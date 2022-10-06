@@ -1,8 +1,8 @@
 .gradle/
 .idea/
 
-petal-api/
-petal-server/
+Zirkonium-API/
+Zirkonium-Server/
 
 build-data/
 build/

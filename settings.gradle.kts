@@ -6,4 +6,4 @@ pluginManagement {
 }
 
 rootProject.name = "Zirkonium"
-include("zirkonium-api", "zirkonium-server")
+include("Zirkonium-API", "Zirkonium-Server")

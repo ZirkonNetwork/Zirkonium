@@ -1,0 +1,511 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <nathangetsmail@gmail.com>
+Date: Wed, 5 Oct 2022 17:14:26 -0600
+Subject: [PATCH] Feat-customizable max enchantment levels
+
+
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/ArrowDamageEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ArrowDamageEnchantment.java
+index 974300069c1e5b755e40ec3435da25ed62f484f4..7f8bf2d6e1f394fc9a7ecd0063416ee1150e94cf 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/ArrowDamageEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/ArrowDamageEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class ArrowDamageEnchantment extends Enchantment {
+     public ArrowDamageEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -19,6 +21,6 @@ public class ArrowDamageEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 5;
++        return PurpurConfig.allowHigherEnchantsLevels ? 5 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 5;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/ArrowKnockbackEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ArrowKnockbackEnchantment.java
+index b3feb7e9403adebbe42640a64b1b4b2dca9d6a10..814eb28ae10f992101ffd88ba33824bf99db1c7a 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/ArrowKnockbackEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/ArrowKnockbackEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class ArrowKnockbackEnchantment extends Enchantment {
+     public ArrowKnockbackEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -19,6 +21,6 @@ public class ArrowKnockbackEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 2;
++        return PurpurConfig.allowHigherEnchantsLevels ? 2 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 2;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/ArrowPiercingEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ArrowPiercingEnchantment.java
+index 853e9291f0869d33e4a35d5c291972d597c1314c..edb6af052ff507db558fa44c382ed761d92608f6 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/ArrowPiercingEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/ArrowPiercingEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class ArrowPiercingEnchantment extends Enchantment {
+     public ArrowPiercingEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -19,7 +21,7 @@ public class ArrowPiercingEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 4;
++        return PurpurConfig.allowHigherEnchantsLevels ? 4 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 4;
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/DamageEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/DamageEnchantment.java
+index d6c354856c71d9629828e2ddbe316306bfaf6ea6..07f155c27c59bae154fc4f6e43d3ddb4bef7a131 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/DamageEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/DamageEnchantment.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.effect.MobEffectInstance;
+ import net.minecraft.world.effect.MobEffects;
+ import net.minecraft.world.entity.Entity;
+@@ -8,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.MobType;
+ import net.minecraft.world.item.AxeItem;
+ import net.minecraft.world.item.ItemStack;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class DamageEnchantment extends Enchantment {
+ 
+@@ -37,7 +39,7 @@ public class DamageEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 5;
++        return PurpurConfig.allowHigherEnchantsLevels ? 5 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 5;
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java
+index cbd39863b75245f1a5a16ab49f09238c034e09d2..296cd5f712892c5cef8244ffaa789f3e517ffd19 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java
+@@ -1,9 +1,11 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.entity.EquipmentSlot;
+ import net.minecraft.world.item.ArmorItem;
+ import net.minecraft.world.item.ItemStack;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class DigDurabilityEnchantment extends Enchantment {
+     protected DigDurabilityEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -22,7 +24,7 @@ public class DigDurabilityEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/DiggingEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/DiggingEnchantment.java
+index c55b492e9bcf5a9eef1bf86d9a0ada7231c459e9..6b21fa406242c7385c8ccaf22f4e2210334809b5 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/DiggingEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/DiggingEnchantment.java
+@@ -1,8 +1,10 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class DiggingEnchantment extends Enchantment {
+     protected DiggingEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -21,7 +23,7 @@ public class DiggingEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 5;
++        return PurpurConfig.allowHigherEnchantsLevels ? 5 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 5;
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/FireAspectEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/FireAspectEnchantment.java
+index 2b9ba92cf944e315b681f113d909fe5b2eb7cf1d..6a6d67cf04d501ea0df171d6f8f49c2d34f9e165 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/FireAspectEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/FireAspectEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class FireAspectEnchantment extends Enchantment {
+     protected FireAspectEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -19,6 +21,6 @@ public class FireAspectEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 2;
++        return PurpurConfig.allowHigherEnchantsLevels ? 2 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 2;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
+index e553bec1b3b6b91bdcc860205f6013992c4ae72c..1564b33b6a2166a59a280e15c9a5311033ff439f 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class FishingSpeedEnchantment extends Enchantment {
+     protected FishingSpeedEnchantment(Enchantment.Rarity weight, EnchantmentCategory type, EquipmentSlot... slotTypes) {
+@@ -19,6 +21,6 @@ public class FishingSpeedEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
+index e29365470fed710345763d3f98a2feeac78f5f47..ae43e9c0016d02875839eeaec5cf191f8be353cb 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
+ import java.util.Iterator;
++
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.entity.EquipmentSlot;
+@@ -11,6 +13,7 @@ import net.minecraft.world.level.block.LiquidBlock;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.material.Material;
+ import net.minecraft.world.phys.shapes.CollisionContext;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class FrostWalkerEnchantment extends Enchantment {
+ 
+@@ -35,7 +38,7 @@ public class FrostWalkerEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 2;
++        return PurpurConfig.allowHigherEnchantsLevels ? 2 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 2;
+     }
+ 
+     public static void onEntityMoved(LivingEntity entity, Level world, BlockPos blockPos, int level) {
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/KnockbackEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/KnockbackEnchantment.java
+index 52e02c8460ae53b9cb3d7f626d6204e1da9861a5..b8f27de228db9898dc451e9c7f5c204c154dfc45 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/KnockbackEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/KnockbackEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class KnockbackEnchantment extends Enchantment {
+     protected KnockbackEnchantment(Enchantment.Rarity weight, EquipmentSlot... slot) {
+@@ -19,6 +21,6 @@ public class KnockbackEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 2;
++        return PurpurConfig.allowHigherEnchantsLevels ? 2 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 2;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
+index 60af917083de1b790b1d93d61835a669143068fb..da7abe4ee8b382dcefe4c5d224b036f41e0b5b0a 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class LootBonusEnchantment extends Enchantment {
+     protected LootBonusEnchantment(Enchantment.Rarity weight, EnchantmentCategory type, EquipmentSlot... slotTypes) {
+@@ -27,7 +29,7 @@ public class LootBonusEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/OxygenEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/OxygenEnchantment.java
+index 41e3f792b38cfd30dd5e8cd62e141e54b7d12219..d0410ff5778f03f40300469f7ca92f540d9ab6f5 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/OxygenEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/OxygenEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class OxygenEnchantment extends Enchantment {
+     public OxygenEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -19,6 +21,6 @@ public class OxygenEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
+index a38194accb2d0ba204ab2f81b4be6031842faf9c..2ad93cfd046b212856a80b89fb7074f3ea1665ec 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
+@@ -1,9 +1,11 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.entity.EquipmentSlot;
+ import net.minecraft.world.entity.LivingEntity;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class ProtectionEnchantment extends Enchantment {
+     public final ProtectionEnchantment.Type type;
+@@ -25,7 +27,7 @@ public class ProtectionEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 4;
++        return PurpurConfig.allowHigherEnchantsLevels ? 4 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 4;
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/QuickChargeEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/QuickChargeEnchantment.java
+index 44cf140303241ab2c646cd2b2b0a671abbb27325..6a28b3acd3148743ebb98251ea55ce688f3bd90a 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/QuickChargeEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/QuickChargeEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class QuickChargeEnchantment extends Enchantment {
+     public QuickChargeEnchantment(Enchantment.Rarity weight, EquipmentSlot... slot) {
+@@ -19,6 +21,6 @@ public class QuickChargeEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/SoulSpeedEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/SoulSpeedEnchantment.java
+index 3d7797e8d11fab0c891cd78bb5d9d042a3165992..b95b7011a4f7c535398cd3ca10ed45a70a35dae2 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/SoulSpeedEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/SoulSpeedEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class SoulSpeedEnchantment extends Enchantment {
+     public SoulSpeedEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -34,6 +36,6 @@ public class SoulSpeedEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/SweepingEdgeEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/SweepingEdgeEnchantment.java
+index ba80b900d58716bd7181cec4644966c56542b2d5..315a1bcab99cfd0df37bce99c8a09bcb55625982 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/SweepingEdgeEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/SweepingEdgeEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class SweepingEdgeEnchantment extends Enchantment {
+     public SweepingEdgeEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -19,7 +21,7 @@ public class SweepingEdgeEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ 
+     public static float getSweepingDamageRatio(int level) {
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/SwiftSneakEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/SwiftSneakEnchantment.java
+index f9599f5b6d3050c106cb962a5924b1b58811f34f..5b5aeed6f46b6654da4c66007231d730593739fc 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/SwiftSneakEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/SwiftSneakEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class SwiftSneakEnchantment extends Enchantment {
+     public SwiftSneakEnchantment(Enchantment.Rarity rarity, EquipmentSlot... slots) {
+@@ -34,6 +36,6 @@ public class SwiftSneakEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
+index 97f61bfdf39def907d7d3686914189f7545937ef..472caaa3326b81d06d5569849b548674fda7c975 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
+ import java.util.Map;
++
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.entity.Entity;
+@@ -8,6 +10,7 @@ import net.minecraft.world.entity.EquipmentSlot;
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.item.ArmorItem;
+ import net.minecraft.world.item.ItemStack;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class ThornsEnchantment extends Enchantment {
+     private static final float CHANCE_PER_LEVEL = 0.15F;
+@@ -28,7 +31,7 @@ public class ThornsEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/TridentImpalerEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/TridentImpalerEnchantment.java
+index 62fc006eaa0cbcf96adfda5d211f1c04df34f4de..c0032f9a16da8a5da38e7e3ed9058d33eb1f2756 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/TridentImpalerEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/TridentImpalerEnchantment.java
+@@ -1,7 +1,9 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
+ import net.minecraft.world.entity.MobType;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class TridentImpalerEnchantment extends Enchantment {
+     public TridentImpalerEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -20,7 +22,7 @@ public class TridentImpalerEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 5;
++        return PurpurConfig.allowHigherEnchantsLevels ? 5 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 5;
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/TridentLoyaltyEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/TridentLoyaltyEnchantment.java
+index bacf68564b46e11d015e5e74d502bdcfa5b6fb55..503ae624c5f1077d36fa9fd4d80efeef281d934e 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/TridentLoyaltyEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/TridentLoyaltyEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class TridentLoyaltyEnchantment extends Enchantment {
+     public TridentLoyaltyEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -19,6 +21,6 @@ public class TridentLoyaltyEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/TridentRiptideEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/TridentRiptideEnchantment.java
+index 14315582296fa273248a7e5d56d6b9bb79645f1e..a058984f957651301ee0e842d98b0e94c14bff0c 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/TridentRiptideEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/TridentRiptideEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class TridentRiptideEnchantment extends Enchantment {
+     public TridentRiptideEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -19,7 +21,7 @@ public class TridentRiptideEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/WaterWalkerEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/WaterWalkerEnchantment.java
+index 4ca8411508e0b2d9edf861ed92adbf07a5c6b3e7..4e96f52524ecf3ce98baef38abee46bf653e4de4 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/WaterWalkerEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/WaterWalkerEnchantment.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.item.enchantment;
+ 
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.world.entity.EquipmentSlot;
++import org.purpurmc.purpur.PurpurConfig;
+ 
+ public class WaterWalkerEnchantment extends Enchantment {
+     public WaterWalkerEnchantment(Enchantment.Rarity weight, EquipmentSlot... slotTypes) {
+@@ -19,7 +21,7 @@ public class WaterWalkerEnchantment extends Enchantment {
+ 
+     @Override
+     public int getMaxLevel() {
+-        return 3;
++        return PurpurConfig.allowHigherEnchantsLevels ? 3 * ZirkoniumConfig.maxEnchantmentLevelMultiplier : 3;
+     }
+ 
+     @Override

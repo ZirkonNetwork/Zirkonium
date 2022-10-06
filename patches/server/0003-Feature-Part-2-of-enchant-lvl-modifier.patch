@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <nathangetsmail@gmail.com>
+Date: Wed, 5 Oct 2022 19:02:02 -0600
+Subject: [PATCH] Feature-Part 2 of enchant lvl modifier
+
+
+diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+index 4a3d216006037b308d71f7784e5fef4d6278bde7..93024a3cf363a3225be955202a3aff0b0fd249d2 100644
+--- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+@@ -3,6 +3,8 @@ package net.minecraft.world.inventory;
+ import com.mojang.logging.LogUtils;
+ import java.util.Iterator;
+ import java.util.Map;
++
++import nathan.zirkonium.configuration.ZirkoniumConfig;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.world.entity.player.Inventory;
+@@ -231,9 +233,10 @@ public class AnvilMenu extends ItemCombinerMenu {
+                                 flag2 = true;
+                             } else {
+                                 flag1 = true;
+-                                if ((!org.purpurmc.purpur.PurpurConfig.allowUnsafeEnchants || !org.purpurmc.purpur.PurpurConfig.allowHigherEnchantsLevels) && i2 > enchantment.getMaxLevel()) { // Purpur
++                                if (((!org.purpurmc.purpur.PurpurConfig.allowUnsafeEnchants || !org.purpurmc.purpur.PurpurConfig.allowHigherEnchantsLevels)
++                                    || (org.purpurmc.purpur.PurpurConfig.allowHigherEnchantsLevels && ZirkoniumConfig.maxEnchantmentLevelMultiplier > 1)) // Zirkonium
++                                        && i2 > enchantment.getMaxLevel()) { // Purpur
+                                     i2 = enchantment.getMaxLevel();
+-                                }
+ 
+                                 map.put(enchantment, i2);
+                                 int j2 = 0;

@@ -48,7 +48,7 @@ subprojects {
 }
 
 paperweight {
-    serverProject.set(project(":zirkonium-server"))
+    serverProject.set(project(":Zirkonium-Server"))
 
     remapRepo.set("https://maven.fabricmc.net/")
     decompileRepo.set("https://files.minecraftforge.net/maven/")
@@ -64,8 +64,8 @@ paperweight {
             apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
             serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
 
-            apiOutputDir.set(layout.projectDirectory.dir("zirkonium-api"))
-            serverOutputDir.set(layout.projectDirectory.dir("zirkonium-server"))
+            apiOutputDir.set(layout.projectDirectory.dir("Zirkonium-API"))
+            serverOutputDir.set(layout.projectDirectory.dir("Zirkonium-Server"))
         }
     }
 }

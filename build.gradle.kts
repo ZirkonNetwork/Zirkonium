@@ -29,6 +29,10 @@ subprojects {
         }
     }
 
+    tasks.withType<Javadoc>().all {
+        enabled = false // Javadoc kept throwing errors and failing to build, didn't need it anyway
+    }
+
     tasks.withType<JavaCompile>().configureEach {
         options.encoding = StandardCharsets.UTF_8.name()
         options.release.set(17)

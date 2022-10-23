@@ -1,0 +1,138 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <nathangetsmail@gmail.com>
+Date: Sun, 23 Oct 2022 15:58:12 -0600
+Subject: [PATCH] Finally fix the anvil level issues
+
+
+diff --git a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
+index 2e47897ad593005fc60625c14081a27062dd9e73..edfbe8dac999e6fa3d14ff88394338b097260fce 100644
+--- a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
+@@ -70,12 +70,10 @@ public class ZirkoniumConfig {
+     }
+ 
+     public static int maxAnvilLevelCost = 40;
+-    public static boolean maxCannotBeLower = false;
+     public static int maxEnchantmentLevelMultiplier = 1;
+     @SuppressWarnings("unused")
+     public static void enchantmentSettings() {
+         maxAnvilLevelCost = getInt("settings.enchantments.max-anvil-level-cost", maxAnvilLevelCost);
+-        maxCannotBeLower = getBoolean("settings.enchantments.max-cannot-be-lower", maxCannotBeLower);
+         maxEnchantmentLevelMultiplier = getInt("settings.enchantments.max-enchantment-level-multiplier", maxEnchantmentLevelMultiplier);
+         if (maxEnchantmentLevelMultiplier < 1) {
+             log(Level.WARNING, "Maximum enchantment level multiplier can not be less than one, resetting it");
+diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+index 00d256caecb9e447142f9cc0eb9fd77146bee31e..82ae7b5696a028f52eba28a154e3b82825bf76cc 100644
+--- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+@@ -1,10 +1,11 @@
+ package net.minecraft.world.inventory;
+ 
+ import com.mojang.logging.LogUtils;
+-import java.util.Iterator;
+-import java.util.Map;
+-
++import net.minecraft.nbt.IntTag;
+ import net.minecraft.network.chat.Component;
++import net.minecraft.network.protocol.game.ClientboundContainerSetDataPacket;
++import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.world.entity.player.Inventory;
+ import net.minecraft.world.entity.player.Player;
+@@ -16,17 +17,11 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
+ import net.minecraft.world.level.block.AnvilBlock;
+ import net.minecraft.world.level.block.state.BlockState;
+ import org.apache.commons.lang3.StringUtils;
+-import org.slf4j.Logger;
+-
+-// CraftBukkit start
+ import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+-// CraftBukkit end
++import org.slf4j.Logger;
+ 
+-// Purpur start
+-import net.minecraft.nbt.IntTag;
+-import net.minecraft.network.protocol.game.ClientboundContainerSetDataPacket;
+-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+-import net.minecraft.server.level.ServerPlayer;
++import java.util.Iterator;
++import java.util.Map;
+ // Purpur end
+ 
+ public class AnvilMenu extends ItemCombinerMenu {
+@@ -46,7 +41,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+     private static final int COST_RENAME = 1;
+     // CraftBukkit start
+     public static final int DEFAULT_DENIED_COST = -1;
+-    public int maximumRepairCost = nathan.zirkonium.configuration.ZirkoniumConfig.maxAnvilLevelCost;
++    public int maximumRepairCost = 40;
+     private CraftInventoryView bukkitEntity;
+     // CraftBukkit end
+     public boolean bypassCost = false; // Purpur
+@@ -75,7 +70,8 @@ public class AnvilMenu extends ItemCombinerMenu {
+     @Override
+     protected void onTake(Player player, ItemStack stack) {
+         ItemStack itemstack = activeQuickItem == null ? stack : activeQuickItem; // Purpur
+-        if (org.purpurmc.purpur.event.inventory.AnvilTakeResultEvent.getHandlerList().getRegisteredListeners().length > 0) new org.purpurmc.purpur.event.inventory.AnvilTakeResultEvent(player.getBukkitEntity(), getBukkitView(), org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack)).callEvent(); // Purpur
++        if (org.purpurmc.purpur.event.inventory.AnvilTakeResultEvent.getHandlerList().getRegisteredListeners().length > 0)
++            new org.purpurmc.purpur.event.inventory.AnvilTakeResultEvent(player.getBukkitEntity(), getBukkitView(), org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack)).callEvent(); // Purpur
+         if (!player.getAbilities().instabuild) {
+             if (bypassCost) ((ServerPlayer) player).lastSentExp = -1;
+             else player.giveExperienceLevels(-this.cost.get()); // Purpur
+@@ -131,7 +127,8 @@ public class AnvilMenu extends ItemCombinerMenu {
+         // Purpur start
+         bypassCost = false;
+         canDoUnsafeEnchants = false;
+-        if (org.purpurmc.purpur.event.inventory.AnvilUpdateResultEvent.getHandlerList().getRegisteredListeners().length > 0) new org.purpurmc.purpur.event.inventory.AnvilUpdateResultEvent(getBukkitView()).callEvent();
++        if (org.purpurmc.purpur.event.inventory.AnvilUpdateResultEvent.getHandlerList().getRegisteredListeners().length > 0)
++            new org.purpurmc.purpur.event.inventory.AnvilUpdateResultEvent(getBukkitView()).callEvent();
+         // Purpur end
+ 
+         ItemStack itemstack = this.inputSlots.getItem(0);
+@@ -295,14 +292,14 @@ public class AnvilMenu extends ItemCombinerMenu {
+                     } else if (bukkitPlayer.hasPermission("purpur.anvil.color")) {
+                         renameTextComponent = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(itemName);
+                         itemstack1.setHoverName(io.papermc.paper.adventure.PaperAdventure.asVanilla(renameTextComponent));
+-                    } else if (player.getBukkitEntity().hasPermission("purpur.anvil.format")){
++                    } else if (player.getBukkitEntity().hasPermission("purpur.anvil.format")) {
+                         itemName = itemName.replaceAll("(?i)&([l-or])", "\u00a7$1");
+                         renameTextComponent = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(itemName);
+                         itemstack1.setHoverName(io.papermc.paper.adventure.PaperAdventure.asVanilla(renameTextComponent));
+                     }
+                 } else
+-                // Purpur end
+-                itemstack1.setHoverName(Component.literal(this.itemName));
++                    // Purpur end
++                    itemstack1.setHoverName(Component.literal(this.itemName));
+             }
+ 
+             this.cost.set(j + i);
+@@ -310,6 +307,10 @@ public class AnvilMenu extends ItemCombinerMenu {
+                 itemstack1 = ItemStack.EMPTY;
+             }
+ 
++            // Zirkonium start
++            this.maximumRepairCost = nathan.zirkonium.configuration.ZirkoniumConfig.maxAnvilLevelCost;
++            // Zirkonium end
++
+             if (b1 == i && b1 > 0 && this.cost.get() >= this.maximumRepairCost) { // CraftBukkit
+                 this.cost.set(this.maximumRepairCost - 1); // CraftBukkit
+             }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryAnvil.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryAnvil.java
+index 6da9e0cd9cfb1d3bf9a955bd4124ac03b178f4e8..fa741586f21a44822477e6195f09629218c6ed26 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryAnvil.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryAnvil.java
+@@ -56,11 +56,7 @@ public class CraftInventoryAnvil extends CraftResultInventory implements AnvilIn
+     // Zirkonium start
+     @Override
+     public void setMaximumRepairCost(int levels) {
+-        if (ZirkoniumConfig.maxCannotBeLower) {
+-            Preconditions.checkArgument(levels >= ZirkoniumConfig.maxAnvilLevelCost, "Maximum repair cost must be more than or equal to " + ZirkoniumConfig.maxAnvilLevelCost);
+-        } else {
+-            Preconditions.checkArgument(levels >= 0, "Maximum repair cost must be positive (or 0)");
+-        }
++        Preconditions.checkArgument(levels >= 0, "Maximum repair cost must be positive (or 0)");
+         container.maximumRepairCost = levels;
+     }
+     // Zirkonium end

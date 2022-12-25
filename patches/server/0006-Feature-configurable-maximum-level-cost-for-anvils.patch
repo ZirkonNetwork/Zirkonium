@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <nathangetsmail@gmail.com>
+Date: Sat, 24 Dec 2022 17:34:26 -0700
+Subject: [PATCH] Feature-configurable maximum level cost for anvils
+
+
+diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+index 7c52c048fb9b265d57f57f0c69796668235a26fd..5a421e1dadc77aa2ba5ca0e0979ce20f63bf95b1 100644
+--- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+@@ -45,7 +45,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+     private static final int COST_RENAME = 1;
+     // CraftBukkit start
+     public static final int DEFAULT_DENIED_COST = -1;
+-    public int maximumRepairCost = 40;
++    public int maximumRepairCost = nathan.zirkonium.configuration.ZirkoniumConfig.maxAnvilLevelCost; // Zirkonium
+     private CraftInventoryView bukkitEntity;
+     // CraftBukkit end
+     public boolean bypassCost = false; // Purpur

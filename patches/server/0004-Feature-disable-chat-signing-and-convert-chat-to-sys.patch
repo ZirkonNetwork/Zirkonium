@@ -1,0 +1,94 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <nathangetsmail@gmail.com>
+Date: Sat, 24 Dec 2022 17:00:43 -0700
+Subject: [PATCH] Feature-disable chat signing and convert chat to system
+ message
+
+
+diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
+index d1d2fc0c57523c1abf1e8bfec913c78927c3dafc..120c5bba8d387f1391e8b13595d6aeac3f3c1db5 100644
+--- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
++++ b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
+@@ -17,7 +17,7 @@ public record ServerboundChatPacket(String message, Instant timeStamp, long salt
+         buf.writeUtf(this.message, 256);
+         buf.writeInstant(this.timeStamp);
+         buf.writeLong(this.salt);
+-        buf.writeNullable(this.signature, MessageSignature::write);
++        buf.writeNullable(nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning ? null : this.signature, MessageSignature::write); // Zirkonium
+         this.lastSeenMessages.write(buf);
+     }
+ 
+diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java
+index 9d6db4a378036559efab91c8b7dcf2a6b0c2cce6..530120322f5a2cae09f595046ffff6055bf68f75 100644
+--- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java
++++ b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java
+@@ -16,6 +16,7 @@ public record ServerboundChatSessionUpdatePacket(RemoteChatSession.Data chatSess
+ 
+     @Override
+     public void handle(ServerGamePacketListener listener) {
+-        listener.handleChatSessionUpdate(this);
++        if (!nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning && !nathan.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage)
++            listener.handleChatSessionUpdate(this); // Zirkonium - ignore chat sessions which in turn ignores incoming signatures
+     }
+ }
+diff --git a/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java b/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
+index 6e0a3086da142f1c42007a16bbec7edbab17da04..bd446a82444fa2bc0dab409aa0e5058b7bc838a0 100644
+--- a/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
++++ b/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
+@@ -69,7 +69,7 @@ public class ServerStatus {
+     }
+ 
+     public boolean enforcesSecureChat() {
+-        return this.enforcesSecureChat;
++        return (nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning && nathan.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage)|| this.enforcesSecureChat; // Zirkonium
+     }
+ 
+     public static class Players {
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 1b5ba8556aa70793d011a0da402476b1ef7c43c0..286535f24cf5f2376c10e080d8caed1605a31c07 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -673,7 +673,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+ 
+     @Override
+     public boolean enforceSecureProfile() {
+-        return this.getProperties().enforceSecureProfile && this.getProperties().onlineMode;
++        return !nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning && this.getProperties().enforceSecureProfile && this.getProperties().onlineMode; // Zirkonium
+     }
+ 
+     protected boolean convertOldUsers() {
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index a37849179a34d0ba5997f7d83c10bd1851135835..61652ffce5286c5abc6e93cf6d2cefab37d588fc 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -2231,7 +2231,15 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+ 
+     @Override
+     public void send(Packet<?> packet) {
+-        this.send(packet, (PacketSendListener) null);
++        // Zirkonium start
++        if (nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning && nathan.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage && packet instanceof ClientboundPlayerChatPacket chat) {
++            packet = new ClientboundSystemChatPacket(chat.chatType().resolve(this.player.level.registryAccess()).get()
++                .decorate(chat.unsignedContent() != null ? chat.unsignedContent() : Component.literal(chat.body().content())), false);
++            this.send(packet);
++            return;
++        }
++        // Zirkonium end
++        this.send(packet, null);
+     }
+ 
+     public void send(Packet<?> packet, @Nullable PacketSendListener callbacks) {
+@@ -2241,8 +2249,12 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+         } else if (packet instanceof ClientboundSetDefaultSpawnPositionPacket) {
+             ClientboundSetDefaultSpawnPositionPacket packet6 = (ClientboundSetDefaultSpawnPositionPacket) packet;
+             this.player.compassTarget = new Location(this.getCraftPlayer().getWorld(), packet6.pos.getX(), packet6.pos.getY(), packet6.pos.getZ());
++        // Zirkonium start
++        } else if (nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning && nathan.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage && packet instanceof ClientboundPlayerChatPacket chat && callbacks != null) {
++            this.send(chat);
++            return;
+         }
+-        // CraftBukkit end
++        // CraftBukkit end // Zirkonium end
+ 
+         try {
+             this.connection.send(packet, callbacks);

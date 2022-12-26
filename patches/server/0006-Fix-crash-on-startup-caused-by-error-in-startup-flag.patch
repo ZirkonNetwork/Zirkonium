@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <nathangetsmail@gmail.com>
+Date: Sat, 24 Dec 2022 17:34:26 -0700
+Subject: [PATCH] Fix crash on startup caused by error in startup flag name
+
+
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 286535f24cf5f2376c10e080d8caed1605a31c07..cc41a7f73f4fef5729711e8f34757b65edc3bc19 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -221,7 +221,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         // Purpur start
+         try {
+             org.purpurmc.purpur.PurpurConfig.init((java.io.File) options.valueOf("purpur-settings"));
+-            nathan.zirkonium.configuration.ZirkoniumConfig.init((java.io.File) options.valueOf("zirkon-settings")); // Zirkonium
++            nathan.zirkonium.configuration.ZirkoniumConfig.init((java.io.File) options.valueOf("zirkonium-settings")); // Zirkonium
+         } catch (Exception e) {
+             DedicatedServer.LOGGER.error("Unable to load server configuration", e);
+             return false;
+diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+index 7c52c048fb9b265d57f57f0c69796668235a26fd..5a421e1dadc77aa2ba5ca0e0979ce20f63bf95b1 100644
+--- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+@@ -45,7 +45,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+     private static final int COST_RENAME = 1;
+     // CraftBukkit start
+     public static final int DEFAULT_DENIED_COST = -1;
+-    public int maximumRepairCost = 40;
++    public int maximumRepairCost = nathan.zirkonium.configuration.ZirkoniumConfig.maxAnvilLevelCost; // Zirkonium
+     private CraftInventoryView bukkitEntity;
+     // CraftBukkit end
+     public boolean bypassCost = false; // Purpur

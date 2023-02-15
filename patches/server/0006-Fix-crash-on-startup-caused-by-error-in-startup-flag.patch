@@ -18,7 +18,7 @@ index 286535f24cf5f2376c10e080d8caed1605a31c07..cc41a7f73f4fef5729711e8f34757b65
              DedicatedServer.LOGGER.error("Unable to load server configuration", e);
              return false;
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 7c52c048fb9b265d57f57f0c69796668235a26fd..5a421e1dadc77aa2ba5ca0e0979ce20f63bf95b1 100644
+index 05a8a295fe7970255c07efad8b4ab7e9a358bf83..b17c77678cbac76b8832b0129548fc48ec2ef03a 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -45,7 +45,7 @@ public class AnvilMenu extends ItemCombinerMenu {

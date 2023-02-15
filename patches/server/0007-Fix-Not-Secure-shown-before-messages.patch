@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <nathangetsmail@gmail.com>
+Date: Tue, 14 Feb 2023 17:12:25 -0700
+Subject: [PATCH] Fix Not Secure shown before messages
+
+
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index c34c5368e336ba4b181a95932a9b40cb4f50ae1d..8006f832348753847fbe4bb41d04a5d2935f81e0 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -1448,7 +1448,7 @@ public abstract class PlayerList {
+     }
+ 
+     public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public
+-        return message.hasSignature() && !message.hasExpiredServer(Instant.now());
++        return nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning || message.hasSignature() && !message.hasExpiredServer(Instant.now());
+     }
+ 
+     // CraftBukkit start

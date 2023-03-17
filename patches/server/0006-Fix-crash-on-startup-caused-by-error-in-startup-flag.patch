@@ -5,7 +5,7 @@ Subject: [PATCH] Fix crash on startup caused by error in startup flag name
 
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 286535f24cf5f2376c10e080d8caed1605a31c07..cc41a7f73f4fef5729711e8f34757b65edc3bc19 100644
+index afac71ce7392ea860421e9bde4b32869b7197de4..a11ea72a7445c6bbffec135df45a835da19b4419 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -221,7 +221,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface

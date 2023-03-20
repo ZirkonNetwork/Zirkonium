@@ -5,7 +5,7 @@ Subject: [PATCH] Fix the server buildscript
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 020927dfe9624453311d1d171a10f44344ec8710..665d2bbeaae8f41fc78079fe33f67443b268eacb 100644
+index 0435c1eb5c1fa6f9180ee8dc36a61afbac0f952e..74c60fdb114bc4613f4ce380be369adc4146bb77 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -7,7 +7,7 @@ plugins {

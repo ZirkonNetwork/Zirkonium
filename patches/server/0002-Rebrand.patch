@@ -119,10 +119,10 @@ index 99597258e8e88cd9e2c901c4ac3ff7faeeabee2b..c63449d140e4d5cdc2d582125c67d21f
  
          if (stream != null) {
 diff --git a/src/main/java/org/purpurmc/purpur/PurpurConfig.java b/src/main/java/org/purpurmc/purpur/PurpurConfig.java
-index 62ad4c6ad417e11e9152f74636b2ff0d187d0799..b86cff1d1936c120398d0721ccfcf805b28e2645 100644
+index 62ad4c6ad417e11e9152f74636b2ff0d187d0799..35c1b03230a42d0d327b71223e89ee0d26422b22 100644
 --- a/src/main/java/org/purpurmc/purpur/PurpurConfig.java
 +++ b/src/main/java/org/purpurmc/purpur/PurpurConfig.java
-@@ -227,11 +227,28 @@ public class PurpurConfig {
+@@ -227,7 +227,7 @@ public class PurpurConfig {
          deathMessageOnlyBroadcastToAffectedPlayer = getBoolean("settings.broadcasts.death.only-broadcast-to-affected-player", deathMessageOnlyBroadcastToAffectedPlayer);
      }
  
@@ -131,27 +131,6 @@ index 62ad4c6ad417e11e9152f74636b2ff0d187d0799..b86cff1d1936c120398d0721ccfcf805
      private static void serverModName() {
          serverModName = getString("settings.server-mod-name", serverModName);
      }
- 
-+    public static int seedStructureBuriedTreasure = -1;
-+    public static int seedStructureMineshaft = -1;
-+    private static void seedSettings() {
-+        seedStructureBuriedTreasure = getInt("settings.seed.structure.buried_treasure", seedStructureBuriedTreasure);
-+        seedStructureMineshaft = getInt("settings.seed.structure.mineshaft", seedStructureMineshaft);
-+        if (version < 26) {
-+            int stronghold = getInt("settings.seed.structure.stronghold", -1);
-+            set("settings.seed.structure.stronghold", null);
-+            if (stronghold != -1) {
-+                org.spigotmc.SpigotConfig.config.set("world-settings.default.seed-stronghold", stronghold);
-+                org.spigotmc.SpigotConfig.save();
-+            }
-+        }
-+        // hide these from timings report
-+        if (!TimingsManager.hiddenConfigs.contains("settings.seed")) TimingsManager.hiddenConfigs.add("settings.seed");
-+    }
-+
-     public static double laggingThreshold = 19.0D;
-     private static void tickLoopSettings() {
-         laggingThreshold = getDouble("settings.lagging-threshold", laggingThreshold);
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
 index a810bfd3b8d6bd4d8f2ef8797e4281ae4fe8a67f..e36fdab579b7e0526e4a952ba8a9b1545e28ca22 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java

@@ -93,7 +93,7 @@ index 2b9ba92cf944e315b681f113d909fe5b2eb7cf1d..0fe35e7849ab9983902b348f4de47f71
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
-index e553bec1b3b6b91bdcc860205f6013992c4ae72c..1dd6cc5c8dccb671c4b34fdd3379f05385da8ea4 100644
+index 83969917890d80c15b7c2ef87a3237b809edd2ae..b56c0a25273955c27f06d4ce73d63f01f782a7c2 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
 @@ -19,6 +19,6 @@ public class FishingSpeedEnchantment extends Enchantment {
@@ -105,7 +105,7 @@ index e553bec1b3b6b91bdcc860205f6013992c4ae72c..1dd6cc5c8dccb671c4b34fdd3379f053
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
-index e29365470fed710345763d3f98a2feeac78f5f47..68aad5b966c05483a505a4cd1c97dae2aca2c267 100644
+index c208a695356fcb418240b8299dfca4bf3b79ab6d..194b71b48bf7341463d74bfb59439cd7ab5ee0cd 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
 @@ -35,7 +35,7 @@ public class FrostWalkerEnchantment extends Enchantment {
@@ -130,7 +130,7 @@ index 52e02c8460ae53b9cb3d7f626d6204e1da9861a5..5d042002564aa507d2374e34672236f3
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
-index 60af917083de1b790b1d93d61835a669143068fb..addb11fb76485af6ec6ef7f8eb8ed5f6eca51383 100644
+index 8fe09c13643d99639fb242da4367c42ef31b38b4..6f3f4a71d27857196a783472fe456a5a67d3baf6 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
 @@ -27,7 +27,7 @@ public class LootBonusEnchantment extends Enchantment {
@@ -155,10 +155,10 @@ index 41e3f792b38cfd30dd5e8cd62e141e54b7d12219..7677d07f6b739eebb06318f6071e64a5
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
-index a38194accb2d0ba204ab2f81b4be6031842faf9c..b8b06dd6ce0f2e1f65f60637c22ca621b8ec990f 100644
+index ba8bd0df934f28c5dae6fd8a85ec0b73f6d3aa31..522b961fa76322aacf7689b07a172a33ecec13c3 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
-@@ -25,7 +25,7 @@ public class ProtectionEnchantment extends Enchantment {
+@@ -26,7 +26,7 @@ public class ProtectionEnchantment extends Enchantment {
  
      @Override
      public int getMaxLevel() {
@@ -217,10 +217,10 @@ index f9599f5b6d3050c106cb962a5924b1b58811f34f..4553ff5bd874563163292693623fc986
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
-index 97f61bfdf39def907d7d3686914189f7545937ef..064d365ba60950695342f30f7e48982588e609b9 100644
+index 618d645e71762ec8279640a60ea00460809bba63..224e4441fac0de548db2b200e4d4650a9d49dd55 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
-@@ -28,7 +28,7 @@ public class ThornsEnchantment extends Enchantment {
+@@ -27,7 +27,7 @@ public class ThornsEnchantment extends Enchantment {
  
      @Override
      public int getMaxLevel() {

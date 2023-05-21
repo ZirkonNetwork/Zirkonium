@@ -5,10 +5,10 @@ Subject: [PATCH] Fix crash on startup caused by error in startup flag name
 
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index afac71ce7392ea860421e9bde4b32869b7197de4..a11ea72a7445c6bbffec135df45a835da19b4419 100644
+index 0f5de8b0a04e28dc388bdd05744baaee0b6c849f..450c5393e68cc1394e4750ac8c1d3eb0029b5d30 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -221,7 +221,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -222,7 +222,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          // Purpur start
          try {
              org.purpurmc.purpur.PurpurConfig.init((java.io.File) options.valueOf("purpur-settings"));
@@ -18,11 +18,11 @@ index afac71ce7392ea860421e9bde4b32869b7197de4..a11ea72a7445c6bbffec135df45a835d
              DedicatedServer.LOGGER.error("Unable to load server configuration", e);
              return false;
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 05a8a295fe7970255c07efad8b4ab7e9a358bf83..b17c77678cbac76b8832b0129548fc48ec2ef03a 100644
+index 7ade5cd93b3d7b7259bf3246a8b74b0b31407817..1a8ba8733a90cb5bc44538bb988422b8a08cf02e 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-@@ -45,7 +45,7 @@ public class AnvilMenu extends ItemCombinerMenu {
-     private static final int COST_RENAME = 1;
+@@ -52,7 +52,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+     private static final int SLOT_Y_PLACEMENT = 47;
      // CraftBukkit start
      public static final int DEFAULT_DENIED_COST = -1;
 -    public int maximumRepairCost = 40;

@@ -32,20 +32,27 @@ index 9d6db4a378036559efab91c8b7dcf2a6b0c2cce6..530120322f5a2cae09f595046ffff605
      }
  }
 diff --git a/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java b/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
-index 6e0a3086da142f1c42007a16bbec7edbab17da04..bd446a82444fa2bc0dab409aa0e5058b7bc838a0 100644
+index e6cc2bab1fde2e8c1394772b99201ea8d7eb8057..c8d9bf11c8217d1cabb9eca34848a13fabb0b541 100644
 --- a/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
 +++ b/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
-@@ -69,7 +69,7 @@ public class ServerStatus {
-     }
+@@ -17,7 +17,7 @@ import net.minecraft.util.ExtraCodecs;
  
-     public boolean enforcesSecureChat() {
--        return this.enforcesSecureChat;
-+        return (nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning && nathan.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage)|| this.enforcesSecureChat; // Zirkonium
-     }
+ public record ServerStatus(Component description, Optional<ServerStatus.Players> players, Optional<ServerStatus.Version> version, Optional<ServerStatus.Favicon> favicon, boolean enforcesSecureChat) {
+     public static final Codec<ServerStatus> CODEC = RecordCodecBuilder.create((instance) -> {
+-        return instance.group(ExtraCodecs.COMPONENT.optionalFieldOf("description", CommonComponents.EMPTY).forGetter(ServerStatus::description), ServerStatus.Players.CODEC.optionalFieldOf("players").forGetter(ServerStatus::players), ServerStatus.Version.CODEC.optionalFieldOf("version").forGetter(ServerStatus::version), ServerStatus.Favicon.CODEC.optionalFieldOf("favicon").forGetter(ServerStatus::favicon), Codec.BOOL.optionalFieldOf("enforcesSecureChat", Boolean.valueOf(false)).forGetter(ServerStatus::enforcesSecureChat)).apply(instance, ServerStatus::new);
++        return instance.group(ExtraCodecs.COMPONENT.optionalFieldOf("description", CommonComponents.EMPTY).forGetter(ServerStatus::description), ServerStatus.Players.CODEC.optionalFieldOf("players").forGetter(ServerStatus::players), ServerStatus.Version.CODEC.optionalFieldOf("version").forGetter(ServerStatus::version), ServerStatus.Favicon.CODEC.optionalFieldOf("favicon").forGetter(ServerStatus::favicon), Codec.BOOL.optionalFieldOf("enforcesSecureChat", Boolean.valueOf(nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning && nathan.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage)).forGetter(ServerStatus::enforcesSecureChat)).apply(instance, ServerStatus::new);
+     });
  
-     public static class Players {
+     public static record Favicon(byte[] iconBytes) {
+@@ -64,4 +64,4 @@ public record ServerStatus(Component description, Optional<ServerStatus.Players>
+             return new ServerStatus.Version(worldVersion.getName(), worldVersion.getProtocolVersion());
+         }
+     }
+-}
++}
+\ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 610fb018e2f7e9c62d74a0b1cbd6aebd7a1f3ad2..afac71ce7392ea860421e9bde4b32869b7197de4 100644
+index b4f5cf05818e3cc0155aab4d7b0d9c5d59942a09..0f5de8b0a04e28dc388bdd05744baaee0b6c849f 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -679,7 +679,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -58,10 +65,10 @@ index 610fb018e2f7e9c62d74a0b1cbd6aebd7a1f3ad2..afac71ce7392ea860421e9bde4b32869
  
      protected boolean convertOldUsers() {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index f5e1361c04d44ae7f82376aff6e5f01aaf45cfdd..65edc719a35a55e8997e1d210d1d5c3906a8ea42 100644
+index af8cb1f1f0c128923495f51e4828003133ce766b..677d52aaa9b7b2dc9fce027f22654d805131da3f 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2231,7 +2231,15 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2235,7 +2235,15 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      @Override
      public void send(Packet<?> packet) {
@@ -78,10 +85,10 @@ index f5e1361c04d44ae7f82376aff6e5f01aaf45cfdd..65edc719a35a55e8997e1d210d1d5c39
      }
  
      public void send(Packet<?> packet, @Nullable PacketSendListener callbacks) {
-@@ -2241,8 +2249,12 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2245,8 +2253,12 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          } else if (packet instanceof ClientboundSetDefaultSpawnPositionPacket) {
              ClientboundSetDefaultSpawnPositionPacket packet6 = (ClientboundSetDefaultSpawnPositionPacket) packet;
-             this.player.compassTarget = new Location(this.getCraftPlayer().getWorld(), packet6.pos.getX(), packet6.pos.getY(), packet6.pos.getZ());
+             this.player.compassTarget = CraftLocation.toBukkit(packet6.pos, this.getCraftPlayer().getWorld());
 +        // Zirkonium start
 +        } else if (nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning && nathan.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage && packet instanceof ClientboundPlayerChatPacket chat && callbacks != null) {
 +            this.send(chat);

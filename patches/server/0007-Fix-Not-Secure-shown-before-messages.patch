@@ -5,7 +5,7 @@ Subject: [PATCH] Fix Not Secure shown before messages
 
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index c27e455321951e76e4818fec0e64301f5620dbf6..16c5596b3702192c67a0d7aa79501e7d1c88a281 100644
+index ff56981a03b55f9ee1ec8ad36adaf9849b2c914b..21876303ba128dca21ea52e3aef920ad6214e5f8 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -1464,7 +1464,7 @@ public abstract class PlayerList {

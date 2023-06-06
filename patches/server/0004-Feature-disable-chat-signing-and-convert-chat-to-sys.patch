@@ -5,6 +5,19 @@ Subject: [PATCH] Feature-disable chat signing and convert chat to system
  message
 
 
+diff --git a/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java b/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
+index 1387e3597c43fd652f2fc82ca6fc2e83039604e2..e57b70b0f54ec5609398c8eb2c555f4053df4e3d 100644
+--- a/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
++++ b/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
+@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.Packet;
+ // Spigot start
+ public record ClientboundSystemChatPacket(@javax.annotation.Nullable net.kyori.adventure.text.Component adventure$content, @javax.annotation.Nullable String content, boolean overlay) implements Packet<ClientGamePacketListener> { // Paper - Adventure
+ 
+-    @io.papermc.paper.annotation.DoNotUse // Paper - No locale context
++    // @io.papermc.paper.annotation.DoNotUse // Paper - No locale context // Zirkonium - I'll use whatever I want, thank you very much
+     public ClientboundSystemChatPacket(Component content, boolean overlay) {
+         this(null, Component.Serializer.toJson(content), overlay); // Paper - Adventure
+     }
 diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
 index d1d2fc0c57523c1abf1e8bfec913c78927c3dafc..120c5bba8d387f1391e8b13595d6aeac3f3c1db5 100644
 --- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
@@ -52,7 +65,7 @@ index e6cc2bab1fde2e8c1394772b99201ea8d7eb8057..c8d9bf11c8217d1cabb9eca34848a13f
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index b4f5cf05818e3cc0155aab4d7b0d9c5d59942a09..0f5de8b0a04e28dc388bdd05744baaee0b6c849f 100644
+index da6e780d42b411fb32b5f2fb49c5ebb8c05805eb..450c5393e68cc1394e4750ac8c1d3eb0029b5d30 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -679,7 +679,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -99,3 +112,16 @@ index af8cb1f1f0c128923495f51e4828003133ce766b..677d52aaa9b7b2dc9fce027f22654d80
  
          try {
              this.connection.send(packet, callbacks);
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index ff56981a03b55f9ee1ec8ad36adaf9849b2c914b..55e345a61ed1973238c85f68d975c71302f7d3b4 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -1464,7 +1464,7 @@ public abstract class PlayerList {
+     }
+ 
+     public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public
+-        return message.hasSignature() && !message.hasExpiredServer(Instant.now());
++        return nathan.zirkonium.configuration.ZirkoniumConfig.disableChatSigning || (message.hasSignature() && !message.hasExpiredServer(Instant.now()));
+     }
+ 
+     // CraftBukkit start

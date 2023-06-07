@@ -4,6 +4,19 @@ Date: Thu, 9 Feb 2023 19:00:22 -0700
 Subject: [PATCH] Rebrand
 
 
+diff --git a/build.gradle.kts b/build.gradle.kts
+index bc11029baa961543d8b7eec0c432972d1dad95f4..c4396cf1e6c2a12b2a1f6dcfe1e2f25ef9d07454 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -86,7 +86,7 @@ tasks.jar {
+         attributes(
+             "Main-Class" to "org.bukkit.craftbukkit.Main",
+             "Implementation-Title" to "CraftBukkit",
+-            "Implementation-Version" to "git-Purpur-$implementationVersion", // Pufferfish // Purpur
++            "Implementation-Version" to "git-Zirkonium-$implementationVersion", // Pufferfish // Purpur // Zirkonium
+             "Implementation-Vendor" to date, // Paper
+             "Specification-Title" to "Bukkit",
+             "Specification-Version" to project.version,
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
 index 8cde30544e14f8fc2dac32966ae3c21f8cf3a551..28508dc7ebfbfb1e5aa91e7d80da40e2bb713e94 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java

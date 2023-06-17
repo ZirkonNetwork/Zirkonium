@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <nathangetsmail@gmail.com>
+Date: Tue, 6 Jun 2023 13:08:16 -0600
+Subject: [PATCH] Implement configurable maximum anvil cost
+
+
+diff --git a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
+index d23c1f0ebfabbcffd445f19f10ef8f2a83dbcefa..5a9ee9f3fe9fd3a94a2b5eea542df790fece979a 100644
+--- a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
+@@ -70,9 +70,11 @@ public class ZirkoniumConfig {
+     }
+ 
+     public static class Gameplay {
++        public static int maxAnvilCost = 40;
+         public static int maxEnchantLevelMultiplier = 1;
+ 
+         public static void gameplaySettings() {
++            maxAnvilCost = getInt("gameplay.anvil.maxCost", maxAnvilCost);
+             maxEnchantLevelMultiplier = getInt("gameplay.enchantment.maxLevelMultiplier", maxEnchantLevelMultiplier);
+             if (maxEnchantLevelMultiplier < 1) {
+                 log(Level.WARNING, "The maximum enchantment level multiplier can not be less than 1, resetting it.");
+diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+index 7ade5cd93b3d7b7259bf3246a8b74b0b31407817..086df3d5d9060edc002146b1f96c4e39f189b074 100644
+--- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+@@ -52,7 +52,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+     private static final int SLOT_Y_PLACEMENT = 47;
+     // CraftBukkit start
+     public static final int DEFAULT_DENIED_COST = -1;
+-    public int maximumRepairCost = 40;
++    public int maximumRepairCost = nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxAnvilCost;
+     private CraftInventoryView bukkitEntity;
+     // CraftBukkit end
+     public boolean bypassCost = false; // Purpur

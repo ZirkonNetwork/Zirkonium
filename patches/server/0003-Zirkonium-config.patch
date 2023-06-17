@@ -6,10 +6,10 @@ Subject: [PATCH] Zirkonium config
 
 diff --git a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..edfbe8dac999e6fa3d14ff88394338b097260fce
+index 0000000000000000000000000000000000000000..7410c70a0ebff81ce5644e6224b5b30d4a3e60ac
 --- /dev/null
 +++ b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
-@@ -0,0 +1,92 @@
+@@ -0,0 +1,72 @@
 +package nathan.zirkonium.configuration;
 +
 +import com.google.common.base.Throwables;
@@ -52,9 +52,6 @@ index 0000000000000000000000000000000000000000..edfbe8dac999e6fa3d14ff88394338b0
 +    }
 +
 +    static void readConfig() {
-+        enchantmentSettings();
-+        miscSettings();
-+
 +        try {
 +            config.save(CONFIG_FILE);
 +        } catch (IOException ex) {
@@ -81,25 +78,8 @@ index 0000000000000000000000000000000000000000..edfbe8dac999e6fa3d14ff88394338b0
 +        return config.getInt(path, config.getInt(path));
 +    }
 +
-+    public static int maxAnvilLevelCost = 40;
-+    public static int maxEnchantmentLevelMultiplier = 1;
-+    @SuppressWarnings("unused")
-+    public static void enchantmentSettings() {
-+        maxAnvilLevelCost = getInt("settings.enchantments.max-anvil-level-cost", maxAnvilLevelCost);
-+        maxEnchantmentLevelMultiplier = getInt("settings.enchantments.max-enchantment-level-multiplier", maxEnchantmentLevelMultiplier);
-+        if (maxEnchantmentLevelMultiplier < 1) {
-+            log(Level.WARNING, "Maximum enchantment level multiplier can not be less than one, resetting it");
-+            maxEnchantmentLevelMultiplier = 1;
-+            set("settings.enchantments.max-enchantment-level-multiplier", 1);
-+        }
-+    }
-+
-+    public static boolean disableChatSigning = false;
-+    public static boolean convertToSystemMessage = false;
-+    @SuppressWarnings("unused")
-+    public static void miscSettings() {
-+        disableChatSigning = getBoolean("settings.misc.disable-chat-signing", disableChatSigning);
-+        convertToSystemMessage = getBoolean("settings.misc.convert-to-system-message", convertToSystemMessage);
++    public static class Gameplay {
++        public static int maxAnvilLevelCost = 40;
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java

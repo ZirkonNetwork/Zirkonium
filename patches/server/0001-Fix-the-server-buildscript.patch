@@ -5,21 +5,15 @@ Subject: [PATCH] Fix the server buildscript
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 9c01005751c0088f560f96401cdfdebbbda4e7ec..bc11029baa961543d8b7eec0c432972d1dad95f4 100644
+index 4b0eee46d899cb641988ef7a3b5b61e938b76c71..99bb253057175131d0c7cedfdc8dd21a25df4272 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -7,8 +7,13 @@ plugins {
- }
+@@ -8,7 +8,7 @@ plugins {
  
  dependencies {
--    implementation(project(":purpur-api")) // Purpur
-+    implementation(project(":Zirkonium-API")) // Zirkonium
-     implementation("io.papermc.paper:paper-mojangapi:1.19.4-R0.1-SNAPSHOT") // Purpur
-+    // Pufferfish start
-+    implementation("io.papermc.paper:paper-mojangapi:1.19.3-R0.1-SNAPSHOT") {
-+        exclude("io.papermc.paper", "paper-api")
-+    }
-+    // Pufferfish end
-     // Paper start
-     implementation("org.jline:jline-terminal-jansi:3.21.0")
-     implementation("net.minecrell:terminalconsoleappender:1.3.0")
+     // Purpur start
+-    implementation(project(":purpur-api"))
++    implementation(project(":Zirkonium-API"))
+     implementation("io.papermc.paper:paper-mojangapi:${project.version}") {
+         exclude("io.papermc.paper", "paper-api")
+     }

@@ -110,7 +110,7 @@ index 9d6db4a378036559efab91c8b7dcf2a6b0c2cce6..213079c2afb288820b66698b693c477c
      }
  }
 diff --git a/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java b/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
-index e6cc2bab1fde2e8c1394772b99201ea8d7eb8057..a7dbe23e1747a1a069727278e98647a623be9845 100644
+index 98ea56cbc8de5a5694b4f4d9a2f25811fdecba04..3e1c7511365de9e80395fa53cbd71d0df04a6592 100644
 --- a/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
 +++ b/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
 @@ -17,7 +17,7 @@ import net.minecraft.util.ExtraCodecs;
@@ -122,7 +122,7 @@ index e6cc2bab1fde2e8c1394772b99201ea8d7eb8057..a7dbe23e1747a1a069727278e98647a6
      });
  
      public static record Favicon(byte[] iconBytes) {
-@@ -64,4 +64,21 @@ public record ServerStatus(Component description, Optional<ServerStatus.Players>
+@@ -62,4 +62,21 @@ public record ServerStatus(Component description, Optional<ServerStatus.Players>
              return new ServerStatus.Version(worldVersion.getName(), worldVersion.getProtocolVersion());
          }
      }
@@ -147,23 +147,24 @@ index e6cc2bab1fde2e8c1394772b99201ea8d7eb8057..a7dbe23e1747a1a069727278e98647a6
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 5c7b187dc072b44c5eb0d1250445cf48ec6f2795..f564e291368d3c093666fe5c1bf804133e1a7d96 100644
+index b5edc4113bba2bb4b2eedb5ccf6a6538caf6babb..bb187f497fe6552088f09ead0381f2d2843efcb1 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -675,7 +675,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
- 
+@@ -675,8 +675,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
      @Override
      public boolean enforceSecureProfile() {
--        return this.getProperties().enforceSecureProfile && this.getProperties().onlineMode;
-+        return !me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports && this.getProperties().enforceSecureProfile && this.getProperties().onlineMode; // Zirkonium - No Chat Reports
+         DedicatedServerProperties dedicatedserverproperties = this.getProperties();
+-
+-        return dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.profileKeySignatureValidator() != null;
++        return !me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports || (dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.profileKeySignatureValidator() != null); // Zirkonium - No Chat Reports
      }
  
      protected boolean convertOldUsers() {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index af8cb1f1f0c128923495f51e4828003133ce766b..36ccad4b9924de52d5a4ccd23188ecba591f2864 100644
+index 754063cc43d8adca0f70d76d8a75ec820c62cae6..2be05ff1cccc57124dbfddfea7ad25fb4c8128d4 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2235,10 +2235,20 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2238,10 +2238,20 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      @Override
      public void send(Packet<?> packet) {
@@ -185,7 +186,7 @@ index af8cb1f1f0c128923495f51e4828003133ce766b..36ccad4b9924de52d5a4ccd23188ecba
          if (packet == null || this.processedDisconnect) { // Spigot
              return;
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index ff56981a03b55f9ee1ec8ad36adaf9849b2c914b..ae28ecde33c00d2d7457ce2739d24211e4e5c667 100644
+index ebcdf6aee72b817b9bbba8f8d580eae1876fc6e5..f2dd63d9aac1f0e7fc9bf66cf34c042ccfef9c39 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -1,6 +1,5 @@
@@ -211,7 +212,7 @@ index ff56981a03b55f9ee1ec8ad36adaf9849b2c914b..ae28ecde33c00d2d7457ce2739d24211
  // CraftBukkit end
  
  public abstract class PlayerList {
-@@ -1464,7 +1461,7 @@ public abstract class PlayerList {
+@@ -1471,7 +1468,7 @@ public abstract class PlayerList {
      }
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public

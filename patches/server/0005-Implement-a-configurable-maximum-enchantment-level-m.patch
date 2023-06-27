@@ -137,10 +137,10 @@ index 83969917890d80c15b7c2ef87a3237b809edd2ae..c31d253a9ae03745512ef76c47ecfc56
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
-index c208a695356fcb418240b8299dfca4bf3b79ab6d..af98763f5c4a435a72556bcd79adc0f543c4f107 100644
+index ba96da9869ac1b31a9311f2b4a92356f3dd3ab99..36ba527854b494227d08c39346999c56b6eb3dd9 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
-@@ -35,7 +35,7 @@ public class FrostWalkerEnchantment extends Enchantment {
+@@ -34,7 +34,7 @@ public class FrostWalkerEnchantment extends Enchantment {
  
      @Override
      public int getMaxLevel() {

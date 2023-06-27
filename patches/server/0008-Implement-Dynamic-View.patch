@@ -1,0 +1,280 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <nathangetsmail@gmail.com>
+Date: Tue, 27 Jun 2023 12:27:37 -0600
+Subject: [PATCH] Implement Dynamic View
+
+
+diff --git a/src/main/java/com/dynview/util/TickTimeHandler.java b/src/main/java/com/dynview/util/TickTimeHandler.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..c4e485e49ac63388f89c41a7e5e7d8988b4526ca
+--- /dev/null
++++ b/src/main/java/com/dynview/util/TickTimeHandler.java
+@@ -0,0 +1,57 @@
++package com.dynview.util;
++
++import com.dynview.viewdisthandler.ServerDynamicViewDistanceManager;
++import net.minecraft.server.MinecraftServer;
++
++public class TickTimeHandler {
++    private int meanTickSum = 50;
++    private int meanTickCount = 1;
++    private int tickTimer = 0;
++
++    public static int serverTickTimerInterval = 100;
++
++    private static TickTimeHandler instance = new TickTimeHandler();
++
++    public static TickTimeHandler getInstance() {
++        return instance;
++    }
++
++    private TickTimeHandler() {
++    }
++
++    public void onServerTick() {
++        tickTimer++;
++
++        if (tickTimer % 20 == 0) {
++            meanTickSum += average(MinecraftServer.getServer().tickTimes) * 1.0E-6D;
++            meanTickCount++;
++
++            if (tickTimer >= serverTickTimerInterval) {
++                serverMeanTickTime = meanTickSum / meanTickCount;
++                tickTimer = 0;
++                meanTickCount = 0;
++                meanTickSum = 0;
++
++                ServerDynamicViewDistanceManager.getInstance().updateViewDistForMeanTick(serverMeanTickTime);
++            }
++        }
++    }
++
++    private static long average(long[] values) {
++        if (values == null || values.length == 0) {
++            return 0L;
++        }
++
++        long sum = 0L;
++        for (long v : values) {
++            sum += v;
++        }
++        return sum / values.length;
++    }
++
++    private int serverMeanTickTime = 50;
++
++    public int getMeanTickTime() {
++        return serverMeanTickTime;
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/com/dynview/viewdisthandler/IDynamicViewDistanceManager.java b/src/main/java/com/dynview/viewdisthandler/IDynamicViewDistanceManager.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..b38aff2a12203d130da80925f20217cf3c87d993
+--- /dev/null
++++ b/src/main/java/com/dynview/viewdisthandler/IDynamicViewDistanceManager.java
+@@ -0,0 +1,11 @@
++package com.dynview.viewdisthandler;
++
++public interface IDynamicViewDistanceManager {
++    void initViewDist();
++
++    void updateViewDistForMeanTick(final int meanTick);
++
++    void setCurrentViewDist(int currentChunkViewDist);
++
++    void setCurrentSimulationDistance(int currentChunkUpdateDist);
++}
+diff --git a/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java b/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..f58810b99efdd16dae4f0ef1c01b6bf02031751f
+--- /dev/null
++++ b/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
+@@ -0,0 +1,120 @@
++package com.dynview.viewdisthandler;
++
++import com.mojang.logging.LogUtils;
++import nathan.zirkonium.configuration.ZirkoniumConfig.DynamicView;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.util.Mth;
++import org.slf4j.Logger;
++
++public class ServerDynamicViewDistanceManager implements IDynamicViewDistanceManager {
++    private static final Logger LOGGER = LogUtils.getLogger();
++
++    private static final int UPDATE_LEEWAY = 3;
++    private static ServerDynamicViewDistanceManager instance;
++    public static int minChunkViewDistance = DynamicView.minChunkViewDistance;
++    public static int maxChunkViewDistance = DynamicView.maxChunkViewDistance;
++    public static int maxSimulationDist = DynamicView.minSimulationDistance;
++    public static int maxSimulationDistance = DynamicView.maxSimulationDistance;
++    public static double meanTickToStayBelow = DynamicView.meanAvgTickTime;
++
++    private boolean reduceViewDistance = true;
++    private boolean increaseViewDistance = true;
++
++    private int currentViewDist = 0;
++    private int currentSimulationDistance = 0;
++
++    private ServerDynamicViewDistanceManager() {
++    }
++
++    public static IDynamicViewDistanceManager getInstance() {
++        if (instance == null) {
++            instance = new ServerDynamicViewDistanceManager();
++        }
++        return instance;
++    }
++
++    @Override
++    public void initViewDist() {
++        currentViewDist = (minChunkViewDistance + maxChunkViewDistance) / 2;
++        currentSimulationDistance = (maxSimulationDist + maxSimulationDistance) / 2;
++        MinecraftServer.getServer().getPlayerList().setViewDistance(minChunkViewDistance);
++        if (DynamicView.adjustSimulationDistance) {
++            MinecraftServer.getServer().getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(currentSimulationDistance));
++        }
++    }
++
++    @Override
++    public void updateViewDistForMeanTick(final int meanTickTime) {
++        final MinecraftServer server = MinecraftServer.getServer();
++
++        if (server.getPlayerList().getPlayers().isEmpty()) {
++            return;
++        }
++
++        if (meanTickTime - UPDATE_LEEWAY > meanTickToStayBelow) {
++            increaseViewDistance = true;
++
++            if (reduceViewDistance && currentViewDist > minChunkViewDistance) {
++                reduceViewDistance = !DynamicView.adjustSimulationDistance;
++                currentViewDist--;
++                if (DynamicView.logMessages) {
++                    LOGGER.info("Mean tick: " + meanTickTime + "ms decreasing chunk view distance to: " + currentViewDist);
++                }
++                server.getPlayerList().setViewDistance(currentViewDist);
++                return;
++            }
++
++            if (!reduceViewDistance && currentSimulationDistance > maxSimulationDist) {
++                reduceViewDistance = true;
++                currentSimulationDistance--;
++                if (DynamicView.logMessages) {
++                    LOGGER.info("Mean tick: " + meanTickTime + "ms decreasing simulation distance to: " + currentSimulationDistance);
++                }
++                server.getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(currentSimulationDistance));
++            }
++
++            if (!DynamicView.adjustSimulationDistance) {
++                reduceViewDistance = true;
++            }
++        }
++
++        if (meanTickTime + UPDATE_LEEWAY < meanTickToStayBelow) {
++            reduceViewDistance = false;
++
++            if (increaseViewDistance && currentViewDist < maxChunkViewDistance) {
++                increaseViewDistance = !DynamicView.adjustSimulationDistance;
++                currentViewDist++;
++                if (DynamicView.logMessages) {
++                    LOGGER.info("Mean tick: " + meanTickTime + "ms increasing chunk view distance to: " + currentViewDist);
++                }
++                server.getPlayerList().setViewDistance(currentViewDist);
++                return;
++            }
++
++            if (!increaseViewDistance && currentSimulationDistance < maxSimulationDistance) {
++                increaseViewDistance = true;
++                currentSimulationDistance++;
++                if (DynamicView.logMessages) {
++                    LOGGER.info("Mean tick: " + meanTickTime + "ms increasing simulation distance to: " + currentSimulationDistance);
++                }
++                server.getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(currentSimulationDistance));
++            }
++
++            if (!DynamicView.adjustSimulationDistance) {
++                increaseViewDistance = true;
++            }
++        }
++    }
++
++    @Override
++    public void setCurrentViewDist(final int currentViewDistance) {
++        this.currentViewDist = Mth.clamp(currentViewDistance, 0, 200);
++        MinecraftServer.getServer().getPlayerList().setViewDistance(this.currentViewDist);
++    }
++
++    @Override
++    public void setCurrentSimulationDistance(final int currentSimulationDistance) {
++        this.currentSimulationDistance = Mth.clamp(currentSimulationDistance, 0, 200);
++        MinecraftServer.getServer().getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
+index cac225f8664e87eda57c76a1000029b9c5e93d20..0b8b3acd26a756632e557ef8467009501c787a47 100644
+--- a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
+@@ -45,6 +45,7 @@ public class ZirkoniumConfig {
+         Gameplay.gameplaySettings();
+         NoChatReports.noChatReportsSettings();
+         SmoothBoot.smoothBootSettings();
++        DynamicView.dynamicViewSettings();
+ 
+         try {
+             config.save(CONFIG_FILE);
+@@ -125,4 +126,30 @@ public class ZirkoniumConfig {
+             ioExecutorPriority = getInt("smooth-boot.io-executor.priority", ioExecutorPriority);
+         }
+     }
++
++    public static class DynamicView {
++        public static boolean enabled = true;
++        public static int minChunkViewDistance = 5;
++        public static int maxChunkViewDistance = 15;
++        public static int minSimulationDistance = 4;
++        public static int maxSimulationDistance = 10;
++        public static int meanAvgTickTime = 45;
++        public static int viewDistanceUpdateRate = 60;
++        public static boolean adjustSimulationDistance = true;
++        public static boolean logMessages = true;
++        public static boolean chunkUnload = true;
++
++        public static void dynamicViewSettings() {
++            enabled = getBoolean("dynamic-view.enabled", enabled);
++            minChunkViewDistance = getInt("dynamic-view.min-chunk-view-distance", minChunkViewDistance);
++            maxChunkViewDistance = getInt("dynamic-view.max-chunk-view-distance", maxChunkViewDistance);
++            meanAvgTickTime = getInt("dynamic-view.mean-avg-tick-time", meanAvgTickTime);
++            viewDistanceUpdateRate = getInt("dynamic-view.view-distance-update-rate", viewDistanceUpdateRate);
++            logMessages = getBoolean("dynamic-view.log-messages", logMessages);
++            chunkUnload = getBoolean("dynamic-view.chunk-unload", chunkUnload);
++            adjustSimulationDistance = getBoolean("dynamic-view.adjust-simulation-distance", adjustSimulationDistance);
++            minSimulationDistance = getInt("dynamic-view.min-simulation-distance", minSimulationDistance);
++            maxSimulationDistance = getInt("dynamic-view.max-simulation-distance", maxSimulationDistance);
++        }
++    }
+ }
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 48c6ad1e2f0809af31f4726328bdf7967118044e..a050cb38386f2eb39ad1c8111b218f31b1720c62 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1125,6 +1125,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+             this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
+             this.status = this.buildServerStatus();
+ 
++            if (nathan.zirkonium.configuration.ZirkoniumConfig.DynamicView.enabled)
++                com.dynview.viewdisthandler.ServerDynamicViewDistanceManager.getInstance().initViewDist(); // Zirkonium - DynamicView
++
+             // Spigot start
+             // Paper start - move done tracking
+             LOGGER.info("Running delayed init tasks");
+@@ -1459,6 +1462,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         long endTime = System.nanoTime();
+         long remaining = (TICK_TIME - (endTime - lastTick)) - catchupTime;
+         new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();
++        if (nathan.zirkonium.configuration.ZirkoniumConfig.DynamicView.enabled)
++            com.dynview.util.TickTimeHandler.getInstance().onServerTick(); // Zirkonium - DynamicView
+         // Paper end
+         //this.profiler.push("tallying"); // Purpur
+         long j = this.tickTimes[this.tickCount % 100] = Util.getNanos() - i;

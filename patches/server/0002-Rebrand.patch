@@ -119,7 +119,7 @@ index 3310828edcabd2c24e3200dcb89d4e8ebd82cf16..14f42f1433a578ad6d31fdf492e94de9
      private final String bukkitVersion = Versioning.getBukkitVersion();
      private final Logger logger = Logger.getLogger("Minecraft");
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
-index 99597258e8e88cd9e2c901c4ac3ff7faeeabee2b..c63449d140e4d5cdc2d582125c67d21f00c0ed34 100644
+index 99597258e8e88cd9e2c901c4ac3ff7faeeabee2b..a88fbfaca6e2799653a8ea82fa907cfb290b8ead 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 @@ -11,7 +11,7 @@ public final class Versioning {
@@ -127,7 +127,7 @@ index 99597258e8e88cd9e2c901c4ac3ff7faeeabee2b..c63449d140e4d5cdc2d582125c67d21f
          String result = "Unknown-Version";
  
 -        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/org.purpurmc.purpur/purpur-api/pom.properties"); // Pufferfish // Purpur
-+        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/nathan.zirkonium/Zirkonium-API/pom.properties"); // Pufferfish // Purpur // Zirkonium
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/me/elephant1214/zirkonium/Zirkonium-API/pom.properties"); // Pufferfish // Purpur // Zirkonium
          Properties properties = new Properties();
  
          if (stream != null) {

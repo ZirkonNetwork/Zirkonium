@@ -87,14 +87,14 @@ index 0000000000000000000000000000000000000000..b38aff2a12203d130da80925f20217cf
 +}
 diff --git a/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java b/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f58810b99efdd16dae4f0ef1c01b6bf02031751f
+index 0000000000000000000000000000000000000000..7bca8c49e4d1e9ef2fe76e26bca4d99f91e39149
 --- /dev/null
 +++ b/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
 @@ -0,0 +1,120 @@
 +package com.dynview.viewdisthandler;
 +
 +import com.mojang.logging.LogUtils;
-+import nathan.zirkonium.configuration.ZirkoniumConfig.DynamicView;
++import me.elephant1214.zirkonium.configuration.ZirkoniumConfig.DynamicView;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraft.util.Mth;
 +import org.slf4j.Logger;
@@ -212,10 +212,10 @@ index 0000000000000000000000000000000000000000..f58810b99efdd16dae4f0ef1c01b6bf0
 +    }
 +}
 \ No newline at end of file
-diff --git a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
-index cac225f8664e87eda57c76a1000029b9c5e93d20..0b8b3acd26a756632e557ef8467009501c787a47 100644
---- a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
-+++ b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
+diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+index 1b6f692f51e50c1f2ec557db6e083da1a056d2b3..8dc4613593f4449d425c51297aa9debfcd5ff0b8 100644
+--- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -45,6 +45,7 @@ public class ZirkoniumConfig {
          Gameplay.gameplaySettings();
          NoChatReports.noChatReportsSettings();
@@ -256,14 +256,14 @@ index cac225f8664e87eda57c76a1000029b9c5e93d20..0b8b3acd26a756632e557ef846700950
 +    }
  }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 48c6ad1e2f0809af31f4726328bdf7967118044e..a050cb38386f2eb39ad1c8111b218f31b1720c62 100644
+index 48c6ad1e2f0809af31f4726328bdf7967118044e..4942ae477e83b08cd2333bfceb09beaf31f7999c 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1125,6 +1125,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
  
-+            if (nathan.zirkonium.configuration.ZirkoniumConfig.DynamicView.enabled)
++            if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.DynamicView.enabled)
 +                com.dynview.viewdisthandler.ServerDynamicViewDistanceManager.getInstance().initViewDist(); // Zirkonium - DynamicView
 +
              // Spigot start
@@ -273,7 +273,7 @@ index 48c6ad1e2f0809af31f4726328bdf7967118044e..a050cb38386f2eb39ad1c8111b218f31
          long endTime = System.nanoTime();
          long remaining = (TICK_TIME - (endTime - lastTick)) - catchupTime;
          new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();
-+        if (nathan.zirkonium.configuration.ZirkoniumConfig.DynamicView.enabled)
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.DynamicView.enabled)
 +            com.dynview.util.TickTimeHandler.getInstance().onServerTick(); // Zirkonium - DynamicView
          // Paper end
          //this.profiler.push("tallying"); // Purpur

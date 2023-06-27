@@ -4,10 +4,10 @@ Date: Tue, 6 Jun 2023 13:08:16 -0600
 Subject: [PATCH] Implement configurable maximum anvil cost
 
 
-diff --git a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
-index d23c1f0ebfabbcffd445f19f10ef8f2a83dbcefa..5a9ee9f3fe9fd3a94a2b5eea542df790fece979a 100644
---- a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
-+++ b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
+diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+index 0df909dafbc72637f5164331967b12fe2631fea4..028cd33f0060dc7ac0927c4ffac387760b326ec9 100644
+--- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -70,9 +70,11 @@ public class ZirkoniumConfig {
      }
  
@@ -21,7 +21,7 @@ index d23c1f0ebfabbcffd445f19f10ef8f2a83dbcefa..5a9ee9f3fe9fd3a94a2b5eea542df790
              if (maxEnchantLevelMultiplier < 1) {
                  log(Level.WARNING, "The maximum enchantment level multiplier can not be less than 1, resetting it.");
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 7ade5cd93b3d7b7259bf3246a8b74b0b31407817..086df3d5d9060edc002146b1f96c4e39f189b074 100644
+index 7ade5cd93b3d7b7259bf3246a8b74b0b31407817..7d8ef861265a59b484be4a686f74031903bd5d52 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -52,7 +52,7 @@ public class AnvilMenu extends ItemCombinerMenu {
@@ -29,7 +29,7 @@ index 7ade5cd93b3d7b7259bf3246a8b74b0b31407817..086df3d5d9060edc002146b1f96c4e39
      // CraftBukkit start
      public static final int DEFAULT_DENIED_COST = -1;
 -    public int maximumRepairCost = 40;
-+    public int maximumRepairCost = nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxAnvilCost;
++    public int maximumRepairCost = me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxAnvilCost;
      private CraftInventoryView bukkitEntity;
      // CraftBukkit end
      public boolean bypassCost = false; // Purpur

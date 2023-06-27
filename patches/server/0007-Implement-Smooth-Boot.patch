@@ -35,12 +35,12 @@ index 0000000000000000000000000000000000000000..4b391e0324950f4710abae2e3fa4204a
 +        super.onTermination(exception);
 +    }
 +}
-diff --git a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
-index 5a9ee9f3fe9fd3a94a2b5eea542df790fece979a..cac225f8664e87eda57c76a1000029b9c5e93d20 100644
---- a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
-+++ b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
+diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+index 028cd33f0060dc7ac0927c4ffac387760b326ec9..1b6f692f51e50c1f2ec557db6e083da1a056d2b3 100644
+--- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -1,6 +1,8 @@
- package nathan.zirkonium.configuration;
+ package me.elephant1214.zirkonium.configuration;
  
  import com.google.common.base.Throwables;
 +import net.minecraft.Util;
@@ -89,7 +89,7 @@ index 5a9ee9f3fe9fd3a94a2b5eea542df790fece979a..cac225f8664e87eda57c76a1000029b9
 +    }
  }
 diff --git a/src/main/java/net/minecraft/Util.java b/src/main/java/net/minecraft/Util.java
-index 4c90a6ee734451fe404b2255d21090b669da1aa1..ba7dc7693884494ecb6499c4695c97bf0640806f 100644
+index 4c90a6ee734451fe404b2255d21090b669da1aa1..2858f0b3445b5d56c12cc742de2c80c5d4bc9a98 100644
 --- a/src/main/java/net/minecraft/Util.java
 +++ b/src/main/java/net/minecraft/Util.java
 @@ -80,7 +80,7 @@ public class Util {
@@ -136,7 +136,7 @@ index 4c90a6ee734451fe404b2255d21090b669da1aa1..ba7dc7693884494ecb6499c4695c97bf
  
 +    // Zirkonium start - Smooth Boot
      public static ExecutorService backgroundExecutor() {
-+        if (nathan.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.bootstrapExecutorEnabled && !initBackgroundExecutor) {
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.bootstrapExecutorEnabled && !initBackgroundExecutor) {
 +            BACKGROUND_EXECUTOR = replaceBackgroundExecutor("Main");
 +            LOGGER.debug("Main executor replaced");
 +            initBackgroundExecutor = true;
@@ -145,7 +145,7 @@ index 4c90a6ee734451fe404b2255d21090b669da1aa1..ba7dc7693884494ecb6499c4695c97bf
      }
  
      public static ExecutorService ioPool() {
-+        if (nathan.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.ioExecutorEnabled && !initIOPool) {
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.ioExecutorEnabled && !initIOPool) {
 +            IO_POOL = replaceIOExecutor();
 +            LOGGER.debug("IO executor replaced");
 +            initIOPool = true;
@@ -154,14 +154,14 @@ index 4c90a6ee734451fe404b2255d21090b669da1aa1..ba7dc7693884494ecb6499c4695c97bf
      }
  
 +    private static ExecutorService replaceBackgroundExecutor(String name) {
-+        return new ForkJoinPool(net.minecraft.util.Mth.clamp(select(name, nathan.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.bootstrapExecutorCount,
-+                nathan.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.mainExecutorCount), 1, 0x7fff), (forkJoinPool) -> {
++        return new ForkJoinPool(net.minecraft.util.Mth.clamp(select(name, me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.bootstrapExecutorCount,
++                me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.mainExecutorCount), 1, 0x7fff), (forkJoinPool) -> {
 +            String workerName = "Worker-" + name + "-" + WORKER_COUNT.getAndIncrement();
 +            LOGGER.debug("Initialized " + workerName);
 +
 +            ForkJoinWorkerThread forkJoinWorkerThread = new io.github.ultimateboomer.smoothboot.util.LoggingForkJoinWorkerThread(forkJoinPool, LOGGER);
-+            forkJoinWorkerThread.setPriority(select(name, nathan.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.bootstrapExecutorPriority,
-+                    nathan.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.mainExecutorPriority));
++            forkJoinWorkerThread.setPriority(select(name, me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.bootstrapExecutorPriority,
++                    me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.mainExecutorPriority));
 +            forkJoinWorkerThread.setName(workerName);
 +            return forkJoinWorkerThread;
 +        }, Util::onThreadException, true);
@@ -175,7 +175,7 @@ index 4c90a6ee734451fe404b2255d21090b669da1aa1..ba7dc7693884494ecb6499c4695c97bf
 +            Thread thread = new Thread(runnable);
 +            thread.setName(workerName);
 +            thread.setDaemon(true);
-+            thread.setPriority(nathan.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.ioExecutorPriority);
++            thread.setPriority(me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.ioExecutorPriority);
 +            thread.setUncaughtExceptionHandler(Util::onThreadException);
 +            return thread;
 +        });
@@ -190,7 +190,7 @@ index 4c90a6ee734451fe404b2255d21090b669da1aa1..ba7dc7693884494ecb6499c4695c97bf
          shutdownExecutor(BACKGROUND_EXECUTOR);
          shutdownExecutor(IO_POOL);
 diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
-index cdbf10339a8e8846a8c364de483a0ccd95cd225a..fdf5999123e2525d4d6fc44af0dc9ecae405af54 100644
+index cdbf10339a8e8846a8c364de483a0ccd95cd225a..72f1b4b49f481b22133becd52dc906baa4e53fe7 100644
 --- a/src/main/java/net/minecraft/server/Main.java
 +++ b/src/main/java/net/minecraft/server/Main.java
 @@ -81,6 +81,12 @@ public class Main {
@@ -198,8 +198,8 @@ index cdbf10339a8e8846a8c364de483a0ccd95cd225a..fdf5999123e2525d4d6fc44af0dc9eca
      @DontObfuscate
      public static void main(final OptionSet optionset) { // CraftBukkit - replaces main(String[] astring)
 +        // Zirkonium start - Smooth Boot
-+        if (nathan.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.gameThreadEnabled) {
-+            Thread.currentThread().setPriority(nathan.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.gameThreadPriority);
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.gameThreadEnabled) {
++            Thread.currentThread().setPriority(me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.gameThreadPriority);
 +            LOGGER.debug("Initialized server game thread");
 +        }
 +        // Zirkonium end

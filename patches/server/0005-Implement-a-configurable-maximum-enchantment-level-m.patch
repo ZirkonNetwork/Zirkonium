@@ -4,10 +4,10 @@ Date: Sat, 24 Dec 2022 17:16:04 -0700
 Subject: [PATCH] Implement a configurable maximum enchantment level multiplier
 
 
-diff --git a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
-index b9114a6dedcc7a9f8b246e69db7504cba95d34a6..d23c1f0ebfabbcffd445f19f10ef8f2a83dbcefa 100644
---- a/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
-+++ b/src/main/java/nathan/zirkonium/configuration/ZirkoniumConfig.java
+diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+index bd53fba9b41e8fbfeb83fc73d28ee36a4598cb21..0df909dafbc72637f5164331967b12fe2631fea4 100644
+--- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -40,6 +40,7 @@ public class ZirkoniumConfig {
      }
  
@@ -37,7 +37,7 @@ index b9114a6dedcc7a9f8b246e69db7504cba95d34a6..d23c1f0ebfabbcffd445f19f10ef8f2a
          public static boolean noChatReports = true;
          public static boolean addQueryData = true;
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/ArrowDamageEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ArrowDamageEnchantment.java
-index 974300069c1e5b755e40ec3435da25ed62f484f4..600004d1a2b423e8129f723c3be37ed860076461 100644
+index 974300069c1e5b755e40ec3435da25ed62f484f4..bccfc459e732d494628ee3a94f501d90d8120b4f 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/ArrowDamageEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/ArrowDamageEnchantment.java
 @@ -19,6 +19,6 @@ public class ArrowDamageEnchantment extends Enchantment {
@@ -45,11 +45,11 @@ index 974300069c1e5b755e40ec3435da25ed62f484f4..600004d1a2b423e8129f723c3be37ed8
      @Override
      public int getMaxLevel() {
 -        return 5;
-+        return 5 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/ArrowKnockbackEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ArrowKnockbackEnchantment.java
-index b3feb7e9403adebbe42640a64b1b4b2dca9d6a10..abf7af3230156df34eb44e2a7fb2a2716824f0e9 100644
+index b3feb7e9403adebbe42640a64b1b4b2dca9d6a10..34d453ed7bb1d8228fc008d9a864cb160a1a37f9 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/ArrowKnockbackEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/ArrowKnockbackEnchantment.java
 @@ -19,6 +19,6 @@ public class ArrowKnockbackEnchantment extends Enchantment {
@@ -57,11 +57,11 @@ index b3feb7e9403adebbe42640a64b1b4b2dca9d6a10..abf7af3230156df34eb44e2a7fb2a271
      @Override
      public int getMaxLevel() {
 -        return 2;
-+        return 2 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 2 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/ArrowPiercingEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ArrowPiercingEnchantment.java
-index 853e9291f0869d33e4a35d5c291972d597c1314c..7507669ae6af11eee69ba8535a8c35bf597f31bb 100644
+index 853e9291f0869d33e4a35d5c291972d597c1314c..08c5e5fe287ecfd87649aab50ebe54c1e9e4de9d 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/ArrowPiercingEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/ArrowPiercingEnchantment.java
 @@ -19,7 +19,7 @@ public class ArrowPiercingEnchantment extends Enchantment {
@@ -69,12 +69,12 @@ index 853e9291f0869d33e4a35d5c291972d597c1314c..7507669ae6af11eee69ba8535a8c35bf
      @Override
      public int getMaxLevel() {
 -        return 4;
-+        return 4 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 4 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/DamageEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/DamageEnchantment.java
-index d6c354856c71d9629828e2ddbe316306bfaf6ea6..f6f3f82ae626a875f142cd6a40059d90c19cb735 100644
+index d6c354856c71d9629828e2ddbe316306bfaf6ea6..a8e8f60d5d8a6766419a2bbae7a8667b36813bf7 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/DamageEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/DamageEnchantment.java
 @@ -37,7 +37,7 @@ public class DamageEnchantment extends Enchantment {
@@ -82,12 +82,12 @@ index d6c354856c71d9629828e2ddbe316306bfaf6ea6..f6f3f82ae626a875f142cd6a40059d90
      @Override
      public int getMaxLevel() {
 -        return 5;
-+        return 5 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java
-index cbd39863b75245f1a5a16ab49f09238c034e09d2..a2a66502095bc64595c34cc497669b5cf0da1991 100644
+index cbd39863b75245f1a5a16ab49f09238c034e09d2..ca0935e32eb9a9f3a7ce748042c5168d424531c0 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java
 @@ -22,7 +22,7 @@ public class DigDurabilityEnchantment extends Enchantment {
@@ -95,12 +95,12 @@ index cbd39863b75245f1a5a16ab49f09238c034e09d2..a2a66502095bc64595c34cc497669b5c
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/DiggingEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/DiggingEnchantment.java
-index c55b492e9bcf5a9eef1bf86d9a0ada7231c459e9..54def775ff4f12752abba7068a2aa42fa5bd1acf 100644
+index c55b492e9bcf5a9eef1bf86d9a0ada7231c459e9..3641c69058fd671bdf89b3aabbfebb209bf7c953 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/DiggingEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/DiggingEnchantment.java
 @@ -21,7 +21,7 @@ public class DiggingEnchantment extends Enchantment {
@@ -108,12 +108,12 @@ index c55b492e9bcf5a9eef1bf86d9a0ada7231c459e9..54def775ff4f12752abba7068a2aa42f
      @Override
      public int getMaxLevel() {
 -        return 5;
-+        return 5 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/FireAspectEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/FireAspectEnchantment.java
-index 2b9ba92cf944e315b681f113d909fe5b2eb7cf1d..7c770f7419a58972c0c6691fdd5393f6863e4b30 100644
+index 2b9ba92cf944e315b681f113d909fe5b2eb7cf1d..8cb47977dd34915018476aace2d0927834cab6a3 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/FireAspectEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/FireAspectEnchantment.java
 @@ -19,6 +19,6 @@ public class FireAspectEnchantment extends Enchantment {
@@ -121,11 +121,11 @@ index 2b9ba92cf944e315b681f113d909fe5b2eb7cf1d..7c770f7419a58972c0c6691fdd5393f6
      @Override
      public int getMaxLevel() {
 -        return 2;
-+        return 2 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 2 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
-index 83969917890d80c15b7c2ef87a3237b809edd2ae..f99ea9199dfd7c9ef3313a83c6f17f9ecf74bbcb 100644
+index 83969917890d80c15b7c2ef87a3237b809edd2ae..c31d253a9ae03745512ef76c47ecfc56e199469a 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
 @@ -19,6 +19,6 @@ public class FishingSpeedEnchantment extends Enchantment {
@@ -133,11 +133,11 @@ index 83969917890d80c15b7c2ef87a3237b809edd2ae..f99ea9199dfd7c9ef3313a83c6f17f9e
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
-index c208a695356fcb418240b8299dfca4bf3b79ab6d..aaed8696a5057c0fc265a5a7c7cf5588132db1e8 100644
+index c208a695356fcb418240b8299dfca4bf3b79ab6d..af98763f5c4a435a72556bcd79adc0f543c4f107 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
 @@ -35,7 +35,7 @@ public class FrostWalkerEnchantment extends Enchantment {
@@ -145,12 +145,12 @@ index c208a695356fcb418240b8299dfca4bf3b79ab6d..aaed8696a5057c0fc265a5a7c7cf5588
      @Override
      public int getMaxLevel() {
 -        return 2;
-+        return 2 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 2 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      public static void onEntityMoved(LivingEntity entity, Level world, BlockPos blockPos, int level) {
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/KnockbackEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/KnockbackEnchantment.java
-index 52e02c8460ae53b9cb3d7f626d6204e1da9861a5..1a39b0b8195308c5efca832df802a9a386ad1f44 100644
+index 52e02c8460ae53b9cb3d7f626d6204e1da9861a5..3d6a2f6e4f4a0dbe6959f223a5895f4c8f960289 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/KnockbackEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/KnockbackEnchantment.java
 @@ -19,6 +19,6 @@ public class KnockbackEnchantment extends Enchantment {
@@ -158,11 +158,11 @@ index 52e02c8460ae53b9cb3d7f626d6204e1da9861a5..1a39b0b8195308c5efca832df802a9a3
      @Override
      public int getMaxLevel() {
 -        return 2;
-+        return 2 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 2 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
-index 8fe09c13643d99639fb242da4367c42ef31b38b4..0ddf3557c3ef9189ee23941abf1d8a14f7e23020 100644
+index 8fe09c13643d99639fb242da4367c42ef31b38b4..c85084122265bb11895220367de4a07e6d09d265 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
 @@ -27,7 +27,7 @@ public class LootBonusEnchantment extends Enchantment {
@@ -170,12 +170,12 @@ index 8fe09c13643d99639fb242da4367c42ef31b38b4..0ddf3557c3ef9189ee23941abf1d8a14
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/OxygenEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/OxygenEnchantment.java
-index 41e3f792b38cfd30dd5e8cd62e141e54b7d12219..7b72291d0cb6cff8a3f3ec90a0f4144bcdbc8186 100644
+index 41e3f792b38cfd30dd5e8cd62e141e54b7d12219..e9801fc4458efe450d16bd23fbad4b3e31d6e884 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/OxygenEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/OxygenEnchantment.java
 @@ -19,6 +19,6 @@ public class OxygenEnchantment extends Enchantment {
@@ -183,11 +183,11 @@ index 41e3f792b38cfd30dd5e8cd62e141e54b7d12219..7b72291d0cb6cff8a3f3ec90a0f4144b
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
-index ba8bd0df934f28c5dae6fd8a85ec0b73f6d3aa31..4e9899e4194fa2e7828cbecbd9e31a4887d23ccf 100644
+index ba8bd0df934f28c5dae6fd8a85ec0b73f6d3aa31..233e26f5cfe4e2d06be9c0ce37012a9be8fb076b 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
 @@ -26,7 +26,7 @@ public class ProtectionEnchantment extends Enchantment {
@@ -195,12 +195,12 @@ index ba8bd0df934f28c5dae6fd8a85ec0b73f6d3aa31..4e9899e4194fa2e7828cbecbd9e31a48
      @Override
      public int getMaxLevel() {
 -        return 4;
-+        return 4 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 4 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/QuickChargeEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/QuickChargeEnchantment.java
-index 44cf140303241ab2c646cd2b2b0a671abbb27325..0dcd0bb284c9bc918b15a813c77c61edc3148c36 100644
+index 44cf140303241ab2c646cd2b2b0a671abbb27325..b42d1c4f13e201fe540a827252d68c30b96a4054 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/QuickChargeEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/QuickChargeEnchantment.java
 @@ -19,6 +19,6 @@ public class QuickChargeEnchantment extends Enchantment {
@@ -208,11 +208,11 @@ index 44cf140303241ab2c646cd2b2b0a671abbb27325..0dcd0bb284c9bc918b15a813c77c61ed
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/SoulSpeedEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/SoulSpeedEnchantment.java
-index 3d7797e8d11fab0c891cd78bb5d9d042a3165992..eed8ed2b06c6666ccd43060779fdd5a70afc48e8 100644
+index 3d7797e8d11fab0c891cd78bb5d9d042a3165992..4b4d4aa63574ff3c54c654ba6df250a436a94da3 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/SoulSpeedEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/SoulSpeedEnchantment.java
 @@ -34,6 +34,6 @@ public class SoulSpeedEnchantment extends Enchantment {
@@ -220,11 +220,11 @@ index 3d7797e8d11fab0c891cd78bb5d9d042a3165992..eed8ed2b06c6666ccd43060779fdd5a7
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/SweepingEdgeEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/SweepingEdgeEnchantment.java
-index ba80b900d58716bd7181cec4644966c56542b2d5..399fab7ada3f9a46d9cc478ed6693f4dd24fbff9 100644
+index ba80b900d58716bd7181cec4644966c56542b2d5..6655c7a30b4baf5d5d53872f5d4c0f29c7fad706 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/SweepingEdgeEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/SweepingEdgeEnchantment.java
 @@ -19,7 +19,7 @@ public class SweepingEdgeEnchantment extends Enchantment {
@@ -232,12 +232,12 @@ index ba80b900d58716bd7181cec4644966c56542b2d5..399fab7ada3f9a46d9cc478ed6693f4d
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      public static float getSweepingDamageRatio(int level) {
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/SwiftSneakEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/SwiftSneakEnchantment.java
-index f9599f5b6d3050c106cb962a5924b1b58811f34f..1b29b8c8709595bbccbf5822ff02a0569315eb85 100644
+index f9599f5b6d3050c106cb962a5924b1b58811f34f..b5ba872bb6caef27d2fbe2435e0d4e810ffcf316 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/SwiftSneakEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/SwiftSneakEnchantment.java
 @@ -34,6 +34,6 @@ public class SwiftSneakEnchantment extends Enchantment {
@@ -245,11 +245,11 @@ index f9599f5b6d3050c106cb962a5924b1b58811f34f..1b29b8c8709595bbccbf5822ff02a056
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
-index 618d645e71762ec8279640a60ea00460809bba63..aa4c219364022a876c1c1033224e035f8f7cc5b4 100644
+index 618d645e71762ec8279640a60ea00460809bba63..aad181801d4883256c6bb5a8a6f68391b4e719ac 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
 @@ -27,7 +27,7 @@ public class ThornsEnchantment extends Enchantment {
@@ -257,12 +257,12 @@ index 618d645e71762ec8279640a60ea00460809bba63..aa4c219364022a876c1c1033224e035f
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/TridentImpalerEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/TridentImpalerEnchantment.java
-index 62fc006eaa0cbcf96adfda5d211f1c04df34f4de..7295b6e9744a377fab0fa325ddb3dc97b623061a 100644
+index 62fc006eaa0cbcf96adfda5d211f1c04df34f4de..a48bfc9dc9abc500255c3e7d59fe44d2fee7c2b8 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/TridentImpalerEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/TridentImpalerEnchantment.java
 @@ -20,7 +20,7 @@ public class TridentImpalerEnchantment extends Enchantment {
@@ -270,12 +270,12 @@ index 62fc006eaa0cbcf96adfda5d211f1c04df34f4de..7295b6e9744a377fab0fa325ddb3dc97
      @Override
      public int getMaxLevel() {
 -        return 5;
-+        return 5 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/TridentLoyaltyEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/TridentLoyaltyEnchantment.java
-index bacf68564b46e11d015e5e74d502bdcfa5b6fb55..02f44f9b3e6c43e579ca5a350ce626d401f11f94 100644
+index bacf68564b46e11d015e5e74d502bdcfa5b6fb55..6035ef83403ed402e4e6beab6815d79ba880770b 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/TridentLoyaltyEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/TridentLoyaltyEnchantment.java
 @@ -19,6 +19,6 @@ public class TridentLoyaltyEnchantment extends Enchantment {
@@ -283,11 +283,11 @@ index bacf68564b46e11d015e5e74d502bdcfa5b6fb55..02f44f9b3e6c43e579ca5a350ce626d4
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/TridentRiptideEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/TridentRiptideEnchantment.java
-index 14315582296fa273248a7e5d56d6b9bb79645f1e..56429fbf26c1c79ea3c7c41e470565e170f567ea 100644
+index 14315582296fa273248a7e5d56d6b9bb79645f1e..1764d307df6e6925f1d83318ef37fe8a940a1532 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/TridentRiptideEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/TridentRiptideEnchantment.java
 @@ -19,7 +19,7 @@ public class TridentRiptideEnchantment extends Enchantment {
@@ -295,12 +295,12 @@ index 14315582296fa273248a7e5d56d6b9bb79645f1e..56429fbf26c1c79ea3c7c41e470565e1
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/WaterWalkerEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/WaterWalkerEnchantment.java
-index 4ca8411508e0b2d9edf861ed92adbf07a5c6b3e7..4dabf8a0b045cfe00ab3baca84a47b89fe8384c4 100644
+index 4ca8411508e0b2d9edf861ed92adbf07a5c6b3e7..daeea5fc99fa5a73a5de1f8959e857b3bdd7456e 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/WaterWalkerEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/WaterWalkerEnchantment.java
 @@ -19,7 +19,7 @@ public class WaterWalkerEnchantment extends Enchantment {
@@ -308,7 +308,7 @@ index 4ca8411508e0b2d9edf861ed92adbf07a5c6b3e7..4dabf8a0b045cfe00ab3baca84a47b89
      @Override
      public int getMaxLevel() {
 -        return 3;
-+        return 3 * nathan.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
++        return 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxEnchantLevelMultiplier;
      }
  
      @Override

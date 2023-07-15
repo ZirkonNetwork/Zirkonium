@@ -5,10 +5,10 @@ Subject: [PATCH] Fix the server buildscript
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 4b0eee46d899cb641988ef7a3b5b61e938b76c71..99bb253057175131d0c7cedfdc8dd21a25df4272 100644
+index 240394b1d9dd1449674a299aa73fa155be2d3d82..8222b69d6cdddf514978663dd27e594dc42fd903 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -8,7 +8,7 @@ plugins {
+@@ -14,7 +14,7 @@ val alsoShade: Configuration by configurations.creating
  
  dependencies {
      // Purpur start

@@ -161,7 +161,7 @@ index b5edc4113bba2bb4b2eedb5ccf6a6538caf6babb..bb187f497fe6552088f09ead0381f2d2
  
      protected boolean convertOldUsers() {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 754063cc43d8adca0f70d76d8a75ec820c62cae6..367c1ed1163c0329fca6d1b2b2e089712ecbd1e7 100644
+index 1c2824d48fc516e45a99821ee18e0246d31651a8..d4cb6c17aeb458653da96a019a8eb0948d8af2cf 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -2238,10 +2238,20 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic

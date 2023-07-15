@@ -5,10 +5,10 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 99bb253057175131d0c7cedfdc8dd21a25df4272..786af24ec0f8d4c01eefca4c106a8507f7b88025 100644
+index 8222b69d6cdddf514978663dd27e594dc42fd903..b16c59f357245f96dc5b65bf1397fdede4cddbdc 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -87,7 +87,7 @@ tasks.jar {
+@@ -95,7 +95,7 @@ tasks.jar {
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
              "Implementation-Title" to "CraftBukkit",
@@ -93,7 +93,7 @@ index 3cb56595822799926a8141e60a42f5d1edfc6de5..cc3b6c4b80a17fb253f7bd5c74425bc3
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 1143e2e76ef896ecf54fa0296c66815b6f856740..d172fcef7ed752108e7630abcbee3ddc11b2ab06 100644
+index 6afdf37406d7dae04a7fec94e0c39d5136521730..58a9680f116bb32416f36f6fe5b5989aadf30098 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -926,7 +926,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -106,10 +106,10 @@ index 1143e2e76ef896ecf54fa0296c66815b6f856740..d172fcef7ed752108e7630abcbee3ddc
                  this.getRunningThread().stop();
                  try {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index da88daa4f5458c9e98cd1f4925745ed7c9242c6a..abaeb1abe3a588aeb9e1fd635f4547e97b255c75 100644
+index 81aee45085a29ceb8e36d7948432e2ca688978c0..60703f9ad85c2ff1dd9eaad111d594d2897d0ade 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -261,7 +261,7 @@ import javax.annotation.Nullable; // Paper
+@@ -264,7 +264,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
@@ -132,7 +132,7 @@ index 99597258e8e88cd9e2c901c4ac3ff7faeeabee2b..a88fbfaca6e2799653a8ea82fa907cfb
  
          if (stream != null) {
 diff --git a/src/main/java/org/purpurmc/purpur/PurpurConfig.java b/src/main/java/org/purpurmc/purpur/PurpurConfig.java
-index 06fa43b469aea15dc64ce1866d08843327a34965..d4f2d9d8911f0ce684c060fe9396ad85fb77d3ff 100644
+index b974b59d421cf97bc9547ea75fe4643d89639bc1..4344e8ab4fe2765fc27b78420945112485ec3f3a 100644
 --- a/src/main/java/org/purpurmc/purpur/PurpurConfig.java
 +++ b/src/main/java/org/purpurmc/purpur/PurpurConfig.java
 @@ -229,7 +229,7 @@ public class PurpurConfig {

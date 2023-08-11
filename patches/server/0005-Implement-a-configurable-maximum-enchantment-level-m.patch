@@ -5,7 +5,7 @@ Subject: [PATCH] Implement a configurable maximum enchantment level multiplier
 
 
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index bd53fba9b41e8fbfeb83fc73d28ee36a4598cb21..0df909dafbc72637f5164331967b12fe2631fea4 100644
+index f0c485c2b6ede0e617ae0e75c780992d14018516..87ae67ff37e20caeea3c43e5674a729998b6abec 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -40,6 +40,7 @@ public class ZirkoniumConfig {
@@ -24,11 +24,11 @@ index bd53fba9b41e8fbfeb83fc73d28ee36a4598cb21..0df909dafbc72637f5164331967b12fe
 +        public static int maxEnchantLevelMultiplier = 1;
 +
 +        public static void gameplaySettings() {
-+            maxEnchantLevelMultiplier = getInt("gameplay.enchantment.maxLevelMultiplier", maxEnchantLevelMultiplier);
++            maxEnchantLevelMultiplier = getInt("gameplay.enchantment.max-level-multiplier", maxEnchantLevelMultiplier);
 +            if (maxEnchantLevelMultiplier < 1) {
 +                log(Level.WARNING, "The maximum enchantment level multiplier can not be less than 1, resetting it.");
 +                maxEnchantLevelMultiplier = 1;
-+                set("gameplay.enchantment.maxLevelMultiplier", 1);
++                set("gameplay.enchantment.max-level-multiplier", 1);
 +            }
 +        }
 +    }

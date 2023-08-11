@@ -213,7 +213,7 @@ index 0000000000000000000000000000000000000000..7bca8c49e4d1e9ef2fe76e26bca4d99f
 +}
 \ No newline at end of file
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index 1b6f692f51e50c1f2ec557db6e083da1a056d2b3..8dc4613593f4449d425c51297aa9debfcd5ff0b8 100644
+index 7e22da0263bc30efba1654903dc0a4d6a1778ef9..d8f3348bb2b55e3f88a1edad306e6964ddcfa829 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -45,6 +45,7 @@ public class ZirkoniumConfig {

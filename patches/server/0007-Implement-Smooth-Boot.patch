@@ -36,7 +36,7 @@ index 0000000000000000000000000000000000000000..4b391e0324950f4710abae2e3fa4204a
 +    }
 +}
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index 028cd33f0060dc7ac0927c4ffac387760b326ec9..1b6f692f51e50c1f2ec557db6e083da1a056d2b3 100644
+index f7035de3b2152562c0c18f0946fb89582498556f..7e22da0263bc30efba1654903dc0a4d6a1778ef9 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -1,6 +1,8 @@

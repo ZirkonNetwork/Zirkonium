@@ -4,9 +4,279 @@ Date: Tue, 27 Jun 2023 12:27:37 -0600
 Subject: [PATCH] Implement Dynamic View
 
 
+diff --git a/src/main/java/com/dynview/command/CommandSetSimulationDistance.java b/src/main/java/com/dynview/command/CommandSetSimulationDistance.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..9132ed49200b63f40562b9f8ebe46e6feaf48846
+--- /dev/null
++++ b/src/main/java/com/dynview/command/CommandSetSimulationDistance.java
+@@ -0,0 +1,45 @@
++package com.dynview.command;
++
++import com.dynview.viewdisthandler.ServerDynamicViewDistanceManager;
++import com.mojang.brigadier.arguments.IntegerArgumentType;
++import com.mojang.brigadier.builder.LiteralArgumentBuilder;
++import com.mojang.brigadier.context.CommandContext;
++import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.network.chat.Component;
++
++public class CommandSetSimulationDistance implements IMCOPCommand {
++    private static final String RANGE_ARG = "simdistance";
++
++    @Override
++    public int onExecute(final CommandContext<CommandSourceStack> context) {
++        context.getSource().sendFailure(Component.literal("You must enter a value to change the simulation distance to [5-32]"));
++        return 0;
++    }
++
++    private int executeWithPage(final CommandContext<CommandSourceStack> context) {
++        if (!checkPreCondition(context)) {
++            return 0;
++        }
++
++        final boolean success = ServerDynamicViewDistanceManager.getInstance().setCurrentSimulationDistance(IntegerArgumentType.getInteger(context, RANGE_ARG));
++        if (success) {
++            context.getSource().sendSuccess(() -> Component.literal("Set simulation distance to " + IntegerArgumentType.getInteger(context, RANGE_ARG)), true);
++            return 1;
++        }
++        return 0;
++    }
++
++    @Override
++    public String getName() {
++        return "setsimdistance";
++    }
++
++    @Override
++    public LiteralArgumentBuilder<CommandSourceStack> build() {
++        return IMCCommand.newLiteral(getName())
++                .requires(listener -> listener.hasPermission(4, "zirkonium.dynview.simdistance"))
++                .then(IMCCommand.newArgument(RANGE_ARG, IntegerArgumentType.integer(5, 32))
++                        .executes(this::executeWithPage))
++                .executes(this::checkPreConditionAndExecute);
++    }
++}
+diff --git a/src/main/java/com/dynview/command/CommandSetViewDistance.java b/src/main/java/com/dynview/command/CommandSetViewDistance.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..82d0f7298cb879fa2d6829df59fad1e35a4f6770
+--- /dev/null
++++ b/src/main/java/com/dynview/command/CommandSetViewDistance.java
+@@ -0,0 +1,47 @@
++package com.dynview.command;
++
++import com.dynview.viewdisthandler.ServerDynamicViewDistanceManager;
++import com.mojang.brigadier.arguments.IntegerArgumentType;
++import com.mojang.brigadier.builder.LiteralArgumentBuilder;
++import com.mojang.brigadier.context.CommandContext;
++import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.network.chat.Component;
++
++
++public class CommandSetViewDistance implements IMCOPCommand {
++
++    private static final String RANGE_ARG = "viewdistance";
++
++    @Override
++    public int onExecute(final CommandContext<CommandSourceStack> context) {
++        context.getSource().sendFailure(Component.literal("You must enter a value to change the view distance to [2-32]"));
++        return 0;
++    }
++
++    private int executeWithPage(final CommandContext<CommandSourceStack> context) {
++        if (!checkPreCondition(context)) {
++            return 0;
++        }
++
++        final boolean success = ServerDynamicViewDistanceManager.getInstance().setCurrentViewDist(IntegerArgumentType.getInteger(context, RANGE_ARG));
++        if (success) {
++            context.getSource().sendSuccess(() -> Component.literal("Set view distance to " + IntegerArgumentType.getInteger(context, RANGE_ARG)), true);
++            return 1;
++        }
++        return 0;
++    }
++
++    @Override
++    public String getName() {
++        return "setviewdistance";
++    }
++
++    @Override
++    public LiteralArgumentBuilder<CommandSourceStack> build() {
++        return IMCCommand.newLiteral(getName())
++                .requires(listener -> listener.hasPermission(4, "zirkonium.dynview.viewdistance"))
++                .then(IMCCommand.newArgument(RANGE_ARG, IntegerArgumentType.integer(2, 32))
++                        .executes(this::executeWithPage))
++                .executes(this::checkPreConditionAndExecute);
++    }
++}
+diff --git a/src/main/java/com/dynview/command/CommandTree.java b/src/main/java/com/dynview/command/CommandTree.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..aba407583d1a0eda915e2d306069119f44ab9bf7
+--- /dev/null
++++ b/src/main/java/com/dynview/command/CommandTree.java
+@@ -0,0 +1,34 @@
++package com.dynview.command;
++
++import com.mojang.brigadier.builder.LiteralArgumentBuilder;
++import net.minecraft.commands.CommandSourceStack;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class CommandTree {
++    private final LiteralArgumentBuilder<CommandSourceStack> rootNode;
++    private final List<CommandTree> childNodes;
++
++    protected CommandTree(final String commandName) {
++        rootNode = LiteralArgumentBuilder.literal(commandName);
++        childNodes = new ArrayList<>();
++    }
++
++    protected CommandTree addNode(final CommandTree tree) {
++        childNodes.add(tree);
++        return this;
++    }
++
++    protected CommandTree addNode(final LiteralArgumentBuilder<CommandSourceStack> command) {
++        rootNode.then(command.build());
++        return this;
++    }
++
++    protected LiteralArgumentBuilder<CommandSourceStack> build() {
++        for (final CommandTree ct : childNodes) {
++            addNode(ct.build());
++        }
++        return rootNode;
++    }
++}
+diff --git a/src/main/java/com/dynview/command/DynViewCommand.java b/src/main/java/com/dynview/command/DynViewCommand.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..d2f02f207e4dbaf7a347aba83f41369667f1bb63
+--- /dev/null
++++ b/src/main/java/com/dynview/command/DynViewCommand.java
+@@ -0,0 +1,17 @@
++package com.dynview.command;
++
++import com.mojang.brigadier.CommandDispatcher;
++import net.minecraft.commands.CommandSourceStack;
++
++public class DynViewCommand {
++    private DynViewCommand() {
++    }
++
++    public static void register(final CommandDispatcher<CommandSourceStack> dispatcher) {
++        CommandTree performantCommands = new CommandTree("dynview")
++                .addNode(new CommandSetViewDistance().build())
++                .addNode(new CommandSetSimulationDistance().build());
++
++        dispatcher.register(performantCommands.build());
++    }
++}
+diff --git a/src/main/java/com/dynview/command/IMCCommand.java b/src/main/java/com/dynview/command/IMCCommand.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..ea5359511a18f74c8687167d7f073d3de95dc9ce
+--- /dev/null
++++ b/src/main/java/com/dynview/command/IMCCommand.java
+@@ -0,0 +1,63 @@
++package com.dynview.command;
++
++import com.mojang.brigadier.Command;
++import com.mojang.brigadier.arguments.ArgumentType;
++import com.mojang.brigadier.builder.LiteralArgumentBuilder;
++import com.mojang.brigadier.builder.RequiredArgumentBuilder;
++import com.mojang.brigadier.context.CommandContext;
++import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.world.entity.player.Player;
++
++public interface IMCCommand {
++    int OP_PERM_LEVEL = 4;
++
++    default LiteralArgumentBuilder<CommandSourceStack> build() {
++        return newLiteral(getName()).executes(this::checkPreConditionAndExecute);
++    }
++
++    static LiteralArgumentBuilder<CommandSourceStack> newLiteral(final String name) {
++        return LiteralArgumentBuilder.literal(name);
++    }
++
++    static <T> RequiredArgumentBuilder<CommandSourceStack, T> newArgument(final String name, final ArgumentType<T> type) {
++        return RequiredArgumentBuilder.argument(name, type);
++    }
++
++    default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context) {
++        if (!checkPreCondition(context)) {
++            return 0;
++        }
++
++        return onExecute(context);
++    }
++
++    default ICommandCallbackBuilder<CommandSourceStack> executePreConditionCheck() {
++        return executeCallback -> context -> {
++            if (!checkPreCondition(context)) {
++                return 0;
++            }
++
++            return executeCallback.run(context);
++        };
++    }
++
++    default boolean checkPreCondition(final CommandContext<CommandSourceStack> context) {
++        return context.getSource().getEntity() instanceof Player || context.getSource().hasPermission(OP_PERM_LEVEL);
++    }
++
++    int onExecute(final CommandContext<CommandSourceStack> context);
++
++    String getName();
++
++    static boolean isPlayerOped(final Player player) {
++        if (player.getServer() == null) {
++            return false;
++        }
++
++        return player.getServer().getPlayerList().isOp(player.getGameProfile());
++    }
++
++    interface ICommandCallbackBuilder<S> {
++        Command<S> then(final Command<CommandSourceStack> executeCallback);
++    }
++}
+diff --git a/src/main/java/com/dynview/command/IMCOPCommand.java b/src/main/java/com/dynview/command/IMCOPCommand.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..be1b0fb1817a386078e13c7df51fb706e3142eb1
+--- /dev/null
++++ b/src/main/java/com/dynview/command/IMCOPCommand.java
+@@ -0,0 +1,28 @@
++package com.dynview.command;
++
++import com.mojang.brigadier.context.CommandContext;
++import io.papermc.paper.adventure.PaperAdventure;
++import io.papermc.paper.configuration.GlobalConfiguration;
++import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.world.entity.Entity;
++import net.minecraft.world.entity.player.Player;
++
++public interface IMCOPCommand extends IMCCommand {
++    @Override
++    default boolean checkPreCondition(final CommandContext<CommandSourceStack> context) {
++        if (context.getSource().hasPermission(OP_PERM_LEVEL)) {
++            return true;
++        }
++
++        final Entity sender = context.getSource().getEntity();
++        if (!(sender instanceof Player)) {
++            return false;
++        }
++
++        if (!IMCCommand.isPlayerOped((Player) sender)) {
++            context.getSource().sendFailure(PaperAdventure.asVanilla(GlobalConfiguration.get().messages.noPermission));
++            return false;
++        }
++        return true;
++    }
++}
 diff --git a/src/main/java/com/dynview/util/TickTimeHandler.java b/src/main/java/com/dynview/util/TickTimeHandler.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c4e485e49ac63388f89c41a7e5e7d8988b4526ca
+index 0000000000000000000000000000000000000000..6f11c1b9dc3a9caae3569a21677add9136e501a4
 --- /dev/null
 +++ b/src/main/java/com/dynview/util/TickTimeHandler.java
 @@ -0,0 +1,57 @@
@@ -32,19 +302,19 @@ index 0000000000000000000000000000000000000000..c4e485e49ac63388f89c41a7e5e7d898
 +    }
 +
 +    public void onServerTick() {
-+        tickTimer++;
++        this.tickTimer++;
 +
-+        if (tickTimer % 20 == 0) {
-+            meanTickSum += average(MinecraftServer.getServer().tickTimes) * 1.0E-6D;
-+            meanTickCount++;
++        if (this.tickTimer % 20 == 0) {
++            this.meanTickSum += average(MinecraftServer.getServer().tickTimes) * 1.0E-6D;
++            this.meanTickCount++;
 +
-+            if (tickTimer >= serverTickTimerInterval) {
-+                serverMeanTickTime = meanTickSum / meanTickCount;
-+                tickTimer = 0;
-+                meanTickCount = 0;
-+                meanTickSum = 0;
++            if (this.tickTimer >= serverTickTimerInterval) {
++                this.serverMeanTickTime = this.meanTickSum / this.meanTickCount;
++                this.tickTimer = 0;
++                this.meanTickCount = 0;
++                this.meanTickSum = 0;
 +
-+                ServerDynamicViewDistanceManager.getInstance().updateViewDistForMeanTick(serverMeanTickTime);
++                ServerDynamicViewDistanceManager.getInstance().updateViewDistForMeanTick(this.serverMeanTickTime);
 +            }
 +        }
 +    }
@@ -70,7 +340,7 @@ index 0000000000000000000000000000000000000000..c4e485e49ac63388f89c41a7e5e7d898
 \ No newline at end of file
 diff --git a/src/main/java/com/dynview/viewdisthandler/IDynamicViewDistanceManager.java b/src/main/java/com/dynview/viewdisthandler/IDynamicViewDistanceManager.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b38aff2a12203d130da80925f20217cf3c87d993
+index 0000000000000000000000000000000000000000..fc3a325cdae968514fccc2604fe938049e5a9f50
 --- /dev/null
 +++ b/src/main/java/com/dynview/viewdisthandler/IDynamicViewDistanceManager.java
 @@ -0,0 +1,11 @@
@@ -81,32 +351,36 @@ index 0000000000000000000000000000000000000000..b38aff2a12203d130da80925f20217cf
 +
 +    void updateViewDistForMeanTick(final int meanTick);
 +
-+    void setCurrentViewDist(int currentChunkViewDist);
++    boolean setCurrentViewDist(int newViewDistance);
 +
-+    void setCurrentSimulationDistance(int currentChunkUpdateDist);
++    boolean setCurrentSimulationDistance(int newSimulationDistance);
 +}
 diff --git a/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java b/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7bca8c49e4d1e9ef2fe76e26bca4d99f91e39149
+index 0000000000000000000000000000000000000000..2c5a0d63c28c3e6be892ceb6d5ce5210bfaed22e
 --- /dev/null
 +++ b/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
-@@ -0,0 +1,120 @@
+@@ -0,0 +1,142 @@
 +package com.dynview.viewdisthandler;
 +
-+import com.mojang.logging.LogUtils;
++import com.dynview.util.TickTimeHandler;
++import me.elephant1214.event.dynview.SimulationDistanceUpdateEvent;
++import me.elephant1214.event.dynview.ViewDistanceUpdateEvent;
 +import me.elephant1214.zirkonium.configuration.ZirkoniumConfig.DynamicView;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraft.util.Mth;
-+import org.slf4j.Logger;
++import org.bukkit.event.Cancellable;
++
++import java.util.logging.Logger;
 +
 +public class ServerDynamicViewDistanceManager implements IDynamicViewDistanceManager {
-+    private static final Logger LOGGER = LogUtils.getLogger();
++    private static final Logger LOGGER = Logger.getLogger("DynView");
 +
 +    private static final int UPDATE_LEEWAY = 3;
 +    private static ServerDynamicViewDistanceManager instance;
-+    public static int minChunkViewDistance = DynamicView.minChunkViewDistance;
-+    public static int maxChunkViewDistance = DynamicView.maxChunkViewDistance;
-+    public static int maxSimulationDist = DynamicView.minSimulationDistance;
++    public static int minViewDistance = DynamicView.minChunkViewDistance;
++    public static int maxViewDistance = DynamicView.maxChunkViewDistance;
++    public static int minSimulationDistance = DynamicView.minSimulationDistance;
 +    public static int maxSimulationDistance = DynamicView.maxSimulationDistance;
 +    public static double meanTickToStayBelow = DynamicView.meanAvgTickTime;
 +
@@ -128,11 +402,11 @@ index 0000000000000000000000000000000000000000..7bca8c49e4d1e9ef2fe76e26bca4d99f
 +
 +    @Override
 +    public void initViewDist() {
-+        currentViewDist = (minChunkViewDistance + maxChunkViewDistance) / 2;
-+        currentSimulationDistance = (maxSimulationDist + maxSimulationDistance) / 2;
-+        MinecraftServer.getServer().getPlayerList().setViewDistance(minChunkViewDistance);
++        this.currentViewDist = (minViewDistance + maxViewDistance) / 2;
++        this.currentSimulationDistance = (minSimulationDistance + maxSimulationDistance) / 2;
++        MinecraftServer.getServer().getPlayerList().setViewDistance(minViewDistance);
 +        if (DynamicView.adjustSimulationDistance) {
-+            MinecraftServer.getServer().getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(currentSimulationDistance));
++            MinecraftServer.getServer().getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
 +        }
 +    }
 +
@@ -140,75 +414,93 @@ index 0000000000000000000000000000000000000000..7bca8c49e4d1e9ef2fe76e26bca4d99f
 +    public void updateViewDistForMeanTick(final int meanTickTime) {
 +        final MinecraftServer server = MinecraftServer.getServer();
 +
-+        if (server.getPlayerList().getPlayers().isEmpty()) {
-+            return;
-+        }
++        if (server.getPlayerList().getPlayers().isEmpty()) return;
 +
 +        if (meanTickTime - UPDATE_LEEWAY > meanTickToStayBelow) {
-+            increaseViewDistance = true;
++            this.increaseViewDistance = true;
 +
-+            if (reduceViewDistance && currentViewDist > minChunkViewDistance) {
-+                reduceViewDistance = !DynamicView.adjustSimulationDistance;
-+                currentViewDist--;
-+                if (DynamicView.logMessages) {
-+                    LOGGER.info("Mean tick: " + meanTickTime + "ms decreasing chunk view distance to: " + currentViewDist);
++            if (this.reduceViewDistance && this.currentViewDist > minViewDistance) {
++                ViewDistanceUpdateEvent updateEvent = new ViewDistanceUpdateEvent(meanTickToStayBelow, meanTickTime, this.currentViewDist, --this.currentViewDist, false);
++                if (!updateEvent.isCancelled()) {
++                    this.reduceViewDistance = !DynamicView.adjustSimulationDistance;
++                    if (updateEvent.getNewDistance() != this.currentViewDist) this.currentViewDist = updateEvent.getNewDistance();
++                    if (DynamicView.logMessages) {
++                        LOGGER.info("Mean tick: " + meanTickTime + "ms decreasing chunk view distance to: " + this.currentViewDist);
++                    }
++                    server.getPlayerList().setViewDistance(this.currentViewDist);
++                    return;
 +                }
-+                server.getPlayerList().setViewDistance(currentViewDist);
-+                return;
 +            }
 +
-+            if (!reduceViewDistance && currentSimulationDistance > maxSimulationDist) {
-+                reduceViewDistance = true;
-+                currentSimulationDistance--;
-+                if (DynamicView.logMessages) {
-+                    LOGGER.info("Mean tick: " + meanTickTime + "ms decreasing simulation distance to: " + currentSimulationDistance);
++            if (!this.reduceViewDistance && this.currentSimulationDistance > minSimulationDistance) {
++                SimulationDistanceUpdateEvent updateEvent = new SimulationDistanceUpdateEvent(meanTickToStayBelow, meanTickTime, this.currentSimulationDistance, --this.currentSimulationDistance, false);
++                if (!updateEvent.isCancelled()) {
++                    this.reduceViewDistance = true;
++                    if (this.currentSimulationDistance != updateEvent.getNewDistance()) this.currentSimulationDistance = updateEvent.getNewDistance();
++                    if (DynamicView.logMessages) {
++                        LOGGER.info("Mean tick: " + meanTickTime + "ms decreasing simulation distance to: " + this.currentSimulationDistance);
++                    }
++                    server.getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
 +                }
-+                server.getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(currentSimulationDistance));
 +            }
 +
 +            if (!DynamicView.adjustSimulationDistance) {
-+                reduceViewDistance = true;
++                this.reduceViewDistance = true;
 +            }
 +        }
 +
 +        if (meanTickTime + UPDATE_LEEWAY < meanTickToStayBelow) {
-+            reduceViewDistance = false;
++            this.reduceViewDistance = false;
 +
-+            if (increaseViewDistance && currentViewDist < maxChunkViewDistance) {
-+                increaseViewDistance = !DynamicView.adjustSimulationDistance;
-+                currentViewDist++;
-+                if (DynamicView.logMessages) {
-+                    LOGGER.info("Mean tick: " + meanTickTime + "ms increasing chunk view distance to: " + currentViewDist);
++            if (this.increaseViewDistance && this.currentViewDist < maxViewDistance) {
++                ViewDistanceUpdateEvent updateEvent = new ViewDistanceUpdateEvent(meanTickToStayBelow, meanTickTime, this.currentViewDist, ++this.currentViewDist, false);
++                if (!updateEvent.isCancelled()) {
++                    this.increaseViewDistance = !DynamicView.adjustSimulationDistance;
++                    if (updateEvent.getNewDistance() != this.currentViewDist) this.currentViewDist = updateEvent.getNewDistance();
++                    if (DynamicView.logMessages) {
++                        LOGGER.info("Mean tick: " + meanTickTime + "ms increasing chunk view distance to: " + this.currentViewDist);
++                    }
++                    server.getPlayerList().setViewDistance(this.currentViewDist);
++                    return;
 +                }
-+                server.getPlayerList().setViewDistance(currentViewDist);
-+                return;
 +            }
 +
-+            if (!increaseViewDistance && currentSimulationDistance < maxSimulationDistance) {
-+                increaseViewDistance = true;
-+                currentSimulationDistance++;
-+                if (DynamicView.logMessages) {
-+                    LOGGER.info("Mean tick: " + meanTickTime + "ms increasing simulation distance to: " + currentSimulationDistance);
++            if (!this.increaseViewDistance && this.currentSimulationDistance < maxSimulationDistance) {
++                SimulationDistanceUpdateEvent updateEvent = new SimulationDistanceUpdateEvent(meanTickToStayBelow, meanTickTime, this.currentSimulationDistance, ++this.currentSimulationDistance, false);
++                if (!updateEvent.isCancelled()) {
++                    this.increaseViewDistance = true;
++                    this.currentSimulationDistance = updateEvent.getNewDistance();
++                    if (DynamicView.logMessages) {
++                        LOGGER.info("Mean tick: " + meanTickTime + "ms increasing simulation distance to: " + this.currentSimulationDistance);
++                    }
++                    server.getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
 +                }
-+                server.getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(currentSimulationDistance));
 +            }
 +
 +            if (!DynamicView.adjustSimulationDistance) {
-+                increaseViewDistance = true;
++                this.increaseViewDistance = true;
 +            }
 +        }
 +    }
 +
 +    @Override
-+    public void setCurrentViewDist(final int currentViewDistance) {
-+        this.currentViewDist = Mth.clamp(currentViewDistance, 0, 200);
-+        MinecraftServer.getServer().getPlayerList().setViewDistance(this.currentViewDist);
++    public boolean setCurrentViewDist(final int newViewDistance) {
++        ViewDistanceUpdateEvent updateEvent = new ViewDistanceUpdateEvent(meanTickToStayBelow, TickTimeHandler.getInstance().getMeanTickTime(), this.currentViewDist, this.currentViewDist = Mth.clamp(newViewDistance, 2, 32), true);
++        if (!updateEvent.isCancelled()) {
++            MinecraftServer.getServer().getPlayerList().setViewDistance(this.currentViewDist);
++            return true;
++        }
++        return false;
 +    }
 +
 +    @Override
-+    public void setCurrentSimulationDistance(final int currentSimulationDistance) {
-+        this.currentSimulationDistance = Mth.clamp(currentSimulationDistance, 0, 200);
-+        MinecraftServer.getServer().getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
++    public boolean setCurrentSimulationDistance(final int newSimulationDistance) {
++        SimulationDistanceUpdateEvent updateEvent = new SimulationDistanceUpdateEvent(meanTickToStayBelow, TickTimeHandler.getInstance().getMeanTickTime(), this.currentSimulationDistance, this.currentSimulationDistance = Mth.clamp(newSimulationDistance, 5, 32), true);
++        if (!updateEvent.isCancelled()) {
++            MinecraftServer.getServer().getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
++            return true;
++        }
++        return false;
 +    }
 +}
 \ No newline at end of file
@@ -255,6 +547,25 @@ index 7e22da0263bc30efba1654903dc0a4d6a1778ef9..d8f3348bb2b55e3f88a1edad306e6964
 +        }
 +    }
  }
+diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
+index 5c0085589b08f199c75ceeab8d0cf25e970a0533..a40cfeb97c376b5ef93219901e31e55e83300850 100644
+--- a/src/main/java/net/minecraft/commands/Commands.java
++++ b/src/main/java/net/minecraft/commands/Commands.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.commands;
+ 
++import com.dynview.command.DynViewCommand;
+ import com.google.common.collect.Maps;
+ import com.mojang.brigadier.ParseResults;
+ import com.mojang.brigadier.StringReader;
+@@ -200,6 +201,7 @@ public class Commands {
+         TriggerCommand.register(this.dispatcher);
+         WeatherCommand.register(this.dispatcher);
+         WorldBorderCommand.register(this.dispatcher);
++        DynViewCommand.register(this.dispatcher); // Zirkonium
+         if (JvmProfiler.INSTANCE.isAvailable()) {
+             JfrCommand.register(this.dispatcher);
+         }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
 index 58a9680f116bb32416f36f6fe5b5989aadf30098..a096fbc3f763ea71ad02384c7a5334963045f2e2 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
@@ -278,3 +589,15 @@ index 58a9680f116bb32416f36f6fe5b5989aadf30098..a096fbc3f763ea71ad02384c7a533496
          // Paper end
          //this.profiler.push("tallying"); // Purpur
          long j = this.tickTimes[this.tickCount % 100] = Util.getNanos() - i;
+diff --git a/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java b/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java
+index 40fc8b6579cc29e68720a99ac12f8adacc1d95be..30139a9d271211278bd265c50b6076cc05fcb6a6 100644
+--- a/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java
++++ b/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java
+@@ -58,6 +58,7 @@ public class MinecraftCommandPermissionsTest extends AbstractTestingBase {
+     }
+ 
+     private static final List<String> TO_SKIP = List.of(
++        "minecraft.command.dynview", // Zirkonium - DynView
+         // Purpur start
+         "minecraft.command.compass",
+         "minecraft.command.credits",

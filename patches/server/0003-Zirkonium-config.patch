@@ -131,7 +131,7 @@ index 12124d6fbc0406bb62bd95a0f7bab68afa43377c..b5edc4113bba2bb4b2eedb5ccf6a6538
              DedicatedServer.LOGGER.error("Unable to load server configuration", e);
              return false;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 5ab6c6b5cfce7f4279441b4a33aa392363038fb3..6390e8f9c676645a0d29151661868ea59cfdfdf3 100644
+index c7da230d2c66c8710ec92a684361ebfee284a6b3..2634c341c4511772d1af4fab80e16a66b06326d3 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -44,6 +44,8 @@ import java.util.logging.Level;

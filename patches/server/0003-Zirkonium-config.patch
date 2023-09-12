@@ -83,7 +83,7 @@ index 0000000000000000000000000000000000000000..ba585089164b7e6bc48fd28e8d389bbc
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 12124d6fbc0406bb62bd95a0f7bab68afa43377c..b5edc4113bba2bb4b2eedb5ccf6a6538caf6babb 100644
+index 2a70abb9e0af502885593df1e732887cd9d2ce4d..a46491caf247c92ca79563384a99060bc90c97bc 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -1,24 +1,21 @@
@@ -120,7 +120,7 @@ index 12124d6fbc0406bb62bd95a0f7bab68afa43377c..b5edc4113bba2bb4b2eedb5ccf6a6538
  import org.bukkit.command.CommandSender;
 -import co.aikar.timings.MinecraftTimings; // Paper
  import org.bukkit.event.server.ServerCommandEvent;
- import org.bukkit.craftbukkit.util.Waitable;
+ import org.bukkit.craftbukkit.util.Waitable; // Paper
  import org.bukkit.event.server.RemoteServerCommandEvent;
 @@ -222,6 +218,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          // Purpur start
@@ -131,7 +131,7 @@ index 12124d6fbc0406bb62bd95a0f7bab68afa43377c..b5edc4113bba2bb4b2eedb5ccf6a6538
              DedicatedServer.LOGGER.error("Unable to load server configuration", e);
              return false;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index c7da230d2c66c8710ec92a684361ebfee284a6b3..2634c341c4511772d1af4fab80e16a66b06326d3 100644
+index 8a6a37b6d5dd15c8eb0b700823e88e60081e1680..7125ddbc7f5fc9b971d565536925ccccaf75e47f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -44,6 +44,8 @@ import java.util.logging.Level;

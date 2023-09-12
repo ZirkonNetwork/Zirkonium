@@ -172,10 +172,10 @@ index 98ea56cbc8de5a5694b4f4d9a2f25811fdecba04..8627a769d8858cc501f70a5a33a0efcb
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index b5edc4113bba2bb4b2eedb5ccf6a6538caf6babb..698f097878dfcc24455d15250633c9873ca19c66 100644
+index a46491caf247c92ca79563384a99060bc90c97bc..68b38a0e2e821ea79cad15c5d688f5e649b441f8 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -675,7 +675,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -674,7 +674,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
      @Override
      public boolean enforceSecureProfile() {
          DedicatedServerProperties dedicatedserverproperties = this.getProperties();
@@ -185,10 +185,10 @@ index b5edc4113bba2bb4b2eedb5ccf6a6538caf6babb..698f097878dfcc24455d15250633c987
      }
  
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index ac70ab790f73e35fd5ec880f5a884da935d8cd7b..aef65814f5891fe0f873f860d9f3289428f984db 100644
+index 9cc3ab8cd3f7ab7f8fbf4d9d14f25ea0bd757eec..b517a3debc73aab8921453e6b3bc456b4488c9f3 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2281,10 +2281,24 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2293,10 +2293,24 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      @Override
      public void send(Packet<?> packet) {
@@ -214,7 +214,7 @@ index ac70ab790f73e35fd5ec880f5a884da935d8cd7b..aef65814f5891fe0f873f860d9f32894
          if (packet == null || this.processedDisconnect) { // Spigot
              return;
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 19b14045b07d0f374129059fc572b7f345973c5d..fe2987740342bcf9dd5009cbc7ea3876ba2dbab3 100644
+index 824f31b68b38f2f8642fb9d59a123cfdaffbb7b2..1fa2e9bbc51e542380577d5328af711fc2ffbd85 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -1,6 +1,5 @@
@@ -240,7 +240,7 @@ index 19b14045b07d0f374129059fc572b7f345973c5d..fe2987740342bcf9dd5009cbc7ea3876
  // CraftBukkit end
  
  public abstract class PlayerList {
-@@ -1471,6 +1468,7 @@ public abstract class PlayerList {
+@@ -1479,6 +1476,7 @@ public abstract class PlayerList {
      }
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public

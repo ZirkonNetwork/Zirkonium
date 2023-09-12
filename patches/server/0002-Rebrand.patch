@@ -93,10 +93,10 @@ index 3cb56595822799926a8141e60a42f5d1edfc6de5..cc3b6c4b80a17fb253f7bd5c74425bc3
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 6afdf37406d7dae04a7fec94e0c39d5136521730..58a9680f116bb32416f36f6fe5b5989aadf30098 100644
+index e6ddf69ade7ae51640569150f7db10d1afa63691..a16c07e07970dcb50b5070a7f52220b6e5884602 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -926,7 +926,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -925,7 +925,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          shutdownThread = Thread.currentThread();
          org.spigotmc.WatchdogThread.doStop(); // Paper
          if (!isSameThread()) {
@@ -106,7 +106,7 @@ index 6afdf37406d7dae04a7fec94e0c39d5136521730..58a9680f116bb32416f36f6fe5b5989a
                  this.getRunningThread().stop();
                  try {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 0a4dfec98470050a0ec9c3693496751fa78fec81..c7da230d2c66c8710ec92a684361ebfee284a6b3 100644
+index b08d4a2a74392b1d59b1eeeab3108103d83ad96c..8a6a37b6d5dd15c8eb0b700823e88e60081e1680 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -265,7 +265,7 @@ import javax.annotation.Nullable; // Paper
@@ -132,10 +132,10 @@ index 99597258e8e88cd9e2c901c4ac3ff7faeeabee2b..ec90dbb33a9a438a01c558e99a257418
  
          if (stream != null) {
 diff --git a/src/main/java/org/purpurmc/purpur/PurpurConfig.java b/src/main/java/org/purpurmc/purpur/PurpurConfig.java
-index 414f467825fece602fbe7446e349657264d135ed..7e70b5670c1585f414474735a6c19559ee95f115 100644
+index 3633574e112f217b412217dd243a631dc4e9c40c..f6cee46089ea7eba72c315a7ef975bf3f78116df 100644
 --- a/src/main/java/org/purpurmc/purpur/PurpurConfig.java
 +++ b/src/main/java/org/purpurmc/purpur/PurpurConfig.java
-@@ -229,7 +229,7 @@ public class PurpurConfig {
+@@ -231,7 +231,7 @@ public class PurpurConfig {
          deathMessageOnlyBroadcastToAffectedPlayer = getBoolean("settings.broadcasts.death.only-broadcast-to-affected-player", deathMessageOnlyBroadcastToAffectedPlayer);
      }
  

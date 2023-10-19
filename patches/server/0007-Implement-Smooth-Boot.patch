@@ -190,7 +190,7 @@ index c60c73d9f998260f3abe6fe445255c6e7c38b0c3..683b911cdadb0f3cc1cd39c7c8ac5086
          shutdownExecutor(BACKGROUND_EXECUTOR);
          shutdownExecutor(IO_POOL);
 diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
-index dae36c6452ccd57a436dd918547b64d59957ab0a..b3884bc2be785103057647ba5ea0a0e7825ce69f 100644
+index a7ebf851a65231074c89a24f30de4ac2fb5b63e4..c0fc7bf3c1d7c82ccd897772c35af8ae0a7bc98e 100644
 --- a/src/main/java/net/minecraft/server/Main.java
 +++ b/src/main/java/net/minecraft/server/Main.java
 @@ -81,6 +81,12 @@ public class Main {

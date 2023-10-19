@@ -5,7 +5,7 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index c74923590cbd9565921d9fb6ee97b4d8d1d022cf..85fca2af8110ae29fc7311ac0f514257940061b2 100644
+index 8fadc9f6735c830816332db7a7c589256c088800..3fa361072522c8fc0ca342c90a0e687736241c8c 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -95,7 +95,7 @@ tasks.jar {
@@ -106,7 +106,7 @@ index e6ddf69ade7ae51640569150f7db10d1afa63691..a16c07e07970dcb50b5070a7f52220b6
                  this.getRunningThread().stop();
                  try {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b08d4a2a74392b1d59b1eeeab3108103d83ad96c..8a6a37b6d5dd15c8eb0b700823e88e60081e1680 100644
+index b21bc96232d0fd52e5dae7fa1c413714f8ddd7ee..0260c679436745a48c48b39c10dba6e56f7d28ad 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -265,7 +265,7 @@ import javax.annotation.Nullable; // Paper
@@ -145,7 +145,7 @@ index 3633574e112f217b412217dd243a631dc4e9c40c..f6cee46089ea7eba72c315a7ef975bf3
          serverModName = getString("settings.server-mod-name", serverModName);
      }
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index 0801dea155048ac5383295f4fef9bd597b678535..5dee6bcadb34466a1ddf8b49678fc612e263e8da 100644
+index dbd502761ff6e6efb252bb41376a7ff028c73895..7eb10e12b13cec34673295ff58924e81f6096cef 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
 @@ -155,14 +155,14 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa

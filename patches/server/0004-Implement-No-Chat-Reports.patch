@@ -36,10 +36,10 @@ index ba585089164b7e6bc48fd28e8d389bbc95c83673..f0c485c2b6ede0e617ae0e75c780992d
      }
  }
 diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
-index 1f4b64a5f812376c499c98cb4be62469bd0b7dbe..b3c780673783542aa3b9d7e2bbf3f412bf431c59 100644
+index 40f51062624161892c780ddae05e22859e2cd021..77970c6710814ad8037e55c7ca362d6013acc1f2 100644
 --- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 +++ b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
-@@ -145,17 +145,40 @@ public class FriendlyByteBuf extends ByteBuf {
+@@ -128,17 +128,40 @@ public class FriendlyByteBuf extends ByteBuf {
      }
  
      public <T> T readJsonWithCodec(Codec<T> codec) {
@@ -82,47 +82,32 @@ index 1f4b64a5f812376c499c98cb4be62469bd0b7dbe..b3c780673783542aa3b9d7e2bbf3f412
          this.writeUtf(FriendlyByteBuf.GSON.toJson((JsonElement) Util.getOrThrow(dataresult, (s) -> {
              return new EncoderException("Failed to encode: " + s + " " + value);
          })));
-diff --git a/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java b/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
-index 1387e3597c43fd652f2fc82ca6fc2e83039604e2..8a126cde22eeb76d638fc5583ed72d38a91834f8 100644
---- a/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
-+++ b/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
-@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.Packet;
- // Spigot start
- public record ClientboundSystemChatPacket(@javax.annotation.Nullable net.kyori.adventure.text.Component adventure$content, @javax.annotation.Nullable String content, boolean overlay) implements Packet<ClientGamePacketListener> { // Paper - Adventure
- 
--    @io.papermc.paper.annotation.DoNotUse // Paper - No locale context
-+    @io.papermc.paper.annotation.DoNotUse
-     public ClientboundSystemChatPacket(Component content, boolean overlay) {
-         this(null, Component.Serializer.toJson(content), overlay); // Paper - Adventure
-     }
 diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java
-index b8c1f3b9afddc87d56541c8af63cffecfcdd2653..19215e203a56046be7718802097569d6addc65d4 100644
+index b8c1f3b9afddc87d56541c8af63cffecfcdd2653..3bad591621fe4b700d4da6ee477214a289bf9c9a 100644
 --- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java
 +++ b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java
-@@ -24,4 +24,10 @@ public record ServerboundChatCommandPacket(String command, Instant timeStamp, lo
+@@ -24,4 +24,9 @@ public record ServerboundChatCommandPacket(String command, Instant timeStamp, lo
      public void handle(ServerGamePacketListener listener) {
          listener.handleChatCommand(this);
      }
 +
 +    @Override // Zirkonium start - No Chat Reports
 +    public ArgumentSignatures argumentSignatures() {
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports) return ArgumentSignatures.EMPTY;
-+        return this.argumentSignatures;
++        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports ? ArgumentSignatures.EMPTY : this.argumentSignatures;
 +    } // Zirkonium end - No Chat Reports
  }
 diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
-index d1d2fc0c57523c1abf1e8bfec913c78927c3dafc..6be61a19395e897537d774365587238c960a58a2 100644
+index d1d2fc0c57523c1abf1e8bfec913c78927c3dafc..88af307bcf6103e6070a2494d7beb0a0539829d5 100644
 --- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
 +++ b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
-@@ -25,4 +25,10 @@ public record ServerboundChatPacket(String message, Instant timeStamp, long salt
+@@ -25,4 +25,9 @@ public record ServerboundChatPacket(String message, Instant timeStamp, long salt
      public void handle(ServerGamePacketListener listener) {
          listener.handleChat(this);
      }
 +
 +    @Override // Zirkonium start - No Chat Reports
 +    public @Nullable MessageSignature signature() {
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports) return null;
-+        return this.signature;
++        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports ? null : this.signature;
 +    } // Zirkonium end - No Chat Reports
  }
 diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java
@@ -172,49 +157,213 @@ index 98ea56cbc8de5a5694b4f4d9a2f25811fdecba04..8627a769d8858cc501f70a5a33a0efcb
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index a46491caf247c92ca79563384a99060bc90c97bc..68b38a0e2e821ea79cad15c5d688f5e649b441f8 100644
+index e8f932f01cfc0cc937959c84338cfc7bd097dd2e..47ef70e7f776db1586fbbe29f0ac8a6ad97b9a6d 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -674,7 +674,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -674,8 +674,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
      @Override
      public boolean enforceSecureProfile() {
          DedicatedServerProperties dedicatedserverproperties = this.getProperties();
 -
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports) return false; // Zirkonium - No Chat Reports
-         return dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.profileKeySignatureValidator() != null;
+-        return dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.profileKeySignatureValidator() != null;
++        return !me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports && (dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.profileKeySignatureValidator() != null); // Zirkonium - No Chat Reports
      }
  
-diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 9cc3ab8cd3f7ab7f8fbf4d9d14f25ea0bd757eec..b517a3debc73aab8921453e6b3bc456b4488c9f3 100644
---- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-+++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2293,10 +2293,24 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+     @Override
+diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+index fa7f85303f9fe80a2e51740c376d9daedfaa60b4..9b2d4eb1b25bec0aeae76a6aff412dc105ef095f 100644
+--- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+@@ -2,8 +2,10 @@ package net.minecraft.server.network;
+ 
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.logging.LogUtils;
++
+ import java.util.Objects;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.CrashReport;
+ import net.minecraft.CrashReportCategory;
+@@ -32,7 +34,9 @@ import org.slf4j.Logger;
+ 
+ // CraftBukkit start
+ import io.netty.buffer.ByteBuf;
++
+ import java.util.concurrent.ExecutionException;
++
+ import org.bukkit.craftbukkit.entity.CraftPlayer;
+ import org.bukkit.craftbukkit.util.CraftChatMessage;
+ import org.bukkit.craftbukkit.util.CraftLocation;
+@@ -67,6 +71,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+         this.player = player;
+         this.cserver = minecraftserver.server;
+     }
++
+     protected final ServerPlayer player;
+     protected final org.bukkit.craftbukkit.CraftServer cserver;
+     public boolean processedDisconnect;
+@@ -81,6 +86,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+         // Paper start
+         this.onDisconnect(reason, null);
+     }
++
+     public void onDisconnect(Component reason, @Nullable net.kyori.adventure.text.Component quitMessage) {
+         // Paper end
+         if (this.isSingleplayerOwner()) {
+@@ -101,25 +107,26 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+                 keepAlives.clear(); // we got a valid response, lets roll with it and forget the rest
+             }
+         } else
+-        // Purpur end
+-        //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // CraftBukkit // Paper - This shouldn't be on the main thread
+-        if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
+-            int i = (int) (Util.getMillis() - this.keepAliveTime);
+-
+-            this.latency = (this.latency * 3 + i) / 4;
+-            this.keepAlivePending = false;
+-        } else if (!this.isSingleplayerOwner()) {
+-            // Paper start - This needs to be handled on the main thread for plugins
+-            server.submit(() -> {
+-                this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT); // Paper - kick event cause
+-            });
+-            // Paper endg
+-        }
++            // Purpur end
++            //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // CraftBukkit // Paper - This shouldn't be on the main thread
++            if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
++                int i = (int) (Util.getMillis() - this.keepAliveTime);
++
++                this.latency = (this.latency * 3 + i) / 4;
++                this.keepAlivePending = false;
++            } else if (!this.isSingleplayerOwner()) {
++                // Paper start - This needs to be handled on the main thread for plugins
++                server.submit(() -> {
++                    this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT); // Paper - kick event cause
++                });
++                // Paper endg
++            }
+ 
+     }
  
      @Override
+-    public void handlePong(ServerboundPongPacket packet) {}
++    public void handlePong(ServerboundPongPacket packet) {
++    }
+ 
+     // CraftBukkit start
+     private static final ResourceLocation CUSTOM_REGISTER = new ResourceLocation("register");
+@@ -137,7 +144,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+         }
+         PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel());
+         ResourceLocation identifier = packet.payload().id();
+-        ByteBuf payload = ((ServerboundCustomPayloadPacket.UnknownPayload)packet.payload()).data();
++        ByteBuf payload = ((ServerboundCustomPayloadPacket.UnknownPayload) packet.payload()).data();
+ 
+         if (identifier.equals(CUSTOM_REGISTER)) {
+             try {
+@@ -149,13 +156,13 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+                 ServerGamePacketListenerImpl.LOGGER.error("Couldn\'t register custom payload", ex);
+                 this.disconnect("Invalid payload REGISTER!", org.bukkit.event.player.PlayerKickEvent.Cause.INVALID_PAYLOAD); // Paper - kick event cause
+             }
+-        // Purpur start
++            // Purpur start
+         } else if (identifier.equals(PURPUR_CLIENT)) {
+             try {
+                 player.purpurClient = true;
+             } catch (Exception ignore) {
+             }
+-        // Purpur end
++            // Purpur end
+         } else if (identifier.equals(CUSTOM_UNREGISTER)) {
+             try {
+                 String channels = payload.toString(com.google.common.base.Charsets.UTF_8);
+@@ -228,21 +235,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+                 }
+             }
+         } else
+-        // Purpur end
++            // Purpur end
+ 
+-        if (this.keepAlivePending) {
+-            if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
+-                ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
+-                this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT); // Paper - kick event cause
+-            }
+-        } else {
+-            if (elapsedTime >= 15000L) { // 15 seconds
+-                this.keepAlivePending = true;
+-                this.keepAliveTime = currentTime;
+-                this.keepAliveChallenge = currentTime;
+-                this.send(new ClientboundKeepAlivePacket(this.keepAliveChallenge));
++            if (this.keepAlivePending) {
++                if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
++                    ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
++                    this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT); // Paper - kick event cause
++                }
++            } else {
++                if (elapsedTime >= 15000L) { // 15 seconds
++                    this.keepAlivePending = true;
++                    this.keepAliveTime = currentTime;
++                    this.keepAliveChallenge = currentTime;
++                    this.send(new ClientboundKeepAlivePacket(this.keepAliveChallenge));
++                }
+             }
+-        }
+         // Paper end
+ 
+         //this.server.getProfiler().pop(); // Purpur
+@@ -258,11 +265,27 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+     }
+ 
      public void send(Packet<?> packet) {
 +        // Zirkonium start - No Chat Reports
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.convertToSystemMessage && packet instanceof ClientboundPlayerChatPacket chat) {
-+            packet = new ClientboundSystemChatPacket(null, Component.Serializer.toJson(chat.chatType().resolve(this.player.level().registryAccess())
-+                    .get().decorate(chat.unsignedContent() != null ? chat.unsignedContent()
-+                            : Component.literal(chat.body().content()))), false);
-+            this.send(packet);
++        if (this instanceof ServerGamePacketListenerImpl listener
++                && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.convertToSystemMessage
++                && packet instanceof net.minecraft.network.protocol.game.ClientboundPlayerChatPacket chat) {
++            packet = new net.minecraft.network.protocol.game.ClientboundSystemChatPacket(io.papermc.paper.adventure.PaperAdventure.asAdventure(chat.chatType().resolve(listener.player.level()
++                    .registryAccess()).get().decorate(chat.unsignedContent() != null ? chat.unsignedContent()
++                    : Component.literal(chat.body().content()))), false);
++            listener.send(packet);
 +            return;
 +        }
          this.send(packet, (PacketSendListener) null);
      }
  
      public void send(Packet<?> packet, @Nullable PacketSendListener callbacks) {
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.convertToSystemMessage && packet instanceof ClientboundPlayerChatPacket playerChat && callbacks != null) {
-+            this.send(playerChat);
+-        // CraftBukkit start
++        if (this instanceof ServerGamePacketListenerImpl listener
++                && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.convertToSystemMessage
++                && packet instanceof net.minecraft.network.protocol.game.ClientboundPlayerChatPacket chat && callbacks != null) {
++            listener.send(chat);
 +            return;
 +        }
-+        // Zirkonium end - No Chat Reports
-+
-         // CraftBukkit start
++        // CraftBukkit start // Zirkonium end - No Chat Reports
          if (packet == null || this.processedDisconnect) { // Spigot
              return;
+         } else if (packet instanceof ClientboundSetDefaultSpawnPositionPacket) {
+@@ -286,7 +309,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+     }
+ 
+     // CraftBukkit start
+-    @Deprecated @io.papermc.paper.annotation.DoNotUse // Paper
++    @Deprecated
++    @io.papermc.paper.annotation.DoNotUse // Paper
+     public void disconnect(String s) { // Paper
+         this.disconnect(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(s), org.bukkit.event.player.PlayerKickEvent.Cause.UNKNOWN); // Paper
+     }
+@@ -298,7 +322,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+     }
+ 
+     // Paper start
+-    @Deprecated @io.papermc.paper.annotation.DoNotUse // Paper
++    @Deprecated
++    @io.papermc.paper.annotation.DoNotUse // Paper
+     public void disconnect(final Component reason) {
+         this.disconnect(io.papermc.paper.adventure.PaperAdventure.asAdventure(reason), org.bukkit.event.player.PlayerKickEvent.Cause.UNKNOWN);
+     }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 824f31b68b38f2f8642fb9d59a123cfdaffbb7b2..1fa2e9bbc51e542380577d5328af711fc2ffbd85 100644
+index 5c38df8170033dbfee267520991a3cc3285d219e..bae0db0214fea0a0cd69002c6f7bffae87f21c9b 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -1,6 +1,5 @@
@@ -224,7 +373,7 @@ index 824f31b68b38f2f8642fb9d59a123cfdaffbb7b2..1fa2e9bbc51e542380577d5328af711f
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
-@@ -118,7 +117,6 @@ import org.bukkit.Location;
+@@ -111,7 +110,6 @@ import org.bukkit.Location;
  import org.bukkit.craftbukkit.CraftServer;
  import org.bukkit.craftbukkit.CraftWorld;
  import org.bukkit.craftbukkit.entity.CraftPlayer;
@@ -232,7 +381,7 @@ index 824f31b68b38f2f8642fb9d59a123cfdaffbb7b2..1fa2e9bbc51e542380577d5328af711f
  import org.bukkit.craftbukkit.util.CraftLocation;
  import org.bukkit.entity.Player;
  import org.bukkit.event.player.PlayerChangedWorldEvent;
-@@ -127,7 +125,6 @@ import org.bukkit.event.player.PlayerLoginEvent;
+@@ -120,7 +118,6 @@ import org.bukkit.event.player.PlayerLoginEvent;
  import org.bukkit.event.player.PlayerQuitEvent;
  import org.bukkit.event.player.PlayerRespawnEvent;
  import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
@@ -240,11 +389,12 @@ index 824f31b68b38f2f8642fb9d59a123cfdaffbb7b2..1fa2e9bbc51e542380577d5328af711f
  // CraftBukkit end
  
  public abstract class PlayerList {
-@@ -1479,6 +1476,7 @@ public abstract class PlayerList {
+@@ -1471,7 +1468,7 @@ public abstract class PlayerList {
      }
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports) return true; // Zirkonium - No Chat Reports
-         return message.hasSignature() && !message.hasExpiredServer(Instant.now());
+-        return message.hasSignature() && !message.hasExpiredServer(Instant.now());
++        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports || (message.hasSignature() && !message.hasExpiredServer(Instant.now())); // Zirkonium - No Chat Reports
      }
  
+     // CraftBukkit start

@@ -89,7 +89,7 @@ index f7035de3b2152562c0c18f0946fb89582498556f..7e22da0263bc30efba1654903dc0a4d6
 +    }
  }
 diff --git a/src/main/java/net/minecraft/Util.java b/src/main/java/net/minecraft/Util.java
-index c60c73d9f998260f3abe6fe445255c6e7c38b0c3..683b911cdadb0f3cc1cd39c7c8ac508673976d0d 100644
+index 5c1503f5b173138fc9e918d5562a981ca8b66d06..b96af56934317a49fe54ff5886203819b11f8a64 100644
 --- a/src/main/java/net/minecraft/Util.java
 +++ b/src/main/java/net/minecraft/Util.java
 @@ -81,7 +81,7 @@ public class Util {
@@ -108,9 +108,9 @@ index c60c73d9f998260f3abe6fe445255c6e7c38b0c3..683b911cdadb0f3cc1cd39c7c8ac5086
 -    private static final ExecutorService IO_POOL = makeIoExecutor();
 +    private static ExecutorService IO_POOL = makeIoExecutor(); // Zirkonium - not final
      private static final DateTimeFormatter FILENAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss", Locale.ROOT);
+     public static final long NANOS_PER_MILLI = 1000000L;
      public static TimeSource.NanoTimeSource timeSource = System::nanoTime;
-     public static final Ticker TICKER = new Ticker() {
-@@ -116,6 +116,10 @@ public class Util {
+@@ -117,6 +117,10 @@ public class Util {
      public static final double COLLISION_EPSILON = 1.0E-7; // Paper
      private static Consumer<String> thePauser = (message) -> {
      };
@@ -121,7 +121,7 @@ index c60c73d9f998260f3abe6fe445255c6e7c38b0c3..683b911cdadb0f3cc1cd39c7c8ac5086
  
      public static <K, V> Collector<Map.Entry<? extends K, ? extends V>, ?, Map<K, V>> toMap() {
          return Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue);
-@@ -189,7 +193,7 @@ public class Util {
+@@ -190,7 +194,7 @@ public class Util {
          return executorService;
      }
  
@@ -130,7 +130,7 @@ index c60c73d9f998260f3abe6fe445255c6e7c38b0c3..683b911cdadb0f3cc1cd39c7c8ac5086
          String string = System.getProperty("max.bg.threads");
          if (string != null) {
              try {
-@@ -207,14 +211,58 @@ public class Util {
+@@ -208,14 +212,58 @@ public class Util {
          return 255;
      }
  
@@ -190,10 +190,10 @@ index c60c73d9f998260f3abe6fe445255c6e7c38b0c3..683b911cdadb0f3cc1cd39c7c8ac5086
          shutdownExecutor(BACKGROUND_EXECUTOR);
          shutdownExecutor(IO_POOL);
 diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
-index dae36c6452ccd57a436dd918547b64d59957ab0a..b3884bc2be785103057647ba5ea0a0e7825ce69f 100644
+index ec268189b19b6fa5c4521f96ce211a531db35ec5..d3d66b5ad84441217ed0484eb4742eedde11a205 100644
 --- a/src/main/java/net/minecraft/server/Main.java
 +++ b/src/main/java/net/minecraft/server/Main.java
-@@ -81,6 +81,12 @@ public class Main {
+@@ -79,6 +79,12 @@ public class Main {
  
      @DontObfuscate
      public static void main(final OptionSet optionset) { // CraftBukkit - replaces main(String[] astring)

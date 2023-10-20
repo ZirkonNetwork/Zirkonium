@@ -125,7 +125,7 @@ index 2b9ba92cf944e315b681f113d909fe5b2eb7cf1d..8cb47977dd34915018476aace2d09278
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
-index 83969917890d80c15b7c2ef87a3237b809edd2ae..c31d253a9ae03745512ef76c47ecfc56e199469a 100644
+index 6b4ae8cdb0244d092a7fdfb75f7dcb09b3ed440f..d7382fc649136def3af076fd09573fc2a7957544 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/FishingSpeedEnchantment.java
 @@ -19,6 +19,6 @@ public class FishingSpeedEnchantment extends Enchantment {
@@ -162,7 +162,7 @@ index 52e02c8460ae53b9cb3d7f626d6204e1da9861a5..3d6a2f6e4f4a0dbe6959f223a5895f4c
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
-index 8fe09c13643d99639fb242da4367c42ef31b38b4..c85084122265bb11895220367de4a07e6d09d265 100644
+index 1351d52374d1c2367932e5ecd5f4637955fb14c9..b86322b2cecafef629fe84bb68b23e7c82fa575d 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/LootBonusEnchantment.java
 @@ -27,7 +27,7 @@ public class LootBonusEnchantment extends Enchantment {

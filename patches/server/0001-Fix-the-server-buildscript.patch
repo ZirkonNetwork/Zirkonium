@@ -5,7 +5,7 @@ Subject: [PATCH] Fix the server buildscript
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 139e2b17b899da6f0147bb8b4412e2e54e817be4..c74923590cbd9565921d9fb6ee97b4d8d1d022cf 100644
+index e372110a189857056e4fae3cd1d996ce8cb69493..789f4ec7ad8b5df11c8f619f173281784754e2f6 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -14,7 +14,7 @@ val alsoShade: Configuration by configurations.creating

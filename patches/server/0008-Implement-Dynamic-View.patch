@@ -548,7 +548,7 @@ index 7e22da0263bc30efba1654903dc0a4d6a1778ef9..d8f3348bb2b55e3f88a1edad306e6964
 +    }
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 5c0085589b08f199c75ceeab8d0cf25e970a0533..a40cfeb97c376b5ef93219901e31e55e83300850 100644
+index 2fd376789bb24b14101e289733631a9a4b68fa1c..17f33cb97db0cb2fee8cf4ef3c87024c4fc33da6 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,5 +1,6 @@
@@ -558,7 +558,7 @@ index 5c0085589b08f199c75ceeab8d0cf25e970a0533..a40cfeb97c376b5ef93219901e31e55e
  import com.google.common.collect.Maps;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
-@@ -200,6 +201,7 @@ public class Commands {
+@@ -203,6 +204,7 @@ public class Commands {
          TriggerCommand.register(this.dispatcher);
          WeatherCommand.register(this.dispatcher);
          WorldBorderCommand.register(this.dispatcher);
@@ -567,10 +567,10 @@ index 5c0085589b08f199c75ceeab8d0cf25e970a0533..a40cfeb97c376b5ef93219901e31e55e
              JfrCommand.register(this.dispatcher);
          }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index a16c07e07970dcb50b5070a7f52220b6e5884602..9b00922b139638877b0c4fe1961074d82e22dcb2 100644
+index c5a61f1d50fad270659b228af1cff5448972c876..f93c1bead19bcd7fe3ce79b2ff403a7f097f5eaa 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1121,6 +1121,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1107,6 +1107,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
  
@@ -580,7 +580,7 @@ index a16c07e07970dcb50b5070a7f52220b6e5884602..9b00922b139638877b0c4fe1961074d8
              // Spigot start
              // Paper start - move done tracking
              LOGGER.info("Running delayed init tasks");
-@@ -1455,6 +1458,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1441,6 +1444,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          long endTime = System.nanoTime();
          long remaining = (TICK_TIME - (endTime - lastTick)) - catchupTime;
          new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();
@@ -590,7 +590,7 @@ index a16c07e07970dcb50b5070a7f52220b6e5884602..9b00922b139638877b0c4fe1961074d8
          //this.profiler.push("tallying"); // Purpur
          long j = this.tickTimes[this.tickCount % 100] = Util.getNanos() - i;
 diff --git a/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java b/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java
-index 40fc8b6579cc29e68720a99ac12f8adacc1d95be..30139a9d271211278bd265c50b6076cc05fcb6a6 100644
+index 81bc3af856b8af019fd13e1da1f7cccd526b7cf0..091ef0e8cd5eaa506b96ddae34837c4a9823888d 100644
 --- a/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java
 +++ b/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java
 @@ -58,6 +58,7 @@ public class MinecraftCommandPermissionsTest extends AbstractTestingBase {

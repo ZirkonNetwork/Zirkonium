@@ -157,21 +157,21 @@ index 98ea56cbc8de5a5694b4f4d9a2f25811fdecba04..8627a769d8858cc501f70a5a33a0efcb
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index e8f932f01cfc0cc937959c84338cfc7bd097dd2e..47ef70e7f776db1586fbbe29f0ac8a6ad97b9a6d 100644
+index 2718dd63ca234c7362e088c203c8c16bfb407c98..1e6323cc648635c5d697d38e100aea79f5c90653 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -674,8 +674,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
-     @Override
+@@ -675,7 +675,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
      public boolean enforceSecureProfile() {
          DedicatedServerProperties dedicatedserverproperties = this.getProperties();
--
--        return dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.profileKeySignatureValidator() != null;
-+        return !me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports && (dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.profileKeySignatureValidator() != null); // Zirkonium - No Chat Reports
-     }
- 
-     @Override
+         // Paper start - fix secure profile with proxy online mode
+-        return dedicatedserverproperties.enforceSecureProfile
++        return !me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports // Zirkonium - No Chat Reports
++            && dedicatedserverproperties.enforceSecureProfile
+             && io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode()
+             && this.services.profileKeySignatureValidator() != null;
+         // Paper end
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index fa7f85303f9fe80a2e51740c376d9daedfaa60b4..9b2d4eb1b25bec0aeae76a6aff412dc105ef095f 100644
+index b19c59a87d4136da583a0b687f6b27fef3456f09..5cdb313a3aced0b765b94f958fe39efe631e25cd 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -2,8 +2,10 @@ package net.minecraft.server.network;
@@ -260,9 +260,9 @@ index fa7f85303f9fe80a2e51740c376d9daedfaa60b4..9b2d4eb1b25bec0aeae76a6aff412dc1
 -        ByteBuf payload = ((ServerboundCustomPayloadPacket.UnknownPayload)packet.payload()).data();
 +        ByteBuf payload = ((ServerboundCustomPayloadPacket.UnknownPayload) packet.payload()).data();
  
-         if (identifier.equals(CUSTOM_REGISTER)) {
+         if (identifier.equals(ServerCommonPacketListenerImpl.CUSTOM_REGISTER)) {
              try {
-@@ -149,13 +156,13 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -149,7 +156,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
                  ServerGamePacketListenerImpl.LOGGER.error("Couldn\'t register custom payload", ex);
                  this.disconnect("Invalid payload REGISTER!", org.bukkit.event.player.PlayerKickEvent.Cause.INVALID_PAYLOAD); // Paper - kick event cause
              }
@@ -271,13 +271,6 @@ index fa7f85303f9fe80a2e51740c376d9daedfaa60b4..9b2d4eb1b25bec0aeae76a6aff412dc1
          } else if (identifier.equals(PURPUR_CLIENT)) {
              try {
                  player.purpurClient = true;
-             } catch (Exception ignore) {
-             }
--        // Purpur end
-+            // Purpur end
-         } else if (identifier.equals(CUSTOM_UNREGISTER)) {
-             try {
-                 String channels = payload.toString(com.google.common.base.Charsets.UTF_8);
 @@ -228,21 +235,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
                  }
              }
@@ -363,7 +356,7 @@ index fa7f85303f9fe80a2e51740c376d9daedfaa60b4..9b2d4eb1b25bec0aeae76a6aff412dc1
          this.disconnect(io.papermc.paper.adventure.PaperAdventure.asAdventure(reason), org.bukkit.event.player.PlayerKickEvent.Cause.UNKNOWN);
      }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 5c38df8170033dbfee267520991a3cc3285d219e..bae0db0214fea0a0cd69002c6f7bffae87f21c9b 100644
+index 182acaad79e14e5e120094916a0d295a4584de7a..33410ad32fa04e1533db77faa85634c2f952183d 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -1,6 +1,5 @@
@@ -389,7 +382,7 @@ index 5c38df8170033dbfee267520991a3cc3285d219e..bae0db0214fea0a0cd69002c6f7bffae
  // CraftBukkit end
  
  public abstract class PlayerList {
-@@ -1471,7 +1468,7 @@ public abstract class PlayerList {
+@@ -1492,7 +1489,7 @@ public abstract class PlayerList {
      }
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public

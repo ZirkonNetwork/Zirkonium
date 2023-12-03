@@ -7,4 +7,4 @@ Purpur fork originally for Zirkon Network
 - Higher maximum enchantment levels modified with multiplication by the set value
 - Modifiable maximum anvil levels without an extra plugin (can be overridden by plugins)
 ## Building
-Run `./gradlew build` then `./gradlew createReobfPaperclipJar` to get a paperclip jar to use in a server
+Run `./gradlew applyPatches`, `./gradlew build`, and then `./gradlew createReobfPaperclipJar` to get a Paperclip jar to use for a server

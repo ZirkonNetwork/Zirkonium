@@ -6,7 +6,7 @@ Subject: [PATCH] Add DynView update events
 
 diff --git a/src/main/java/me/elephant1214/event/dynview/DynViewUpdateEvent.java b/src/main/java/me/elephant1214/event/dynview/DynViewUpdateEvent.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8703fbbd85d450c244f6518364847e1f0d14559b
+index 0000000000000000000000000000000000000000..b426db5fcb0f1bc16c5fbb9d77e99bd0076e5e0d
 --- /dev/null
 +++ b/src/main/java/me/elephant1214/event/dynview/DynViewUpdateEvent.java
 @@ -0,0 +1,60 @@
@@ -18,14 +18,14 @@ index 0000000000000000000000000000000000000000..8703fbbd85d450c244f6518364847e1f
 +abstract sealed class DynViewUpdateEvent extends Event implements Cancellable permits SimulationDistanceUpdateEvent, ViewDistanceUpdateEvent {
 +    private boolean cancelled = false;
 +    private final double meanTickToStayBelow;
-+    private final int meanTickTime;
++    private final double meanTickTime;
 +    private final int oldDistance;
 +    private int newDistance;
 +    private final boolean changedByCommand;
 +
 +    DynViewUpdateEvent(
 +            final double meanTickToStayBelow,
-+            final int meanTickTime,
++            final double meanTickTime,
 +            final int oldDistance,
 +            final int newDistance,
 +            final boolean changedByCommand
@@ -41,7 +41,7 @@ index 0000000000000000000000000000000000000000..8703fbbd85d450c244f6518364847e1f
 +        return this.meanTickToStayBelow;
 +    }
 +
-+    public int getMeanTickTime() {
++    public double getMeanTickTime() {
 +        return this.meanTickTime;
 +    }
 +
@@ -72,7 +72,7 @@ index 0000000000000000000000000000000000000000..8703fbbd85d450c244f6518364847e1f
 +}
 diff --git a/src/main/java/me/elephant1214/event/dynview/SimulationDistanceUpdateEvent.java b/src/main/java/me/elephant1214/event/dynview/SimulationDistanceUpdateEvent.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..00cb14239666ad1e216484dafe75342cf0c706fa
+index 0000000000000000000000000000000000000000..6359c76fe11166f8561f54a0ee2316b7fe587fff
 --- /dev/null
 +++ b/src/main/java/me/elephant1214/event/dynview/SimulationDistanceUpdateEvent.java
 @@ -0,0 +1,27 @@
@@ -86,7 +86,7 @@ index 0000000000000000000000000000000000000000..00cb14239666ad1e216484dafe75342c
 +
 +    public SimulationDistanceUpdateEvent(
 +            final double meanTickToStayBelow,
-+            final int meanTickTime,
++            final double meanTickTime,
 +            final int oldDistance,
 +            final int newDistance,
 +            final boolean changedByCommand
@@ -105,7 +105,7 @@ index 0000000000000000000000000000000000000000..00cb14239666ad1e216484dafe75342c
 +}
 diff --git a/src/main/java/me/elephant1214/event/dynview/ViewDistanceUpdateEvent.java b/src/main/java/me/elephant1214/event/dynview/ViewDistanceUpdateEvent.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3972b5b3eb3de1c76b4e2c9bbd8b18e1967b1a99
+index 0000000000000000000000000000000000000000..911cbd33bb9cbea676d6361d97931f7b53efefaa
 --- /dev/null
 +++ b/src/main/java/me/elephant1214/event/dynview/ViewDistanceUpdateEvent.java
 @@ -0,0 +1,27 @@
@@ -119,7 +119,7 @@ index 0000000000000000000000000000000000000000..3972b5b3eb3de1c76b4e2c9bbd8b18e1
 +
 +    public ViewDistanceUpdateEvent(
 +            final double meanTickToStayBelow,
-+            final int meanTickTime,
++            final double meanTickTime,
 +            final int oldDistance,
 +            final int newDistance,
 +            final boolean changedByCommand

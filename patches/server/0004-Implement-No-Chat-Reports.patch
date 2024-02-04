@@ -155,26 +155,24 @@ index c40979e2fa37acb2f3df493395f3ab6e185345d7..bd4e0238a54f44435f8e19e8e6fa52ca
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index cbc86432a7a96360d7f857b5bcc5a64a35442ce5..84110c0135df9c02530b554e9f5d36e7eb4e4b45 100644
+index cbc86432a7a96360d7f857b5bcc5a64a35442ce5..12f20de263b0d620c0f691af1f95d441dd6c9dd7 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -675,8 +675,14 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -674,9 +674,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+     @Override
      public boolean enforceSecureProfile() {
          DedicatedServerProperties dedicatedserverproperties = this.getProperties();
- 
-+<<<<<<< HEAD
-         // Paper start - Add setting for proxy online mode status
-         return dedicatedserverproperties.enforceSecureProfile
-+=======
+-
+-        // Paper start - Add setting for proxy online mode status
+-        return dedicatedserverproperties.enforceSecureProfile
 +        // Paper start - fix secure profile with proxy online mode
 +        return !me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports // Zirkonium - No Chat Reports
 +            && dedicatedserverproperties.enforceSecureProfile
-+>>>>>>> Implement No Chat Reports
              && io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode()
              && this.services.canValidateProfileKeys();
          // Paper end - Add setting for proxy online mode status
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index 02e65b0bd212d46855baee48fab35dc95a88b43f..54b2672d9984a4c3de012768ecfcd046bf54f85b 100644
+index 02e65b0bd212d46855baee48fab35dc95a88b43f..0ed6516de4239935b47b19f9566a0b748ce32ca8 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -2,8 +2,10 @@ package net.minecraft.server.network;
@@ -242,7 +240,7 @@ index 02e65b0bd212d46855baee48fab35dc95a88b43f..54b2672d9984a4c3de012768ecfcd046
          } else if (identifier.equals(PURPUR_CLIENT)) {
              try {
                  player.purpurClient = true;
-@@ -241,22 +248,27 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -241,21 +248,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
                  }
              }
          } else
@@ -273,16 +271,11 @@ index 02e65b0bd212d46855baee48fab35dc95a88b43f..54b2672d9984a4c3de012768ecfcd046
 +                    this.send(new ClientboundKeepAlivePacket(this.keepAliveChallenge));
 +                }
              }
-+<<<<<<< HEAD
-         }
+-        }
          // Paper end - give clients a longer time to respond to pings as per pre 1.12.2 timings
-+=======
-+        // Paper end
-+>>>>>>> Implement No Chat Reports
  
          //this.server.getProfiler().pop(); // Purpur
-     }
-@@ -271,11 +283,27 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -271,11 +278,27 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      }
  
      public void send(Packet<?> packet) {
@@ -311,7 +304,7 @@ index 02e65b0bd212d46855baee48fab35dc95a88b43f..54b2672d9984a4c3de012768ecfcd046
          if (packet == null || this.processedDisconnect) { // Spigot
              return;
          } else if (packet instanceof ClientboundSetDefaultSpawnPositionPacket) {
-@@ -299,7 +327,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -299,7 +322,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      }
  
      // CraftBukkit start
@@ -321,7 +314,7 @@ index 02e65b0bd212d46855baee48fab35dc95a88b43f..54b2672d9984a4c3de012768ecfcd046
      public void disconnect(String s) { // Paper
          this.disconnect(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(s), org.bukkit.event.player.PlayerKickEvent.Cause.UNKNOWN); // Paper
      }
-@@ -311,7 +340,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -311,7 +335,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      }
  
      // Paper start

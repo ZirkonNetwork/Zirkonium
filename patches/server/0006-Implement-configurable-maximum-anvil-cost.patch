@@ -22,7 +22,7 @@ index 87ae67ff37e20caeea3c43e5674a729998b6abec..f7035de3b2152562c0c18f0946fb8958
                  log(Level.WARNING, "The maximum enchantment level multiplier can not be less than 1, resetting it.");
                  maxEnchantLevelMultiplier = 1;
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 27d76e0c4809d333c548379bf78ec2db083b027e..efecb78ae49babd5f6923397d19ebbe865504590 100644
+index 2913d69fcff4b6df68586146b7323cea33eba74b..e2a2a720cef557b09283b98aced792a690d56a96 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -55,7 +55,7 @@ public class AnvilMenu extends ItemCombinerMenu {

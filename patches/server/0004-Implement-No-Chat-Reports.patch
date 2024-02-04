@@ -36,7 +36,7 @@ index ba585089164b7e6bc48fd28e8d389bbc95c83673..f0c485c2b6ede0e617ae0e75c780992d
      }
  }
 diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
-index 3b301945a08dc2162bfae76ea8c3b04bb65f53dd..6d72614cfe7573d24062f4a64968476931ee2748 100644
+index bdcfd80f937c34956911373905d66424bbff8e1d..627adbd73686fca48e9f4b6f0f7c056466ec832c 100644
 --- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 +++ b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 @@ -129,9 +129,23 @@ public class FriendlyByteBuf extends ByteBuf {
@@ -66,7 +66,7 @@ index 3b301945a08dc2162bfae76ea8c3b04bb65f53dd..6d72614cfe7573d24062f4a649684769
          });
 @@ -144,7 +158,14 @@ public class FriendlyByteBuf extends ByteBuf {
      public <T> void writeJsonWithCodec(Codec<T> codec, T value, int maxLength) {
-         // Paper end - Adventure
+         // Paper end - Adventure; add max length parameter
          DataResult<JsonElement> dataresult = codec.encodeStart(JsonOps.INSTANCE, value);
 -
 +        // Zirkonium start - No Chat Reports
@@ -79,7 +79,7 @@ index 3b301945a08dc2162bfae76ea8c3b04bb65f53dd..6d72614cfe7573d24062f4a649684769
 +        } // Zirkonium end - No Chat Reports
          this.writeUtf(FriendlyByteBuf.GSON.toJson((JsonElement) Util.getOrThrow(dataresult, (s) -> {
              return new EncoderException("Failed to encode: " + s + " " + value);
-         })), maxLength); // Paper - Adventure
+         })), maxLength); // Paper - Adventure; add max length parameter
 diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java
 index b8c1f3b9afddc87d56541c8af63cffecfcdd2653..3bad591621fe4b700d4da6ee477214a289bf9c9a 100644
 --- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java
@@ -155,21 +155,26 @@ index c40979e2fa37acb2f3df493395f3ab6e185345d7..bd4e0238a54f44435f8e19e8e6fa52ca
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index ddcc68283444e6bc918860450cc64bc8b2aa9464..44253f7a84a8bf3daa961f25838ab970d1c05e40 100644
+index cbc86432a7a96360d7f857b5bcc5a64a35442ce5..84110c0135df9c02530b554e9f5d36e7eb4e4b45 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -676,7 +676,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -675,8 +675,14 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+     public boolean enforceSecureProfile() {
          DedicatedServerProperties dedicatedserverproperties = this.getProperties();
  
-         // Paper start - fix secure profile with proxy online mode
--        return dedicatedserverproperties.enforceSecureProfile
++<<<<<<< HEAD
+         // Paper start - Add setting for proxy online mode status
+         return dedicatedserverproperties.enforceSecureProfile
++=======
++        // Paper start - fix secure profile with proxy online mode
 +        return !me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports // Zirkonium - No Chat Reports
 +            && dedicatedserverproperties.enforceSecureProfile
++>>>>>>> Implement No Chat Reports
              && io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode()
              && this.services.canValidateProfileKeys();
-         // Paper end
+         // Paper end - Add setting for proxy online mode status
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index da499e0b21eba40d24d95047e3a9220567d4bae7..51962549028ac27527392017695291f426ce9779 100644
+index 02e65b0bd212d46855baee48fab35dc95a88b43f..54b2672d9984a4c3de012768ecfcd046bf54f85b 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -2,8 +2,10 @@ package net.minecraft.server.network;
@@ -202,46 +207,14 @@ index da499e0b21eba40d24d95047e3a9220567d4bae7..51962549028ac27527392017695291f4
      protected final org.bukkit.craftbukkit.CraftServer cserver;
      public boolean processedDisconnect;
 @@ -82,6 +87,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
-         // Paper start
+         // Paper start - Fix kick event leave message not being sent
          this.onDisconnect(reason, null);
      }
 +
      public void onDisconnect(Component reason, @Nullable net.kyori.adventure.text.Component quitMessage) {
-         // Paper end
+         // Paper end - Fix kick event leave message not being sent
          if (this.isSingleplayerOwner()) {
-@@ -102,25 +108,26 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
-                 keepAlives.clear(); // we got a valid response, lets roll with it and forget the rest
-             }
-         } else
--        // Purpur end
--        //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // CraftBukkit // Paper - This shouldn't be on the main thread
--        if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
--            int i = (int) (Util.getMillis() - this.keepAliveTime);
--
--            this.latency = (this.latency * 3 + i) / 4;
--            this.keepAlivePending = false;
--        } else if (!this.isSingleplayerOwner()) {
--            // Paper start - This needs to be handled on the main thread for plugins
--            server.submit(() -> {
--                this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT); // Paper - kick event cause
--            });
--            // Paper endg
--        }
-+            // Purpur end
-+            //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // CraftBukkit // Paper - This shouldn't be on the main thread
-+            if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
-+                int i = (int) (Util.getMillis() - this.keepAliveTime);
-+
-+                this.latency = (this.latency * 3 + i) / 4;
-+                this.keepAlivePending = false;
-+            } else if (!this.isSingleplayerOwner()) {
-+                // Paper start - This needs to be handled on the main thread for plugins
-+                server.submit(() -> {
-+                    this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT); // Paper - kick event cause
-+                });
-+                // Paper endg
-+            }
- 
+@@ -120,7 +126,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      }
  
      @Override
@@ -269,7 +242,7 @@ index da499e0b21eba40d24d95047e3a9220567d4bae7..51962549028ac27527392017695291f4
          } else if (identifier.equals(PURPUR_CLIENT)) {
              try {
                  player.purpurClient = true;
-@@ -241,21 +248,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -241,22 +248,27 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
                  }
              }
          } else
@@ -300,11 +273,16 @@ index da499e0b21eba40d24d95047e3a9220567d4bae7..51962549028ac27527392017695291f4
 +                    this.send(new ClientboundKeepAlivePacket(this.keepAliveChallenge));
 +                }
              }
--        }
-         // Paper end
++<<<<<<< HEAD
+         }
+         // Paper end - give clients a longer time to respond to pings as per pre 1.12.2 timings
++=======
++        // Paper end
++>>>>>>> Implement No Chat Reports
  
          //this.server.getProfiler().pop(); // Purpur
-@@ -271,11 +278,27 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+     }
+@@ -271,11 +283,27 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      }
  
      public void send(Packet<?> packet) {
@@ -333,7 +311,7 @@ index da499e0b21eba40d24d95047e3a9220567d4bae7..51962549028ac27527392017695291f4
          if (packet == null || this.processedDisconnect) { // Spigot
              return;
          } else if (packet instanceof ClientboundSetDefaultSpawnPositionPacket) {
-@@ -299,7 +322,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -299,7 +327,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      }
  
      // CraftBukkit start
@@ -343,7 +321,7 @@ index da499e0b21eba40d24d95047e3a9220567d4bae7..51962549028ac27527392017695291f4
      public void disconnect(String s) { // Paper
          this.disconnect(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(s), org.bukkit.event.player.PlayerKickEvent.Cause.UNKNOWN); // Paper
      }
-@@ -311,7 +335,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -311,7 +340,8 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      }
  
      // Paper start
@@ -354,7 +332,7 @@ index da499e0b21eba40d24d95047e3a9220567d4bae7..51962549028ac27527392017695291f4
          this.disconnect(io.papermc.paper.adventure.PaperAdventure.asAdventure(reason), org.bukkit.event.player.PlayerKickEvent.Cause.UNKNOWN);
      }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index a52f0b7d76dc71d176d960fc4f67f0683127112e..a4353860a596cd9b9385a76bd4a5bb201fd8b7cc 100644
+index 323391509c2efd49c54d7b36d7aa880c63ae5fd4..51ff6548c2e0a22f22e6e07194033107d056a1df 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -1,6 +1,5 @@
@@ -380,7 +358,7 @@ index a52f0b7d76dc71d176d960fc4f67f0683127112e..a4353860a596cd9b9385a76bd4a5bb20
  // CraftBukkit end
  
  public abstract class PlayerList {
-@@ -1498,7 +1495,7 @@ public abstract class PlayerList {
+@@ -1497,7 +1494,7 @@ public abstract class PlayerList {
      }
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public

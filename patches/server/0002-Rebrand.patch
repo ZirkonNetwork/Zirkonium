@@ -5,10 +5,10 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 030581d4ee6adc4593e5ca95f8825766cd3c32a9..35df3b2380fa656489a6d8ecc8941d4eb4be624f 100644
+index fa323c29499ba6d4149c41feba03992b8ef9fea6..333a2ab998275f698519717155cd00bd28b1bd0c 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -93,7 +93,7 @@ tasks.jar {
+@@ -92,7 +92,7 @@ tasks.jar {
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
              "Implementation-Title" to "CraftBukkit",
@@ -102,10 +102,10 @@ index 3cb56595822799926a8141e60a42f5d1edfc6de5..cc3b6c4b80a17fb253f7bd5c74425bc3
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index f69976dcba060027c67c2e1b49fa28d3f28f66f0..84dcae2e48fb62fe07828eb02205ab465e53bbf5 100644
+index b1dd8d66a524254a270a725f5f7a46f28e13b749..b48b3e6871cc125c08dba597e20eb9028f88980c 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -959,7 +959,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -956,7 +956,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          shutdownThread = Thread.currentThread();
          org.spigotmc.WatchdogThread.doStop(); // Paper
          if (!isSameThread()) {
@@ -115,7 +115,7 @@ index f69976dcba060027c67c2e1b49fa28d3f28f66f0..84dcae2e48fb62fe07828eb02205ab46
                  this.getRunningThread().stop();
                  try {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index aa04387019f2aef5e7e54a9654c05f832d508295..b51633b758dc87f5716077584d8384461da41c4a 100644
+index 4e84a59ce4e390b74b65027a1c8c4f1b179bcb48..aad537dda53b42bd3a7428e1683eaf3355e2ef5f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -264,7 +264,7 @@ import javax.annotation.Nullable; // Paper
@@ -154,7 +154,7 @@ index e9fc2b4661f5275b93db5d3fdf25a8bdc3b38920..0d36fe05872171131cee74131d8f082f
          serverModName = getString("settings.server-mod-name", serverModName);
      }
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index 5fc8cc40ab627eba0b2110c73d31af213a935733..a0b3c1a3019baa45a0413e5cae83131ced8f72cd 100644
+index f7296691cb4af7814de1520347b307ff209082e4..ccba344f4c23b9bda7d94020e2d1e338b2006cdc 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
 @@ -155,14 +155,14 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
@@ -175,7 +175,7 @@ index 5fc8cc40ab627eba0b2110c73d31af213a935733..a0b3c1a3019baa45a0413e5cae83131c
                  //
                  if ( net.minecraft.world.level.Level.lastPhysicsProblem != null )
                  {
-@@ -185,12 +185,12 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
+@@ -184,12 +184,12 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
                  // Paper end
                  } else
                  {
@@ -187,10 +187,10 @@ index 5fc8cc40ab627eba0b2110c73d31af213a935733..a0b3c1a3019baa45a0413e5cae83131c
                  log.log( Level.SEVERE, "------------------------------" );
 -                log.log( Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Purpur!):" ); // Paper // Purpur
 +                log.log( Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Zirkonium!):" ); // Paper // Purpur // Zirkonium
-                 io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler.dumpAllChunkLoadInfo(isLongTimeout); // Paper // Paper - rewrite chunk system
+                 io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler.dumpAllChunkLoadInfo(isLongTimeout); // Paper - rewrite chunk system
                  this.dumpTickingInfo(); // Paper - log detailed tick information
                  WatchdogThread.dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE ), log );
-@@ -206,7 +206,7 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
+@@ -205,7 +205,7 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
                      WatchdogThread.dumpThread( thread, log );
                  }
                  } else {

@@ -19,6 +19,6 @@ The commands are for Bash (or Git Bash), but you should only have to remove `./`
 \
 Run `./gradlew applyPatches`, `./gradlew build`,
 and then `./gradlew createReobfPaperclipJar` to get a Paperclip jar to use for servers.
-This entire process can take 15+ minutes depending on your CPU, available memory, and the speed of the drive this is on
+This entire process can take anywhere from 5 minutes to an hour plus depending on the available CPU power, available memory, and the speed of the drive this is on
 (the higher the r/w speeds the better); HDDs are not recommended.\
-After the tasks are completed, the new Paperclip jar can be found in `./build/libs` under the name ``.
+After the tasks are completed, the new Paperclip jar can be found in `./build/libs` under the name `Zirkonium-paperclip-<mcVersion>-<apiVersion>-reobf.jar`.

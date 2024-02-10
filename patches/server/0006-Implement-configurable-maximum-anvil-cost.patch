@@ -5,24 +5,26 @@ Subject: [PATCH] Implement configurable maximum anvil cost
 
 
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index 87ae67ff37e20caeea3c43e5674a729998b6abec..f7035de3b2152562c0c18f0946fb89582498556f 100644
+index fc11e40392705071a27cec9df50155e7af27cf92..646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-@@ -70,10 +70,12 @@ public class ZirkoniumConfig {
+@@ -79,6 +79,7 @@ public class ZirkoniumConfig {
      }
  
-     public static class Gameplay {
-+        public static int maxAnvilCost = 40;
-         public static int maxEnchantLevelMultiplier = 1;
+     public static int maxEnchantLevelMultiplier = 1;
++    public static int maxAnvilCost = 40;
  
-         public static void gameplaySettings() {
-             maxEnchantLevelMultiplier = getInt("gameplay.enchantment.max-level-multiplier", maxEnchantLevelMultiplier);
-+            maxAnvilCost = getInt("gameplay.anvil.max-cost", maxAnvilCost);
-             if (maxEnchantLevelMultiplier < 1) {
-                 log(Level.WARNING, "The maximum enchantment level multiplier can not be less than 1, resetting it.");
-                 maxEnchantLevelMultiplier = 1;
+     private static void gameplaySettings() {
+         maxEnchantLevelMultiplier = getInt("gameplay.enchantment.max-level-multiplier", maxEnchantLevelMultiplier);
+@@ -87,5 +88,6 @@ public class ZirkoniumConfig {
+             maxEnchantLevelMultiplier = 1;
+             set("gameplay.enchantment.max-level-multiplier", 1);
+         }
++        maxAnvilCost = getInt("gameplay.anvil.max-cost", maxAnvilCost);
+     }
+ }
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 2913d69fcff4b6df68586146b7323cea33eba74b..e2a2a720cef557b09283b98aced792a690d56a96 100644
+index 2913d69fcff4b6df68586146b7323cea33eba74b..10258293a5efed64eaf67047d9feda8e4069b7d9 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -55,7 +55,7 @@ public class AnvilMenu extends ItemCombinerMenu {
@@ -30,7 +32,7 @@ index 2913d69fcff4b6df68586146b7323cea33eba74b..e2a2a720cef557b09283b98aced792a6
      // CraftBukkit start
      public static final int DEFAULT_DENIED_COST = -1;
 -    public int maximumRepairCost = 40;
-+    public int maximumRepairCost = me.elephant1214.zirkonium.configuration.ZirkoniumConfig.Gameplay.maxAnvilCost;
++    public int maximumRepairCost = me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxAnvilCost;
      private CraftInventoryView bukkitEntity;
      // CraftBukkit end
      public boolean bypassCost = false; // Purpur

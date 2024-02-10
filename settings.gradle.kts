@@ -1,3 +1,5 @@
+rootProject.name = "Zirkonium"
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -5,5 +7,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "Zirkonium"
-include("Zirkonium-API", "Zirkonium-Server")
+include("zirkonium-api", "zirkonium-server", "paper-api-generator")

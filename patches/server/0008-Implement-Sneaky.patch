@@ -1,0 +1,374 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <nathangetsmail@gmail.com>
+Date: Thu, 8 Feb 2024 16:51:36 -0700
+Subject: [PATCH] Implement Sneaky
+
+
+diff --git a/src/main/java/com/adryd/sneaky/util/LegacyPingMetadata.java b/src/main/java/com/adryd/sneaky/util/LegacyPingMetadata.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..a6631074fbde09598b89262a0459c640f71cf4fc
+--- /dev/null
++++ b/src/main/java/com/adryd/sneaky/util/LegacyPingMetadata.java
+@@ -0,0 +1,27 @@
++package com.adryd.sneaky.util;
++
++import net.minecraft.SharedConstants;
++import net.minecraft.server.ServerInfo;
++import org.jetbrains.annotations.NotNull;
++
++public final class LegacyPingMetadata implements ServerInfo {
++    @Override
++    public @NotNull String getMotd() {
++        return "A Minecraft Server";
++    }
++
++    @Override
++    public @NotNull String getServerVersion() {
++        return SharedConstants.getCurrentVersion().getName();
++    }
++
++    @Override
++    public int getPlayerCount() {
++        return 0;
++    }
++
++    @Override
++    public int getMaxPlayers() {
++        return 20;
++    }
++}
+diff --git a/src/main/java/me/elephant1214/zirkonium/SneakyManager.java b/src/main/java/me/elephant1214/zirkonium/SneakyManager.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..bd83a19d040f9851c0159885c86218c8c232b8f6
+--- /dev/null
++++ b/src/main/java/me/elephant1214/zirkonium/SneakyManager.java
+@@ -0,0 +1,99 @@
++package me.elephant1214.zirkonium;
++
++import me.elephant1214.zirkonium.configuration.ZirkoniumConfig;
++
++import java.io.File;
++import java.io.IOException;
++import java.net.InetSocketAddress;
++import java.net.SocketAddress;
++import java.nio.file.Files;
++import java.nio.file.NoSuchFileException;
++import java.util.HashMap;
++import java.util.logging.Logger;
++
++import static me.elephant1214.zirkonium.Zirkonium.LOGGER;
++
++public final class SneakyManager {
++    private static final File IP_FILE = new File("allowed-ping-ips.csv");
++    private static final HashMap<String, Long> IP_MAP = new HashMap<>();
++
++    private static boolean loaded = false;
++
++    public static void readFromFile() {
++        try {
++            String data = Files.readString(IP_FILE.toPath());
++            if (data == null || data.isEmpty() || data.isBlank()) return;
++
++            String[] lines = data.split("\n");
++            for (String line : lines) {
++                if (line.startsWith("#")) continue;
++                String[] split = line.split(",");
++                if (split.length == 2) {
++                    IP_MAP.put(split[0], Long.parseLong(split[1]));
++                }
++            }
++        } catch (NoSuchFileException e) {
++            loaded = true;
++            saveToFile(true);
++        } catch (IOException e) {
++            LOGGER.severe("[Sneaky] Failed to read allowed ping IPs list: " + e.getMessage());
++        } catch (NumberFormatException e) {
++            LOGGER.severe("[Sneaky] Failed to parse allowed ping IPs list: " + e.getMessage());
++        }
++        loaded = true;
++    }
++
++    public static void saveToFile(final boolean newFile) {
++        if (!loaded) return;
++
++        final StringBuilder configBuilder = new StringBuilder();
++        configBuilder.append("# This file contains allowed IP addresses and their last login date in milliseconds.\n");
++        configBuilder.append("# Setting lastLoginDate to 0 makes an IP never expire.\n");
++        configBuilder.append("# Format: ipAddress,lastLoginMilliseconds\n");
++
++        if (newFile) {
++            configBuilder.append("127.0.0.1,0\n");
++            configBuilder.append("0:0:0:0:0:0:0:1%0,0\n");
++        }
++
++        final long writeTime = System.currentTimeMillis();
++        IP_MAP.forEach((ip, lastLogin) -> {
++            if (lastLogin == 0 || writeTime - lastLogin < getExpirationInMs()) {
++                configBuilder.append(ip).append(",").append(lastLogin).append("\n");
++            }
++        });
++
++        try {
++            Files.writeString(IP_FILE.toPath(), configBuilder.toString());
++        } catch (IOException e) {
++            LOGGER.severe("[Sneaky] Failed to save allowed IPs list: " + e.getMessage());
++        }
++    }
++
++    public static void addIP(SocketAddress address) {
++        IP_MAP.put(stringifyAddress(address), System.currentTimeMillis());
++    }
++
++    public static boolean canPing(SocketAddress address) {
++        final String ip = stringifyAddress(address);
++        if (IP_MAP.containsKey(ip)) {
++            if (System.currentTimeMillis() - IP_MAP.get(ip) < getExpirationInMs() || IP_MAP.get(ip) == 0) {
++                return true;
++            }
++            IP_MAP.remove(ip);
++        }
++        return false;
++    }
++
++    private static long getExpirationInMs() {
++        return 86400000L * ZirkoniumConfig.ipLogExpiration;
++    }
++
++    private static String stringifyAddress(SocketAddress remote) {
++        String address = ((InetSocketAddress) remote).getAddress().getHostAddress();
++        if (address.startsWith("/")) {
++            address = address.substring(1);
++        }
++        return address;
++    }
++}
+diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+index 7f33d67d3be88b56388f2c9dbdacdbec3af7f384..6326e6123a602681e295743ba6fb659a9e147693 100644
+--- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+@@ -1,6 +1,7 @@
+ package me.elephant1214.zirkonium.configuration;
+ 
+ import com.google.common.base.Throwables;
++import me.elephant1214.zirkonium.SneakyManager;
+ import org.bukkit.configuration.InvalidConfigurationException;
+ import org.bukkit.configuration.file.YamlConfiguration;
+ 
+@@ -34,8 +35,8 @@ public class ZirkoniumConfig {
+         config.options().header(HEADER);
+         config.options().copyDefaults(true);
+ 
+-        version = getInt("config-version", 1);
+-        set("config-version", 1);
++        version = getInt("config-version", 2);
++        set("config-version", 2);
+ 
+         readConfig();
+     }
+@@ -44,6 +45,7 @@ public class ZirkoniumConfig {
+         noChatReportsSettings();
+         gameplaySettings();
+         dynamicViewSettings();
++        sneakySettings();
+ 
+         try {
+             config.save(CONFIG_FILE);
+@@ -115,4 +117,28 @@ public class ZirkoniumConfig {
+         minSimulationDistance = getInt("dynamic-view.min-simulation-distance", minSimulationDistance);
+         maxSimulationDistance = getInt("dynamic-view.max-simulation-distance", maxSimulationDistance);
+     }
++
++    public static boolean sneaky = false;
++    public static boolean hideServerPingData = true;
++    public static boolean hidePlayerList = false;
++    public static boolean dontLogUnauthedClientDisconnects = false;
++    public static boolean dontLogUnauthedServerDisconnects = false;
++    public static boolean disableQueryUntilLogin = false;
++    public static boolean disableLegacyQuery = true;
++    public static boolean disableConnectionsFromBannedIps = false;
++    public static int ipLogExpiration = 30;
++
++    private static void sneakySettings() {
++        SneakyManager.readFromFile();
++
++        sneaky = getBoolean("sneaky.enabled", sneaky);
++        hideServerPingData = getBoolean("sneaky.hide-server-ping-data", hideServerPingData);
++        hidePlayerList = getBoolean("sneaky.hide-player-list", hidePlayerList);
++        dontLogUnauthedClientDisconnects = getBoolean("sneaky.dont-log-unauthed-client-disconnects", dontLogUnauthedClientDisconnects);
++        dontLogUnauthedServerDisconnects = getBoolean("sneaky.dont-log-unauthed-server-disconnects", dontLogUnauthedServerDisconnects);
++        disableQueryUntilLogin = getBoolean("sneaky.disable-query-until-login", disableQueryUntilLogin);
++        disableLegacyQuery = getBoolean("sneaky.disable-legacy-query", disableLegacyQuery);
++        disableConnectionsFromBannedIps = getBoolean("sneaky.disable-connections-from-banned-ips", disableConnectionsFromBannedIps);
++        ipLogExpiration = getInt("sneaky.ip-log-duration", ipLogExpiration);
++    }
+ }
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index a34e4028c45d6dc349f08d789bbabb10a5895f27..7371d6e4501ffc4982eb8fe5e72faf830b23be38 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -873,6 +873,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+     }
+     public boolean saveAllChunks(boolean suppressLogs, boolean flush, boolean force, boolean close) {
+         // Paper end - rewrite chunk system - add close param
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky) me.elephant1214.zirkonium.SneakyManager.saveToFile(false); // Zirkonium - Sneaky
+         boolean flag3 = false;
+ 
+         for (Iterator iterator = this.getAllLevels().iterator(); iterator.hasNext(); flag3 = true) {
+diff --git a/src/main/java/net/minecraft/server/network/LegacyQueryHandler.java b/src/main/java/net/minecraft/server/network/LegacyQueryHandler.java
+index 569516822319c885e76be1aa92580bdf0bc932f5..eee725d7cee2f06c6fb82dfeb5cae82863560349 100644
+--- a/src/main/java/net/minecraft/server/network/LegacyQueryHandler.java
++++ b/src/main/java/net/minecraft/server/network/LegacyQueryHandler.java
+@@ -43,6 +43,10 @@ public class LegacyQueryHandler extends ChannelInboundHandlerAdapter {
+                     return;
+                 }
+ 
++                if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.disableLegacyQuery) { // Zirkonium start - Sneaky
++                    channelhandlercontext.close();
++                    return;
++                } // Zirkonium end - Sneaky
+                 SocketAddress socketaddress = channelhandlercontext.channel().remoteAddress();
+                 int i = bytebuf.readableBytes();
+                 String s = null; // Paper
+@@ -52,6 +56,11 @@ public class LegacyQueryHandler extends ChannelInboundHandlerAdapter {
+                 if (i == 0) {
+                     LegacyQueryHandler.LOGGER.debug("Ping: (<1.3.x) from {}", net.minecraft.server.MinecraftServer.getServer().logIPs() ? socketaddress: "<ip address withheld>"); // Paper - Respect logIPs option
+ 
++                    // Zirkonium start - Don't call the info event when responding with empty info
++                    if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.hideServerPingData
++                            && !me.elephant1214.zirkonium.SneakyManager.canPing(channelhandlercontext.channel().remoteAddress())) {
++                        s = String.format(Locale.ROOT, "%s\u00a7%d\u00a7%d", EMPTY_INFO.getMotd(), EMPTY_INFO.getPlayerCount(), EMPTY_INFO.getMaxPlayers());
++                    } else {
+                     // Paper start - Call PaperServerListPingEvent and use results
+                     event = com.destroystokyo.paper.network.PaperLegacyStatusClient.processRequest(net.minecraft.server.MinecraftServer.getServer(), (java.net.InetSocketAddress) socketaddress, 39, null);
+                     if (event == null) {
+@@ -62,6 +71,7 @@ public class LegacyQueryHandler extends ChannelInboundHandlerAdapter {
+                     }
+                     s = String.format(Locale.ROOT, "%s\u00a7%d\u00a7%d", com.destroystokyo.paper.network.PaperLegacyStatusClient.getUnformattedMotd(event), event.getNumPlayers(), event.getMaxPlayers());
+                     // Paper end
++                    } // Zirkonium end
+                     LegacyQueryHandler.sendFlushAndClose(channelhandlercontext, LegacyQueryHandler.createLegacyDisconnectPacket(channelhandlercontext.alloc(), s));
+                 } else {
+                     if (bytebuf.readUnsignedByte() != 1) {
+@@ -87,6 +97,11 @@ public class LegacyQueryHandler extends ChannelInboundHandlerAdapter {
+                     }
+ 
+                     if (s == null) {
++                        // Zirkonium start - Don't call the info event when responding with empty info
++                        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.hideServerPingData
++                                && !me.elephant1214.zirkonium.SneakyManager.canPing(channelhandlercontext.channel().remoteAddress())) {
++                            s = String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, this.server.getServerVersion(), EMPTY_INFO.getMotd(), EMPTY_INFO.getPlayerCount(), EMPTY_INFO.getMaxPlayers());
++                        } else {
+                         // Paper start - Call PaperServerListPingEvent and use results
+                         event = com.destroystokyo.paper.network.PaperLegacyStatusClient.processRequest(net.minecraft.server.MinecraftServer.getServer(), (java.net.InetSocketAddress) socketaddress, 127, null); // Paper
+                         if (event == null) {
+@@ -97,6 +112,7 @@ public class LegacyQueryHandler extends ChannelInboundHandlerAdapter {
+                         }
+                         s = String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", new Object[] { event.getProtocolVersion(), this.server.getServerVersion(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()}); // CraftBukkit
+                         // Paper end
++                        } // Zirkonium end
+                     }
+                     LegacyQueryHandler.sendFlushAndClose(channelhandlercontext, LegacyQueryHandler.createLegacyDisconnectPacket(channelhandlercontext.alloc(), s));
+                 }
+@@ -252,7 +268,10 @@ public class LegacyQueryHandler extends ChannelInboundHandlerAdapter {
+         // CraftBukkit end
+     }
+ 
++    private static final ServerInfo EMPTY_INFO = new com.adryd.sneaky.util.LegacyPingMetadata(); // Zirkonium - Sneaky
++
+     private static void sendFlushAndClose(ChannelHandlerContext context, ByteBuf buf) {
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.disableLegacyQuery) return; // Zirkonium - Sneaky
+         context.pipeline().firstContext().writeAndFlush(buf).addListener(ChannelFutureListener.CLOSE);
+     }
+ 
+diff --git a/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
+index a53dd1ea02bd19826cd9fd337459b08e9533bce8..8a2730f48e04edfca0912b1a75dfec15624e510d 100644
+--- a/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
+@@ -163,6 +163,10 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
+                 ServerStatus serverping = this.server.getStatus();
+ 
+                 if (this.server.repliesToStatus() && serverping != null) {
++                    if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.disableQueryUntilLogin && me.elephant1214.zirkonium.SneakyManager.canPing(this.connection.getRemoteAddress())) { // Zirkonium start - Sneaky
++                        this.connection.disconnect(IGNORE_STATUS_REASON);
++                        return;
++                    } // Zirkonium end - Sneaky
+                     this.connection.setClientboundProtocolAfterHandshake(ClientIntent.STATUS);
+                     this.connection.setListener(new ServerStatusPacketListenerImpl(serverping, this.connection));
+                 } else {
+diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+index 8b62f992ec61d0a66a3856b4928ee2d705548291..170ec2c3a673538b1984d2fcd93e087dfd41d9c3 100644
+--- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+@@ -112,6 +112,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+ 
+     public void disconnect(Component reason) {
+         try {
++            if (!me.elephant1214.zirkonium.configuration.ZirkoniumConfig.dontLogUnauthedServerDisconnects && this.authenticatedProfile == null) // Zirkonium start - Sneaky
+             ServerLoginPacketListenerImpl.LOGGER.info("Disconnecting {}: {}", this.getUserName(), reason.getString());
+             this.connection.send(new ClientboundLoginDisconnectPacket(reason));
+             this.connection.disconnect(reason);
+@@ -127,6 +128,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+ 
+     @Override
+     public void onDisconnect(Component reason) {
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.dontLogUnauthedClientDisconnects && this.authenticatedProfile == null) return;
+         ServerLoginPacketListenerImpl.LOGGER.info("{} lost connection: {}", this.getUserName(), reason.getString());
+     }
+ 
+@@ -194,6 +196,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+         PlayerList playerlist = this.server.getPlayerList();
+         // CraftBukkit start - fire PlayerLoginEvent
+         this.player = playerlist.canPlayerLogin(this, profile); // CraftBukkit
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky) me.elephant1214.zirkonium.SneakyManager.addIP(this.connection.getRemoteAddress()); // Zirkonium - Sneaky
+ 
+         if (this.player == null) {
+             // this.disconnect(ichatbasecomponent);
+@@ -271,6 +274,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+                         ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1)); // Spigot
+                     } else {
+                         ServerLoginPacketListenerImpl.this.disconnect(org.purpurmc.purpur.PurpurConfig.unverifiedUsername.equals("default") ? Component.translatable("multiplayer.disconnect.unverified_username") : io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(org.purpurmc.purpur.PurpurConfig.unverifiedUsername))); // Purpur
++                        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.dontLogUnauthedServerDisconnects) // Zirkonium - Sneaky
+                         ServerLoginPacketListenerImpl.LOGGER.error("Username '{}' tried to join with an invalid session", s1);
+                     }
+                 } catch (AuthenticationUnavailableException authenticationunavailableexception) {
+diff --git a/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
+index 6338c52e0082d36d3b80038fdb44abf2772adb30..9c6fd6a59c4e1be830152efa703083a8986d1f49 100644
+--- a/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
+@@ -30,10 +30,35 @@ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListene
+     private boolean hasRequestedStatus;
+ 
+     public ServerStatusPacketListenerImpl(ServerStatus metadata, Connection connection) {
+-        this.status = metadata;
++        // Zirkonium start - Sneaky
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky && me.elephant1214.zirkonium.SneakyManager.canPing(connection.address)) {
++            if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.hideServerPingData) {
++                this.status = FAKE_STATUS;
++            } else if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.hidePlayerList) {
++                this.status = new ServerStatus(
++                        metadata.description(),
++                        Optional.of(new ServerStatus.Players(20, 0, java.util.List.of())),
++                        metadata.version(),
++                        metadata.favicon(),
++                        metadata.enforcesSecureChat()
++                );
++            } else {
++                this.status = metadata;
++            }
++        } else {
++            this.status = metadata;
++        }
+         this.connection = connection;
+     }
+ 
++    private static final ServerStatus FAKE_STATUS = new ServerStatus(
++            Component.literal("A Minecraft Server"),
++            Optional.of(new ServerStatus.Players(20, 0, java.util.List.of())),
++            Optional.of(ServerStatus.Version.current()),
++            Optional.empty(),
++            true
++    ); // Zirkonium end - Sneaky
++
+     @Override
+     public void onDisconnect(Component reason) {}
+ 

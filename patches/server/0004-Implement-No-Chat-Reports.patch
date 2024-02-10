@@ -5,38 +5,37 @@ Subject: [PATCH] Implement No Chat Reports
 
 
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index ba585089164b7e6bc48fd28e8d389bbc95c83673..f0c485c2b6ede0e617ae0e75c780992d14018516 100644
+index 7d35b880d5b58aebd220d83def3b997e15029b09..76ca77707a811c79a6b3a13d31ba1e9f49d20c08 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-@@ -40,6 +40,8 @@ public class ZirkoniumConfig {
+@@ -41,6 +41,8 @@ public class ZirkoniumConfig {
      }
  
      static void readConfig() {
-+        NoChatReports.noChatReportsSettings();
++        noChatReportsSettings();
 +
          try {
              config.save(CONFIG_FILE);
          } catch (IOException ex) {
-@@ -66,7 +68,15 @@ public class ZirkoniumConfig {
+@@ -62,4 +64,16 @@ public class ZirkoniumConfig {
+         config.addDefault(path, def);
          return config.getInt(path, config.getInt(path));
      }
- 
--    public static class Gameplay {
--        public static int maxAnvilLevelCost = 40;
-+    public static class NoChatReports {
-+        public static boolean noChatReports = true;
-+        public static boolean addQueryData = true;
-+        public static boolean convertToSystemMessage = true;
 +
-+        public static void noChatReportsSettings() {
-+            noChatReports = getBoolean("no-chat-reports.enabled", noChatReports);
-+            addQueryData = getBoolean("no-chat-reports.add-query-data", addQueryData) && noChatReports;
-+            convertToSystemMessage = getBoolean("no-chat-reports.convert-to-system-message", convertToSystemMessage) && noChatReports;
-+        }
-     }
++    // Actual config options are below this point
++
++    public static boolean noChatReports = true;
++    public static boolean addQueryData = true;
++    public static boolean convertToSystemMessage = true;
++
++    private static void noChatReportsSettings() {
++        noChatReports = getBoolean("no-chat-reports.enabled", noChatReports);
++        addQueryData = getBoolean("no-chat-reports.add-query-data", addQueryData) && noChatReports;
++        convertToSystemMessage = getBoolean("no-chat-reports.convert-to-system-message", convertToSystemMessage) && noChatReports;
++    }
  }
 diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
-index bdcfd80f937c34956911373905d66424bbff8e1d..627adbd73686fca48e9f4b6f0f7c056466ec832c 100644
+index bdcfd80f937c34956911373905d66424bbff8e1d..a273042199b7653d55d05b1755539b799ef30263 100644
 --- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 +++ b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 @@ -129,9 +129,23 @@ public class FriendlyByteBuf extends ByteBuf {
@@ -44,7 +43,7 @@ index bdcfd80f937c34956911373905d66424bbff8e1d..627adbd73686fca48e9f4b6f0f7c0564
  
      public <T> T readJsonWithCodec(Codec<T> codec) {
 +        // Zirkonium start - No Chat Reports
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports &&
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports &&
 +                codec == net.minecraft.network.protocol.status.ServerStatus.CODEC) {
 +            JsonElement jsonElement = GsonHelper.fromJson(FriendlyByteBuf.GSON, this.readUtf(), JsonElement.class);
 +            DataResult<T> dataResult = codec.parse(JsonOps.INSTANCE, jsonElement);
@@ -70,7 +69,7 @@ index bdcfd80f937c34956911373905d66424bbff8e1d..627adbd73686fca48e9f4b6f0f7c0564
          DataResult<JsonElement> dataresult = codec.encodeStart(JsonOps.INSTANCE, value);
 -
 +        // Zirkonium start - No Chat Reports
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.addQueryData &&
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.addQueryData &&
 +                codec == net.minecraft.network.protocol.status.ServerStatus.CODEC) {
 +            JsonElement element = Util.getOrThrow(dataresult, string -> new EncoderException("Failed to encode: " + string + " " + value));
 +            element.getAsJsonObject().addProperty("preventsChatReports", true);
@@ -81,7 +80,7 @@ index bdcfd80f937c34956911373905d66424bbff8e1d..627adbd73686fca48e9f4b6f0f7c0564
              return new EncoderException("Failed to encode: " + s + " " + value);
          })), maxLength); // Paper - Adventure; add max length parameter
 diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java
-index b8c1f3b9afddc87d56541c8af63cffecfcdd2653..3bad591621fe4b700d4da6ee477214a289bf9c9a 100644
+index b8c1f3b9afddc87d56541c8af63cffecfcdd2653..61ab75bc9d7f1914f2ceed472d2d4b460c4cf48e 100644
 --- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java
 +++ b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatCommandPacket.java
 @@ -24,4 +24,9 @@ public record ServerboundChatCommandPacket(String command, Instant timeStamp, lo
@@ -91,11 +90,11 @@ index b8c1f3b9afddc87d56541c8af63cffecfcdd2653..3bad591621fe4b700d4da6ee477214a2
 +
 +    @Override // Zirkonium start - No Chat Reports
 +    public ArgumentSignatures argumentSignatures() {
-+        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports ? ArgumentSignatures.EMPTY : this.argumentSignatures;
++        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports ? ArgumentSignatures.EMPTY : this.argumentSignatures;
 +    } // Zirkonium end - No Chat Reports
  }
 diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
-index d1d2fc0c57523c1abf1e8bfec913c78927c3dafc..88af307bcf6103e6070a2494d7beb0a0539829d5 100644
+index d1d2fc0c57523c1abf1e8bfec913c78927c3dafc..999771c0e4d8751aef25d247d454253549518e15 100644
 --- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
 +++ b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
 @@ -25,4 +25,9 @@ public record ServerboundChatPacket(String message, Instant timeStamp, long salt
@@ -105,23 +104,23 @@ index d1d2fc0c57523c1abf1e8bfec913c78927c3dafc..88af307bcf6103e6070a2494d7beb0a0
 +
 +    @Override // Zirkonium start - No Chat Reports
 +    public @Nullable MessageSignature signature() {
-+        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports ? null : this.signature;
++        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports ? null : this.signature;
 +    } // Zirkonium end - No Chat Reports
  }
 diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java
-index 9d6db4a378036559efab91c8b7dcf2a6b0c2cce6..0e2fa14eda69ba5aa3ee4d6901f43b8bbcec57e8 100644
+index 9d6db4a378036559efab91c8b7dcf2a6b0c2cce6..38d7512c7cae0857867eb0a155d3966adbf5b08a 100644
 --- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java
 +++ b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java
 @@ -16,6 +16,7 @@ public record ServerboundChatSessionUpdatePacket(RemoteChatSession.Data chatSess
  
      @Override
      public void handle(ServerGamePacketListener listener) {
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports) return; // Zirkonium - No Chat Reports
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports) return; // Zirkonium - No Chat Reports
          listener.handleChatSessionUpdate(this);
      }
  }
 diff --git a/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java b/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
-index c40979e2fa37acb2f3df493395f3ab6e185345d7..bd4e0238a54f44435f8e19e8e6fa52ca30cc8b2d 100644
+index c40979e2fa37acb2f3df493395f3ab6e185345d7..dc718ab6ba8d5eecec6eb1db5ba4f24b9590da30 100644
 --- a/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
 +++ b/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
 @@ -62,4 +62,27 @@ public record ServerStatus(Component description, Optional<ServerStatus.Players>
@@ -135,7 +134,7 @@ index c40979e2fa37acb2f3df493395f3ab6e185345d7..bd4e0238a54f44435f8e19e8e6fa52ca
 +
 +    @Override
 +    public boolean enforcesSecureChat() {
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.convertToSystemMessage) {
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage) {
 +            return true;
 +        }
 +        return this.enforcesSecureChat;
@@ -155,7 +154,7 @@ index c40979e2fa37acb2f3df493395f3ab6e185345d7..bd4e0238a54f44435f8e19e8e6fa52ca
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index cbc86432a7a96360d7f857b5bcc5a64a35442ce5..12f20de263b0d620c0f691af1f95d441dd6c9dd7 100644
+index cbc86432a7a96360d7f857b5bcc5a64a35442ce5..d5491686130202b58b36c0ef10829348b94bac12 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -674,9 +674,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -166,13 +165,13 @@ index cbc86432a7a96360d7f857b5bcc5a64a35442ce5..12f20de263b0d620c0f691af1f95d441
 -        // Paper start - Add setting for proxy online mode status
 -        return dedicatedserverproperties.enforceSecureProfile
 +        // Paper start - fix secure profile with proxy online mode
-+        return !me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports // Zirkonium - No Chat Reports
++        return !me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports // Zirkonium - No Chat Reports
 +            && dedicatedserverproperties.enforceSecureProfile
              && io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode()
              && this.services.canValidateProfileKeys();
          // Paper end - Add setting for proxy online mode status
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index 02e65b0bd212d46855baee48fab35dc95a88b43f..0ed6516de4239935b47b19f9566a0b748ce32ca8 100644
+index 02e65b0bd212d46855baee48fab35dc95a88b43f..bcd4f35a27c79fc3f02769ebedc1483d2cb8fa9e 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -2,8 +2,10 @@ package net.minecraft.server.network;
@@ -281,7 +280,7 @@ index 02e65b0bd212d46855baee48fab35dc95a88b43f..0ed6516de4239935b47b19f9566a0b74
      public void send(Packet<?> packet) {
 +        // Zirkonium start - No Chat Reports
 +        if (this instanceof ServerGamePacketListenerImpl listener
-+                && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.convertToSystemMessage
++                && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage
 +                && packet instanceof net.minecraft.network.protocol.game.ClientboundPlayerChatPacket chat) {
 +            packet = new net.minecraft.network.protocol.game.ClientboundSystemChatPacket(io.papermc.paper.adventure.PaperAdventure.asAdventure(chat.chatType().resolve(listener.player.level()
 +                    .registryAccess()).get().decorate(chat.unsignedContent() != null ? chat.unsignedContent()
@@ -295,7 +294,7 @@ index 02e65b0bd212d46855baee48fab35dc95a88b43f..0ed6516de4239935b47b19f9566a0b74
      public void send(Packet<?> packet, @Nullable PacketSendListener callbacks) {
 -        // CraftBukkit start
 +        if (this instanceof ServerGamePacketListenerImpl listener
-+                && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.convertToSystemMessage
++                && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage
 +                && packet instanceof net.minecraft.network.protocol.game.ClientboundPlayerChatPacket chat && callbacks != null) {
 +            listener.send(chat);
 +            return;
@@ -325,7 +324,7 @@ index 02e65b0bd212d46855baee48fab35dc95a88b43f..0ed6516de4239935b47b19f9566a0b74
          this.disconnect(io.papermc.paper.adventure.PaperAdventure.asAdventure(reason), org.bukkit.event.player.PlayerKickEvent.Cause.UNKNOWN);
      }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 323391509c2efd49c54d7b36d7aa880c63ae5fd4..51ff6548c2e0a22f22e6e07194033107d056a1df 100644
+index 323391509c2efd49c54d7b36d7aa880c63ae5fd4..a8ca319d7411d64d9758807d526254d6808d9707 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -1,6 +1,5 @@
@@ -356,7 +355,7 @@ index 323391509c2efd49c54d7b36d7aa880c63ae5fd4..51ff6548c2e0a22f22e6e07194033107
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public
 -        return message.hasSignature() && !message.hasExpiredServer(Instant.now());
-+        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.NoChatReports.noChatReports || (message.hasSignature() && !message.hasExpiredServer(Instant.now())); // Zirkonium - No Chat Reports
++        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports || (message.hasSignature() && !message.hasExpiredServer(Instant.now())); // Zirkonium - No Chat Reports
      }
  
      // CraftBukkit start

@@ -357,32 +357,28 @@ index 0000000000000000000000000000000000000000..e9ab6e1c6f463514d319889cf9ef0942
 +}
 diff --git a/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java b/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..d8cec653825563245db6896ae85b8bb5b6c716fa
+index 0000000000000000000000000000000000000000..efed925c0ac1a5da1e21f1fdf6e19ed3f3f663a4
 --- /dev/null
 +++ b/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
-@@ -0,0 +1,142 @@
+@@ -0,0 +1,138 @@
 +package com.dynview.viewdisthandler;
 +
 +import com.dynview.util.TickTimeHandler;
 +import me.elephant1214.event.dynview.SimulationDistanceUpdateEvent;
 +import me.elephant1214.event.dynview.ViewDistanceUpdateEvent;
-+import me.elephant1214.zirkonium.configuration.ZirkoniumConfig.DynamicView;
++import me.elephant1214.zirkonium.Zirkonium;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraft.util.Mth;
-+import org.bukkit.event.Cancellable;
 +
 +import java.util.logging.Logger;
 +
-+public class ServerDynamicViewDistanceManager implements IDynamicViewDistanceManager {
-+    private static final Logger LOGGER = Logger.getLogger("DynView");
++import static java.lang.Math.round;
++import static me.elephant1214.zirkonium.Zirkonium.LOGGER;
++import static me.elephant1214.zirkonium.configuration.ZirkoniumConfig.*;
 +
++public class ServerDynamicViewDistanceManager implements IDynamicViewDistanceManager {
 +    private static final int UPDATE_LEEWAY = 3;
 +    private static ServerDynamicViewDistanceManager instance;
-+    public static int minViewDistance = DynamicView.minChunkViewDistance;
-+    public static int maxViewDistance = DynamicView.maxChunkViewDistance;
-+    public static int minSimulationDistance = DynamicView.minSimulationDistance;
-+    public static int maxSimulationDistance = DynamicView.maxSimulationDistance;
-+    public static double meanTickToStayBelow = DynamicView.meanAvgTickTime;
 +
 +    private boolean reduceViewDistance = true;
 +    private boolean increaseViewDistance = true;
@@ -402,10 +398,10 @@ index 0000000000000000000000000000000000000000..d8cec653825563245db6896ae85b8bb5
 +
 +    @Override
 +    public void initViewDist() {
-+        this.currentViewDist = (minViewDistance + maxViewDistance) / 2;
++        this.currentViewDist = (minChunkViewDistance + maxChunkViewDistance) / 2;
 +        this.currentSimulationDistance = (minSimulationDistance + maxSimulationDistance) / 2;
-+        MinecraftServer.getServer().getPlayerList().setViewDistance(minViewDistance);
-+        if (DynamicView.adjustSimulationDistance) {
++        MinecraftServer.getServer().getPlayerList().setViewDistance(minChunkViewDistance);
++        if (adjustSimulationDistance) {
 +            MinecraftServer.getServer().getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
 +        }
 +    }
@@ -416,16 +412,16 @@ index 0000000000000000000000000000000000000000..d8cec653825563245db6896ae85b8bb5
 +
 +        if (server.getPlayerList().getPlayers().isEmpty()) return;
 +
-+        if (meanTickTime - UPDATE_LEEWAY > meanTickToStayBelow) {
++        if (meanTickTime - UPDATE_LEEWAY > maxTickTime) {
 +            this.increaseViewDistance = true;
 +
-+            if (this.reduceViewDistance && this.currentViewDist > minViewDistance) {
-+                ViewDistanceUpdateEvent updateEvent = new ViewDistanceUpdateEvent(meanTickToStayBelow, meanTickTime, this.currentViewDist, --this.currentViewDist, false);
++            if (this.reduceViewDistance && this.currentViewDist > minChunkViewDistance) {
++                ViewDistanceUpdateEvent updateEvent = new ViewDistanceUpdateEvent(maxTickTime, meanTickTime, this.currentViewDist, --this.currentViewDist, false);
 +                if (!updateEvent.isCancelled()) {
-+                    this.reduceViewDistance = !DynamicView.adjustSimulationDistance;
++                    this.reduceViewDistance = !adjustSimulationDistance;
 +                    if (updateEvent.getNewDistance() != this.currentViewDist) this.currentViewDist = updateEvent.getNewDistance();
-+                    if (DynamicView.logMessages) {
-+                        LOGGER.info("Mean tick: " + meanTickTime + "ms decreasing chunk view distance to: " + this.currentViewDist);
++                    if (logMessages) {
++                        LOGGER.info("[DynView] Mean tick: " + round(meanTickTime) + "ms decreasing chunk view distance to: " + this.currentViewDist);
 +                    }
 +                    server.getPlayerList().setViewDistance(this.currentViewDist);
 +                    return;
@@ -433,32 +429,32 @@ index 0000000000000000000000000000000000000000..d8cec653825563245db6896ae85b8bb5
 +            }
 +
 +            if (!this.reduceViewDistance && this.currentSimulationDistance > minSimulationDistance) {
-+                SimulationDistanceUpdateEvent updateEvent = new SimulationDistanceUpdateEvent(meanTickToStayBelow, meanTickTime, this.currentSimulationDistance, --this.currentSimulationDistance, false);
++                SimulationDistanceUpdateEvent updateEvent = new SimulationDistanceUpdateEvent(maxTickTime, meanTickTime, this.currentSimulationDistance, --this.currentSimulationDistance, false);
 +                if (!updateEvent.isCancelled()) {
 +                    this.reduceViewDistance = true;
 +                    if (this.currentSimulationDistance != updateEvent.getNewDistance()) this.currentSimulationDistance = updateEvent.getNewDistance();
-+                    if (DynamicView.logMessages) {
-+                        LOGGER.info("Mean tick: " + meanTickTime + "ms decreasing simulation distance to: " + this.currentSimulationDistance);
++                    if (logMessages) {
++                        LOGGER.info("[DynView] Mean tick: " + round(meanTickTime) + "ms decreasing simulation distance to: " + this.currentSimulationDistance);
 +                    }
 +                    server.getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
 +                }
 +            }
 +
-+            if (!DynamicView.adjustSimulationDistance) {
++            if (!adjustSimulationDistance) {
 +                this.reduceViewDistance = true;
 +            }
 +        }
 +
-+        if (meanTickTime + UPDATE_LEEWAY < meanTickToStayBelow) {
++        if (meanTickTime + UPDATE_LEEWAY < maxTickTime) {
 +            this.reduceViewDistance = false;
 +
-+            if (this.increaseViewDistance && this.currentViewDist < maxViewDistance) {
-+                ViewDistanceUpdateEvent updateEvent = new ViewDistanceUpdateEvent(meanTickToStayBelow, meanTickTime, this.currentViewDist, ++this.currentViewDist, false);
++            if (this.increaseViewDistance && this.currentViewDist < maxChunkViewDistance) {
++                ViewDistanceUpdateEvent updateEvent = new ViewDistanceUpdateEvent(maxTickTime, meanTickTime, this.currentViewDist, ++this.currentViewDist, false);
 +                if (!updateEvent.isCancelled()) {
-+                    this.increaseViewDistance = !DynamicView.adjustSimulationDistance;
++                    this.increaseViewDistance = !adjustSimulationDistance;
 +                    if (updateEvent.getNewDistance() != this.currentViewDist) this.currentViewDist = updateEvent.getNewDistance();
-+                    if (DynamicView.logMessages) {
-+                        LOGGER.info("Mean tick: " + meanTickTime + "ms increasing chunk view distance to: " + this.currentViewDist);
++                    if (logMessages) {
++                        LOGGER.info("[DynView] Mean tick: " + round(meanTickTime) + "ms increasing chunk view distance to: " + this.currentViewDist);
 +                    }
 +                    server.getPlayerList().setViewDistance(this.currentViewDist);
 +                    return;
@@ -466,18 +462,18 @@ index 0000000000000000000000000000000000000000..d8cec653825563245db6896ae85b8bb5
 +            }
 +
 +            if (!this.increaseViewDistance && this.currentSimulationDistance < maxSimulationDistance) {
-+                SimulationDistanceUpdateEvent updateEvent = new SimulationDistanceUpdateEvent(meanTickToStayBelow, meanTickTime, this.currentSimulationDistance, ++this.currentSimulationDistance, false);
++                SimulationDistanceUpdateEvent updateEvent = new SimulationDistanceUpdateEvent(maxTickTime, meanTickTime, this.currentSimulationDistance, ++this.currentSimulationDistance, false);
 +                if (!updateEvent.isCancelled()) {
 +                    this.increaseViewDistance = true;
 +                    this.currentSimulationDistance = updateEvent.getNewDistance();
-+                    if (DynamicView.logMessages) {
-+                        LOGGER.info("Mean tick: " + meanTickTime + "ms increasing simulation distance to: " + this.currentSimulationDistance);
++                    if (logMessages) {
++                        LOGGER.info("[DynView] Mean tick: " + round(meanTickTime) + "ms increasing simulation distance to: " + this.currentSimulationDistance);
 +                    }
 +                    server.getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
 +                }
 +            }
 +
-+            if (!DynamicView.adjustSimulationDistance) {
++            if (!adjustSimulationDistance) {
 +                this.increaseViewDistance = true;
 +            }
 +        }
@@ -485,7 +481,7 @@ index 0000000000000000000000000000000000000000..d8cec653825563245db6896ae85b8bb5
 +
 +    @Override
 +    public boolean setCurrentViewDist(final int newViewDistance) {
-+        ViewDistanceUpdateEvent updateEvent = new ViewDistanceUpdateEvent(meanTickToStayBelow, TickTimeHandler.getInstance().getMeanTickTime(), this.currentViewDist, this.currentViewDist = Mth.clamp(newViewDistance, 2, 32), true);
++        ViewDistanceUpdateEvent updateEvent = new ViewDistanceUpdateEvent(maxTickTime, TickTimeHandler.getInstance().getMeanTickTime(), this.currentViewDist, this.currentViewDist = Mth.clamp(newViewDistance, 2, 32), true);
 +        if (!updateEvent.isCancelled()) {
 +            MinecraftServer.getServer().getPlayerList().setViewDistance(this.currentViewDist);
 +            return true;
@@ -495,7 +491,7 @@ index 0000000000000000000000000000000000000000..d8cec653825563245db6896ae85b8bb5
 +
 +    @Override
 +    public boolean setCurrentSimulationDistance(final int newSimulationDistance) {
-+        SimulationDistanceUpdateEvent updateEvent = new SimulationDistanceUpdateEvent(meanTickToStayBelow, TickTimeHandler.getInstance().getMeanTickTime(), this.currentSimulationDistance, this.currentSimulationDistance = Mth.clamp(newSimulationDistance, 5, 32), true);
++        SimulationDistanceUpdateEvent updateEvent = new SimulationDistanceUpdateEvent(maxTickTime, TickTimeHandler.getInstance().getMeanTickTime(), this.currentSimulationDistance, this.currentSimulationDistance = Mth.clamp(newSimulationDistance, 5, 32), true);
 +        if (!updateEvent.isCancelled()) {
 +            MinecraftServer.getServer().getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
 +            return true;
@@ -505,46 +501,44 @@ index 0000000000000000000000000000000000000000..d8cec653825563245db6896ae85b8bb5
 +}
 \ No newline at end of file
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index f7035de3b2152562c0c18f0946fb89582498556f..a35b27228d4f24f04cd5489e42923283f3b9fc72 100644
+index 646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5..7f33d67d3be88b56388f2c9dbdacdbec3af7f384 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-@@ -42,6 +42,7 @@ public class ZirkoniumConfig {
+@@ -43,6 +43,7 @@ public class ZirkoniumConfig {
      static void readConfig() {
-         Gameplay.gameplaySettings();
-         NoChatReports.noChatReportsSettings();
-+        DynamicView.dynamicViewSettings();
+         noChatReportsSettings();
+         gameplaySettings();
++        dynamicViewSettings();
  
          try {
              config.save(CONFIG_FILE);
-@@ -95,4 +96,30 @@ public class ZirkoniumConfig {
-             convertToSystemMessage = getBoolean("no-chat-reports.convert-to-system-message", convertToSystemMessage) && noChatReports;
+@@ -90,4 +91,28 @@ public class ZirkoniumConfig {
          }
+         maxAnvilCost = getInt("gameplay.anvil.max-cost", maxAnvilCost);
      }
 +
-+    public static class DynamicView {
-+        public static boolean enabled = true;
-+        public static int minChunkViewDistance = 5;
-+        public static int maxChunkViewDistance = 15;
-+        public static int minSimulationDistance = 4;
-+        public static int maxSimulationDistance = 10;
-+        public static int meanAvgTickTime = 45;
-+        public static int viewDistanceUpdateRate = 60;
-+        public static boolean adjustSimulationDistance = true;
-+        public static boolean logMessages = true;
-+        public static boolean chunkUnload = true;
++    public static boolean dynamicView = true;
++    public static int minChunkViewDistance = 5;
++    public static int maxChunkViewDistance = 15;
++    public static int minSimulationDistance = 4;
++    public static int maxSimulationDistance = 10;
++    public static int maxTickTime = 45;
++    public static int viewDistanceUpdateRate = 60;
++    public static boolean adjustSimulationDistance = true;
++    public static boolean logMessages = true;
++    public static boolean chunkUnload = true;
 +
-+        public static void dynamicViewSettings() {
-+            enabled = getBoolean("dynamic-view.enabled", enabled);
-+            minChunkViewDistance = getInt("dynamic-view.min-chunk-view-distance", minChunkViewDistance);
-+            maxChunkViewDistance = getInt("dynamic-view.max-chunk-view-distance", maxChunkViewDistance);
-+            meanAvgTickTime = getInt("dynamic-view.mean-avg-tick-time", meanAvgTickTime);
-+            viewDistanceUpdateRate = getInt("dynamic-view.view-distance-update-rate", viewDistanceUpdateRate);
-+            logMessages = getBoolean("dynamic-view.log-messages", logMessages);
-+            chunkUnload = getBoolean("dynamic-view.chunk-unload", chunkUnload);
-+            adjustSimulationDistance = getBoolean("dynamic-view.adjust-simulation-distance", adjustSimulationDistance);
-+            minSimulationDistance = getInt("dynamic-view.min-simulation-distance", minSimulationDistance);
-+            maxSimulationDistance = getInt("dynamic-view.max-simulation-distance", maxSimulationDistance);
-+        }
++    private static void dynamicViewSettings() {
++        dynamicView = getBoolean("dynamic-view.enabled", dynamicView);
++        minChunkViewDistance = getInt("dynamic-view.min-chunk-view-distance", minChunkViewDistance);
++        maxChunkViewDistance = getInt("dynamic-view.max-chunk-view-distance", maxChunkViewDistance);
++        maxTickTime = getInt("dynamic-view.max-tick-time", maxTickTime);
++        viewDistanceUpdateRate = getInt("dynamic-view.view-distance-update-rate", viewDistanceUpdateRate);
++        logMessages = getBoolean("dynamic-view.log-messages", logMessages);
++        chunkUnload = getBoolean("dynamic-view.chunk-unload", chunkUnload);
++        adjustSimulationDistance = getBoolean("dynamic-view.adjust-simulation-distance", adjustSimulationDistance);
++        minSimulationDistance = getInt("dynamic-view.min-simulation-distance", minSimulationDistance);
++        maxSimulationDistance = getInt("dynamic-view.max-simulation-distance", maxSimulationDistance);
 +    }
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
@@ -567,25 +561,24 @@ index b6cc108c2d4361e6f415cfc3ff8c7699a8e222f4..ccf87651288f3532438a35732a163edf
              JfrCommand.register(this.dispatcher);
          }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index b48b3e6871cc125c08dba597e20eb9028f88980c..9c6496d29523f03742a0e371d864ea73e7b3eeb8 100644
+index b48b3e6871cc125c08dba597e20eb9028f88980c..a34e4028c45d6dc349f08d789bbabb10a5895f27 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1151,6 +1151,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
  
-+            if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.DynamicView.enabled)
++            if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.dynamicView)
 +                com.dynview.viewdisthandler.ServerDynamicViewDistanceManager.getInstance().initViewDist(); // Zirkonium - DynamicView
 +
              // Spigot start
              // Paper start - move done tracking
              LOGGER.info("Running delayed init tasks");
-@@ -1584,6 +1587,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1584,6 +1587,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          long endTime = System.nanoTime();
          long remaining = (TICK_TIME - (endTime - lastTick)) - catchupTime;
          new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.DynamicView.enabled)
-+            com.dynview.util.TickTimeHandler.getInstance().onServerTick(); // Zirkonium - DynamicView
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.dynamicView) com.dynview.util.TickTimeHandler.getInstance().onServerTick(); // Zirkonium - DynamicView
          // Paper end - Server Tick Events
          //this.profiler.push("tallying"); // Purpur
          long j = Util.getNanos() - i;

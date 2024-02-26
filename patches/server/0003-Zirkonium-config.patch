@@ -89,7 +89,7 @@ index 0000000000000000000000000000000000000000..7d35b880d5b58aebd220d83def3b997e
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 043a48d8c90e2e008b06fb5a643378a0fa948aaa..cbc86432a7a96360d7f857b5bcc5a64a35442ce5 100644
+index 5ca6af93362d205438f8321ee2461ae7f8160df1..4fbf409da88ad5063ad9b1ed257a03e35a8d42d5 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -1,24 +1,21 @@
@@ -137,10 +137,10 @@ index 043a48d8c90e2e008b06fb5a643378a0fa948aaa..cbc86432a7a96360d7f857b5bcc5a64a
              DedicatedServer.LOGGER.error("Unable to load server configuration", e);
              return false;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index e5955177b981a676eed0b62d488daafc43edbffe..914190f88697de4ef7ab38c14554613f5ec93001 100644
+index a348b79e925931aba13a1093e562fb847b38cc07..c43b92ee31c8a24ed31f983ee7c21acae9576aa1 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -243,7 +243,6 @@ import org.bukkit.plugin.PluginManager;
+@@ -245,7 +245,6 @@ import org.bukkit.plugin.PluginManager;
  import org.bukkit.plugin.ServicesManager;
  import org.bukkit.plugin.SimplePluginManager;
  import org.bukkit.plugin.SimpleServicesManager;
@@ -148,7 +148,7 @@ index e5955177b981a676eed0b62d488daafc43edbffe..914190f88697de4ef7ab38c14554613f
  import org.bukkit.plugin.messaging.Messenger;
  import org.bukkit.plugin.messaging.StandardMessenger;
  import org.bukkit.potion.Potion;
-@@ -1057,6 +1056,7 @@ public final class CraftServer implements Server {
+@@ -1069,6 +1068,7 @@ public final class CraftServer implements Server {
          org.spigotmc.SpigotConfig.init((File) this.console.options.valueOf("spigot-settings")); // Spigot
          this.console.paperConfigurations.reloadConfigs(this.console);
          org.purpurmc.purpur.PurpurConfig.init((File) console.options.valueOf("purpur-settings")); // Purpur

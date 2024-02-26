@@ -143,7 +143,7 @@ index 0000000000000000000000000000000000000000..bd83a19d040f9851c0159885c86218c8
 +    }
 +}
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index 7f33d67d3be88b56388f2c9dbdacdbec3af7f384..6326e6123a602681e295743ba6fb659a9e147693 100644
+index 7a2e2def54176ff599ee150a6cd99ec431afaec0..dd841b9fbc4ca0c71db7a8942f49999860049a36 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -1,6 +1,7 @@
@@ -332,7 +332,7 @@ index 8b62f992ec61d0a66a3856b4928ee2d705548291..170ec2c3a673538b1984d2fcd93e087d
                      }
                  } catch (AuthenticationUnavailableException authenticationunavailableexception) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-index 6338c52e0082d36d3b80038fdb44abf2772adb30..9c6fd6a59c4e1be830152efa703083a8986d1f49 100644
+index 6338c52e0082d36d3b80038fdb44abf2772adb30..63cf373e96a0525df9f4da6d6c85d22b4bb6964d 100644
 --- a/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
 @@ -30,10 +30,35 @@ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListene
@@ -341,13 +341,13 @@ index 6338c52e0082d36d3b80038fdb44abf2772adb30..9c6fd6a59c4e1be830152efa703083a8
      public ServerStatusPacketListenerImpl(ServerStatus metadata, Connection connection) {
 -        this.status = metadata;
 +        // Zirkonium start - Sneaky
-+        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky && me.elephant1214.zirkonium.SneakyManager.canPing(connection.address)) {
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.sneaky && !me.elephant1214.zirkonium.SneakyManager.canPing(connection.address)) {
 +            if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.hideServerPingData) {
 +                this.status = FAKE_STATUS;
 +            } else if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.hidePlayerList) {
 +                this.status = new ServerStatus(
 +                        metadata.description(),
-+                        Optional.of(new ServerStatus.Players(20, 0, java.util.List.of())),
++                        Optional.of(new ServerStatus.Players(metadata.players().get().max(), 0, java.util.List.of())),
 +                        metadata.version(),
 +                        metadata.favicon(),
 +                        metadata.enforcesSecureChat()

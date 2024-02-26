@@ -501,7 +501,7 @@ index 0000000000000000000000000000000000000000..efed925c0ac1a5da1e21f1fdf6e19ed3
 +}
 \ No newline at end of file
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index 646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5..7f33d67d3be88b56388f2c9dbdacdbec3af7f384 100644
+index 646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5..7a2e2def54176ff599ee150a6cd99ec431afaec0 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -43,6 +43,7 @@ public class ZirkoniumConfig {
@@ -518,8 +518,8 @@ index 646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5..7f33d67d3be88b56388f2c9dbdacdbec
      }
 +
 +    public static boolean dynamicView = true;
-+    public static int minChunkViewDistance = 5;
-+    public static int maxChunkViewDistance = 15;
++    public static int minChunkViewDistance = 6;
++    public static int maxChunkViewDistance = 16;
 +    public static int minSimulationDistance = 4;
 +    public static int maxSimulationDistance = 10;
 +    public static int maxTickTime = 45;
@@ -542,7 +542,7 @@ index 646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5..7f33d67d3be88b56388f2c9dbdacdbec
 +    }
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index b6cc108c2d4361e6f415cfc3ff8c7699a8e222f4..ccf87651288f3532438a35732a163edf87714752 100644
+index b203394ed62807e7d5df433830993f1d2ee14939..e4b4ebf1f05424d931a31c720d8b1b013008ac66 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,5 +1,6 @@

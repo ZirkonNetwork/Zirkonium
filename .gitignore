@@ -1,0 +1,9 @@
+.gradle/
+.idea/
+
+zirkonium-api/
+zirkonium-server/
+paper-api-generator/
+
+build/
+run/

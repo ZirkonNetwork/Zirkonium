@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <46881115+Elephant1214@users.noreply.github.com>
+Date: Tue, 6 Jun 2023 13:08:16 -0600
+Subject: [PATCH] Implement configurable maximum anvil cost
+
+
+diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+index fc11e40392705071a27cec9df50155e7af27cf92..646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5 100644
+--- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+@@ -79,6 +79,7 @@ public class ZirkoniumConfig {
+     }
+ 
+     public static int maxEnchantLevelMultiplier = 1;
++    public static int maxAnvilCost = 40;
+ 
+     private static void gameplaySettings() {
+         maxEnchantLevelMultiplier = getInt("gameplay.enchantment.max-level-multiplier", maxEnchantLevelMultiplier);
+@@ -87,5 +88,6 @@ public class ZirkoniumConfig {
+             maxEnchantLevelMultiplier = 1;
+             set("gameplay.enchantment.max-level-multiplier", 1);
+         }
++        maxAnvilCost = getInt("gameplay.anvil.max-cost", maxAnvilCost);
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+index 2747f04e657154362af55eef1dd50455e02af371..4b6593760b55bc26d74dfce39179089d6fd3417d 100644
+--- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+@@ -57,7 +57,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+     private static final int SLOT_Y_PLACEMENT = 47;
+     // CraftBukkit start
+     public static final int DEFAULT_DENIED_COST = -1;
+-    public int maximumRepairCost = 40;
++    public int maximumRepairCost = me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxAnvilCost;
+     private CraftInventoryView bukkitEntity;
+     // CraftBukkit end
+     public boolean bypassCost = false; // Purpur

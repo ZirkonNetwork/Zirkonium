@@ -1,0 +1,208 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <46881115+Elephant1214@users.noreply.github.com>
+Date: Sat, 17 Jun 2023 09:38:38 -0600
+Subject: [PATCH] Implement Smooth Boot
+
+
+diff --git a/src/main/java/io/github/ultimateboomer/smoothboot/util/LoggingForkJoinWorkerThread.java b/src/main/java/io/github/ultimateboomer/smoothboot/util/LoggingForkJoinWorkerThread.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..4b391e0324950f4710abae2e3fa4204ac39b650b
+--- /dev/null
++++ b/src/main/java/io/github/ultimateboomer/smoothboot/util/LoggingForkJoinWorkerThread.java
+@@ -0,0 +1,25 @@
++package io.github.ultimateboomer.smoothboot.util;
++
++import org.slf4j.Logger;
++
++import java.util.concurrent.ForkJoinPool;
++import java.util.concurrent.ForkJoinWorkerThread;
++
++public class LoggingForkJoinWorkerThread extends ForkJoinWorkerThread {
++    private final Logger logger;
++
++    public LoggingForkJoinWorkerThread(ForkJoinPool pool, Logger logger) {
++        super(pool);
++        this.logger = logger;
++    }
++
++    @Override
++    protected void onTermination(Throwable exception) {
++        if (exception != null) {
++            logger.warn("{} died", this.getName(), exception);
++        } else {
++            logger.debug("{} shutdown", this.getName());
++        }
++        super.onTermination(exception);
++    }
++}
+diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+index f7035de3b2152562c0c18f0946fb89582498556f..7e22da0263bc30efba1654903dc0a4d6a1778ef9 100644
+--- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+@@ -1,6 +1,8 @@
+ package me.elephant1214.zirkonium.configuration;
+ 
+ import com.google.common.base.Throwables;
++import net.minecraft.Util;
++import net.minecraft.util.Mth;
+ import org.bukkit.Bukkit;
+ import org.bukkit.configuration.InvalidConfigurationException;
+ import org.bukkit.configuration.file.YamlConfiguration;
+@@ -42,6 +44,7 @@ public class ZirkoniumConfig {
+     static void readConfig() {
+         Gameplay.gameplaySettings();
+         NoChatReports.noChatReportsSettings();
++        SmoothBoot.smoothBootSettings();
+ 
+         try {
+             config.save(CONFIG_FILE);
+@@ -95,4 +98,31 @@ public class ZirkoniumConfig {
+             convertToSystemMessage = getBoolean("no-chat-reports.convert-to-system-message", convertToSystemMessage) && noChatReports;
+         }
+     }
++
++    public static class SmoothBoot {
++        public static boolean enabled = true;
++        public static boolean gameThreadEnabled = true;
++        public static int gameThreadPriority = 5;
++        public static boolean bootstrapExecutorEnabled = true;
++        public static int bootstrapExecutorPriority = 3;
++        public static int bootstrapExecutorCount = 1;
++        public static boolean mainExecutorEnabled = true;
++        public static int mainExecutorPriority = 3;
++        public static int mainExecutorCount = Mth.clamp(Runtime.getRuntime().availableProcessors() - 1, 1, Util.getMaxThreads());
++        public static boolean ioExecutorEnabled = true;
++        public static int ioExecutorPriority = 3;
++
++        public static void smoothBootSettings() {
++            enabled = getBoolean("smooth-boot.enabled", enabled);
++            gameThreadEnabled = getBoolean("smooth-boot.game-thread.enabled", gameThreadEnabled) && enabled;
++            gameThreadPriority = getInt("smooth-boot.game-thread.priority", gameThreadPriority);
++            bootstrapExecutorEnabled = getBoolean("smooth-boot.bootstrap-executor.enabled", bootstrapExecutorEnabled) && enabled;
++            bootstrapExecutorPriority = getInt("smooth-boot.bootstrap-executor.priority", bootstrapExecutorPriority);
++            bootstrapExecutorCount = getInt("smooth-boot.bootstrap-executor.count", bootstrapExecutorCount);
++            mainExecutorEnabled = getBoolean("smooth-boot.main-executor.enabled", mainExecutorEnabled) && enabled;
++            mainExecutorPriority = getInt("smooth-boot.main-executor.priority", mainExecutorPriority);
++            ioExecutorEnabled = getBoolean("smooth-boot.io-executor.enabled", ioExecutorEnabled) && enabled;
++            ioExecutorPriority = getInt("smooth-boot.io-executor.priority", ioExecutorPriority);
++        }
++    }
+ }
+diff --git a/src/main/java/net/minecraft/Util.java b/src/main/java/net/minecraft/Util.java
+index 5c1503f5b173138fc9e918d5562a981ca8b66d06..b96af56934317a49fe54ff5886203819b11f8a64 100644
+--- a/src/main/java/net/minecraft/Util.java
++++ b/src/main/java/net/minecraft/Util.java
+@@ -81,7 +81,7 @@ public class Util {
+     private static final int DEFAULT_MAX_THREADS = 255;
+     private static final String MAX_THREADS_SYSTEM_PROPERTY = "max.bg.threads";
+     private static final AtomicInteger WORKER_COUNT = new AtomicInteger(1);
+-    private static final ExecutorService BACKGROUND_EXECUTOR = makeExecutor("Main", -1); // Paper - add -1 priority
++    private static ExecutorService BACKGROUND_EXECUTOR = makeExecutor("Main", -1); // Paper - add -1 priority // Zirkonium - not final
+     // Paper start - don't submit BLOCKING PROFILE LOOKUPS to the world gen thread
+     public static final ExecutorService PROFILE_EXECUTOR = Executors.newFixedThreadPool(2, new java.util.concurrent.ThreadFactory() {
+ 
+@@ -98,7 +98,7 @@ public class Util {
+         }
+     });
+     // Paper end - don't submit BLOCKING PROFILE LOOKUPS to the world gen thread
+-    private static final ExecutorService IO_POOL = makeIoExecutor();
++    private static ExecutorService IO_POOL = makeIoExecutor(); // Zirkonium - not final
+     private static final DateTimeFormatter FILENAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss", Locale.ROOT);
+     public static final long NANOS_PER_MILLI = 1000000L;
+     public static TimeSource.NanoTimeSource timeSource = System::nanoTime;
+@@ -117,6 +117,10 @@ public class Util {
+     public static final double COLLISION_EPSILON = 1.0E-7; // Paper
+     private static Consumer<String> thePauser = (message) -> {
+     };
++    // Zirkonium start - Smooth Boot
++    private static boolean initBackgroundExecutor = false;
++    private static boolean initIOPool = false;
++    // Zirkonium end
+ 
+     public static <K, V> Collector<Map.Entry<? extends K, ? extends V>, ?, Map<K, V>> toMap() {
+         return Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue);
+@@ -190,7 +194,7 @@ public class Util {
+         return executorService;
+     }
+ 
+-    private static int getMaxThreads() {
++    public static int getMaxThreads() { // Zirkonium - private -> public
+         String string = System.getProperty("max.bg.threads");
+         if (string != null) {
+             try {
+@@ -208,14 +212,58 @@ public class Util {
+         return 255;
+     }
+ 
++    // Zirkonium start - Smooth Boot
+     public static ExecutorService backgroundExecutor() {
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.bootstrapExecutorEnabled && !initBackgroundExecutor) {
++            BACKGROUND_EXECUTOR = replaceBackgroundExecutor("Main");
++            LOGGER.debug("Main executor replaced");
++            initBackgroundExecutor = true;
++        }
+         return BACKGROUND_EXECUTOR;
+     }
+ 
+     public static ExecutorService ioPool() {
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.ioExecutorEnabled && !initIOPool) {
++            IO_POOL = replaceIOExecutor();
++            LOGGER.debug("IO executor replaced");
++            initIOPool = true;
++        }
+         return IO_POOL;
+     }
+ 
++    private static ExecutorService replaceBackgroundExecutor(String name) {
++        return new ForkJoinPool(net.minecraft.util.Mth.clamp(select(name, me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.bootstrapExecutorCount,
++                me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.mainExecutorCount), 1, 0x7fff), (forkJoinPool) -> {
++            String workerName = "Worker-" + name + "-" + WORKER_COUNT.getAndIncrement();
++            LOGGER.debug("Initialized " + workerName);
++
++            ForkJoinWorkerThread forkJoinWorkerThread = new io.github.ultimateboomer.smoothboot.util.LoggingForkJoinWorkerThread(forkJoinPool, LOGGER);
++            forkJoinWorkerThread.setPriority(select(name, me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.bootstrapExecutorPriority,
++                    me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.mainExecutorPriority));
++            forkJoinWorkerThread.setName(workerName);
++            return forkJoinWorkerThread;
++        }, Util::onThreadException, true);
++    }
++
++    private static ExecutorService replaceIOExecutor() {
++        return Executors.newCachedThreadPool((runnable) -> {
++            String workerName = "IO-Worker-" + WORKER_COUNT.getAndIncrement();
++            LOGGER.debug("Initialized " + workerName);
++
++            Thread thread = new Thread(runnable);
++            thread.setName(workerName);
++            thread.setDaemon(true);
++            thread.setPriority(me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.ioExecutorPriority);
++            thread.setUncaughtExceptionHandler(Util::onThreadException);
++            return thread;
++        });
++    }
++
++    private static <T> T select(String name, T bootstrap, T main) {
++        return java.util.Objects.equals(name, "Bootstrap") ? bootstrap : main;
++    }
++    // Zirkonium end
++
+     public static void shutdownExecutors() {
+         shutdownExecutor(BACKGROUND_EXECUTOR);
+         shutdownExecutor(IO_POOL);
+diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
+index ec268189b19b6fa5c4521f96ce211a531db35ec5..d3d66b5ad84441217ed0484eb4742eedde11a205 100644
+--- a/src/main/java/net/minecraft/server/Main.java
++++ b/src/main/java/net/minecraft/server/Main.java
+@@ -79,6 +79,12 @@ public class Main {
+ 
+     @DontObfuscate
+     public static void main(final OptionSet optionset) { // CraftBukkit - replaces main(String[] astring)
++        // Zirkonium start - Smooth Boot
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.gameThreadEnabled) {
++            Thread.currentThread().setPriority(me.elephant1214.zirkonium.configuration.ZirkoniumConfig.SmoothBoot.gameThreadPriority);
++            LOGGER.debug("Initialized server game thread");
++        }
++        // Zirkonium end
+         SharedConstants.tryDetectVersion();
+         /* CraftBukkit start - Replace everything
+         OptionParser optionparser = new OptionParser();

@@ -1,0 +1,218 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <46881115+Elephant1214@users.noreply.github.com>
+Date: Sat, 24 Dec 2022 17:00:43 -0700
+Subject: [PATCH] Implement No Chat Reports
+
+
+diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+index 7d35b880d5b58aebd220d83def3b997e15029b09..76ca77707a811c79a6b3a13d31ba1e9f49d20c08 100644
+--- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+@@ -41,6 +41,8 @@ public class ZirkoniumConfig {
+     }
+ 
+     static void readConfig() {
++        noChatReportsSettings();
++
+         try {
+             config.save(CONFIG_FILE);
+         } catch (IOException ex) {
+@@ -62,4 +64,16 @@ public class ZirkoniumConfig {
+         config.addDefault(path, def);
+         return config.getInt(path, config.getInt(path));
+     }
++
++    // Actual config options are below this point
++
++    public static boolean noChatReports = true;
++    public static boolean addQueryData = true;
++    public static boolean convertToSystemMessage = true;
++
++    private static void noChatReportsSettings() {
++        noChatReports = getBoolean("no-chat-reports.enabled", noChatReports);
++        addQueryData = getBoolean("no-chat-reports.add-query-data", addQueryData) && noChatReports;
++        convertToSystemMessage = getBoolean("no-chat-reports.convert-to-system-message", convertToSystemMessage) && noChatReports;
++    }
+ }
+diff --git a/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java b/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
+index 479e6e2aa88a22ef7f8fccb06add6806f5b71d9d..baac9ef450d00352d474a46c735fe4b3821c86c0 100644
+--- a/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
++++ b/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
+@@ -36,8 +36,15 @@ public record ArgumentSignatures(List<ArgumentSignatures.Entry> entries) {
+ 
+         public void write(FriendlyByteBuf buf) {
+             buf.writeUtf(this.name, 16);
+-            MessageSignature.write(buf, this.signature);
++            buf.writeNullable(this.signature, MessageSignature::write);
+         }
++
++        // Zirkonium start - No Chat Reports
++        @Override
++        public @Nullable MessageSignature signature() {
++            return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports ? null : this.signature;
++        }
++        // Zirkonium end - No Chat Reports
+     }
+ 
+     @FunctionalInterface
+diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
+index aafeb9c61ddba6a8671f0238eda47b227619f1af..049099f95b6d1df44f73ec78e0e0700c2438fdfc 100644
+--- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java
++++ b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
+@@ -113,6 +113,21 @@ public class FriendlyByteBuf extends ByteBuf {
+     }
+ 
+     public <T> T readJsonWithCodec(Codec<T> codec) {
++        // Zirkonium start - No Chat Reports
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports &&
++                codec == net.minecraft.network.protocol.status.ServerStatus.CODEC) {
++            JsonElement jsonElement = GsonHelper.fromJson(FriendlyByteBuf.GSON, this.readUtf(), JsonElement.class);
++            DataResult<T> dataResult = codec.parse(JsonOps.INSTANCE, jsonElement);
++            T result = dataResult.getOrThrow(string -> new DecoderException("Failed to decode json: " + string));
++
++            if (jsonElement.getAsJsonObject().has("preventsChatReports")) {
++                ((net.minecraft.network.protocol.status.ServerStatus) result).setPreventsChatReports(jsonElement.getAsJsonObject()
++                        .get("preventsChatReports")
++                        .getAsBoolean());
++            }
++            return result;
++        } // Zirkonium end - No Chat Reports
++
+         JsonElement jsonelement = (JsonElement) GsonHelper.fromJson(FriendlyByteBuf.GSON, this.readUtf(), JsonElement.class);
+         DataResult<T> dataresult = codec.parse(JsonOps.INSTANCE, jsonelement);
+ 
+@@ -129,6 +144,14 @@ public class FriendlyByteBuf extends ByteBuf {
+         // Paper end - Adventure; add max length parameter
+         DataResult<JsonElement> dataresult = codec.encodeStart(JsonOps.INSTANCE, value);
+ 
++        // Zirkonium start - No Chat Reports
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.addQueryData &&
++                codec == net.minecraft.network.protocol.status.ServerStatus.CODEC) {
++            JsonElement element = dataresult.getOrThrow(string -> new EncoderException("Failed to encode: " + string + " " + value));
++            element.getAsJsonObject().addProperty("preventsChatReports", true);
++            this.writeUtf(GSON.toJson(element));
++            return;
++        } // Zirkonium end - No Chat Reports
+         this.writeUtf(FriendlyByteBuf.GSON.toJson((JsonElement) dataresult.getOrThrow((s) -> {
+             return new EncoderException("Failed to encode: " + s + " " + String.valueOf(value));
+         })), maxLength); // Paper - Adventure; add max length parameter
+diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
+index 07df3299f1d1aa5506e1f6f146347d53e0278d9c..002d446e9c90dee871976b410bf8f21e76650669 100644
+--- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
++++ b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatPacket.java
+@@ -36,4 +36,11 @@ public record ServerboundChatPacket(String message, Instant timeStamp, long salt
+     public void handle(ServerGamePacketListener listener) {
+         listener.handleChat(this);
+     }
++
++    // Zirkonium start - No Chat Reports
++    @Override
++    public @Nullable MessageSignature signature() {
++        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports ? null : this.signature;
++    }
++    // Zirkonium end - No Chat Reports
+ }
+diff --git a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java
+index 5705cb920084b775cce4b361683b32c6b6e003ed..d0d437a8b0449c6b649e3fda8383d881a9ea3065 100644
+--- a/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java
++++ b/src/main/java/net/minecraft/network/protocol/game/ServerboundChatSessionUpdatePacket.java
+@@ -26,6 +26,7 @@ public record ServerboundChatSessionUpdatePacket(RemoteChatSession.Data chatSess
+ 
+     @Override
+     public void handle(ServerGamePacketListener listener) {
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports) return; // Zirkonium - No Chat Reports
+         listener.handleChatSessionUpdate(this);
+     }
+ }
+diff --git a/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java b/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
+index 50dc68a005490415b88780397ef6c26859596dd5..79b9e6d30d1f930ba753e0c809500d639f996269 100644
+--- a/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
++++ b/src/main/java/net/minecraft/network/protocol/status/ServerStatus.java
+@@ -81,4 +81,27 @@ public record ServerStatus(
+             return new ServerStatus.Version(worldVersion.getName(), worldVersion.getProtocolVersion());
+         }
+     }
+-}
++
++    // Zirkonium start - No Chat Reports
++    private static boolean preventsChatReports;
++
++    @Override
++    public boolean enforcesSecureChat() {
++        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage) {
++            return true;
++        }
++        return this.enforcesSecureChat;
++    }
++
++    public boolean preventsChatReports() {
++        if (this.version.isPresent() && this.version.get().protocol < 759 && this.version.get().protocol > 0) {
++            return true;
++        }
++        return preventsChatReports;
++    }
++
++    public void setPreventsChatReports(boolean prevents) {
++        preventsChatReports = prevents;
++    }
++    // Zirkonium end
++}
+\ No newline at end of file
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index c16735d998d5ab6b0afffa1b67bbaa67e4915874..711b4bc5dcc9177573eaafc5b02753c5c21407d1 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -697,8 +697,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+     public boolean enforceSecureProfile() {
+         DedicatedServerProperties dedicatedserverproperties = this.getProperties();
+ 
+-        // Paper start - Add setting for proxy online mode status
+-        return dedicatedserverproperties.enforceSecureProfile
++        // Paper start - fix secure profile with proxy online mode
++        return !me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports // Zirkonium - No Chat Reports
++            && dedicatedserverproperties.enforceSecureProfile
+             && io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode()
+             && this.services.canValidateProfileKeys();
+         // Paper end - Add setting for proxy online mode status
+diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+index 8368c5ff929df9d32cdb95cc2da0e9f7f3b85d2a..69ba1860262f35a1707133494cdae16cb0eb6965 100644
+--- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+@@ -323,6 +323,12 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+     }
+ 
+     public void send(Packet<?> packet) {
++        // Zirkonium start - No Chat Reports
++        if (this instanceof ServerGamePacketListenerImpl listener && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage && packet instanceof net.minecraft.network.protocol.game.ClientboundPlayerChatPacket chat) {
++            packet = new net.minecraft.network.protocol.game.ClientboundSystemChatPacket(io.papermc.paper.adventure.PaperAdventure.asAdventure(chat.chatType().decorate(chat.unsignedContent() != null ? chat.unsignedContent() : Component.literal(chat.body().content()))), false);
++            listener.send(packet);
++            return;
++        } // Zirkonium end - No Chat Reports
+         this.send(packet, (PacketSendListener) null);
+     }
+ 
+@@ -330,6 +336,11 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+         // CraftBukkit start
+         if (packet == null || this.processedDisconnect) { // Spigot
+             return;
++        // Zirkonium start - No Chat Reports
++        } else if (this instanceof ServerGamePacketListenerImpl listener && me.elephant1214.zirkonium.configuration.ZirkoniumConfig.convertToSystemMessage && packet instanceof net.minecraft.network.protocol.game.ClientboundPlayerChatPacket chat && callbacks != null) {
++            listener.send(chat);
++            return;
++        // Zirkonium end - No Chat Reports
+         } else if (packet instanceof ClientboundSetDefaultSpawnPositionPacket) {
+             ClientboundSetDefaultSpawnPositionPacket packet6 = (ClientboundSetDefaultSpawnPositionPacket) packet;
+             this.player.compassTarget = CraftLocation.toBukkit(packet6.pos, this.getCraftPlayer().getWorld());
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index b863f6fe65c796a1d3102cc3eddb5d6c5becd3ac..537afcab5aca39ac86367fc13d068438da3cf2ef 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -1497,7 +1497,7 @@ public abstract class PlayerList {
+     }
+ 
+     public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public
+-        return message.hasSignature() && !message.hasExpiredServer(Instant.now());
++        return me.elephant1214.zirkonium.configuration.ZirkoniumConfig.noChatReports || (message.hasSignature() && !message.hasExpiredServer(Instant.now())); // Zirkonium - No Chat Reports
+     }
+ 
+     // CraftBukkit start

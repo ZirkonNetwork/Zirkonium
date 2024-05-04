@@ -1,0 +1,329 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <46881115+Elephant1214@users.noreply.github.com>
+Date: Sat, 24 Dec 2022 17:16:04 -0700
+Subject: [PATCH] Implement a configurable maximum enchantment level multiplier
+
+
+diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+index 76ca77707a811c79a6b3a13d31ba1e9f49d20c08..fc11e40392705071a27cec9df50155e7af27cf92 100644
+--- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
++++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
+@@ -42,6 +42,7 @@ public class ZirkoniumConfig {
+ 
+     static void readConfig() {
+         noChatReportsSettings();
++        gameplaySettings();
+ 
+         try {
+             config.save(CONFIG_FILE);
+@@ -76,4 +77,15 @@ public class ZirkoniumConfig {
+         addQueryData = getBoolean("no-chat-reports.add-query-data", addQueryData) && noChatReports;
+         convertToSystemMessage = getBoolean("no-chat-reports.convert-to-system-message", convertToSystemMessage) && noChatReports;
+     }
++
++    public static int maxEnchantLevelMultiplier = 1;
++
++    private static void gameplaySettings() {
++        maxEnchantLevelMultiplier = getInt("gameplay.enchantment.max-level-multiplier", maxEnchantLevelMultiplier);
++        if (maxEnchantLevelMultiplier < 1) {
++            LOGGER.warning("The maximum enchantment level multiplier cannot be less than 1, resetting it");
++            maxEnchantLevelMultiplier = 1;
++            set("gameplay.enchantment.max-level-multiplier", 1);
++        }
++    }
+ }
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/BreachEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/BreachEnchantment.java
+index 204bbe48214fb1b9b7f95288218ac931f1eb864e..b2ab7712b23cc20b8f31b184880a049949bee2b0 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/BreachEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/BreachEnchantment.java
+@@ -12,7 +12,7 @@ public class BreachEnchantment extends Enchantment {
+             Enchantment.definition(
+                 ItemTags.MACE_ENCHANTABLE,
+                 2,
+-                4,
++                4 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier,
+                 Enchantment.dynamicCost(15, 9),
+                 Enchantment.dynamicCost(65, 9),
+                 4,
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/DensityEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/DensityEnchantment.java
+index 3b8219aa4e8c9e2cb27c3eb46f51cc7c8e431657..40e572c5e2c79b11d57defb37630a961c2299909 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/DensityEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/DensityEnchantment.java
+@@ -11,7 +11,7 @@ public class DensityEnchantment extends Enchantment {
+             Enchantment.definition(
+                 ItemTags.MACE_ENCHANTABLE,
+                 10,
+-                5,
++                5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier,
+                 Enchantment.dynamicCost(1, 11),
+                 Enchantment.dynamicCost(21, 11),
+                 1,
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/Enchantments.java b/src/main/java/net/minecraft/world/item/enchantment/Enchantments.java
+index e158ff1a9dbd054985873e854fcf6c433102059c..ee7961f906154e4edc169de4cf839d8c9c9d149a 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/Enchantments.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/Enchantments.java
+@@ -12,42 +12,42 @@ public class Enchantments {
+     public static final Enchantment PROTECTION = register(
+         "protection",
+         new ProtectionEnchantment(
+-            Enchantment.definition(ItemTags.ARMOR_ENCHANTABLE, 10, 4, Enchantment.dynamicCost(1, 11), Enchantment.dynamicCost(12, 11), 1, ARMOR_SLOTS),
++            Enchantment.definition(ItemTags.ARMOR_ENCHANTABLE, 10, 4 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(1, 11), Enchantment.dynamicCost(12, 11), 1, ARMOR_SLOTS),
+             ProtectionEnchantment.Type.ALL
+         )
+     );
+     public static final Enchantment FIRE_PROTECTION = register(
+         "fire_protection",
+         new ProtectionEnchantment(
+-            Enchantment.definition(ItemTags.ARMOR_ENCHANTABLE, 5, 4, Enchantment.dynamicCost(10, 8), Enchantment.dynamicCost(18, 8), 2, ARMOR_SLOTS),
++            Enchantment.definition(ItemTags.ARMOR_ENCHANTABLE, 5, 4 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(10, 8), Enchantment.dynamicCost(18, 8), 2, ARMOR_SLOTS),
+             ProtectionEnchantment.Type.FIRE
+         )
+     );
+     public static final Enchantment FEATHER_FALLING = register(
+         "feather_falling",
+         new ProtectionEnchantment(
+-            Enchantment.definition(ItemTags.FOOT_ARMOR_ENCHANTABLE, 5, 4, Enchantment.dynamicCost(5, 6), Enchantment.dynamicCost(11, 6), 2, ARMOR_SLOTS),
++            Enchantment.definition(ItemTags.FOOT_ARMOR_ENCHANTABLE, 5, 4 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(5, 6), Enchantment.dynamicCost(11, 6), 2, ARMOR_SLOTS),
+             ProtectionEnchantment.Type.FALL
+         )
+     );
+     public static final Enchantment BLAST_PROTECTION = register(
+         "blast_protection",
+         new ProtectionEnchantment(
+-            Enchantment.definition(ItemTags.ARMOR_ENCHANTABLE, 2, 4, Enchantment.dynamicCost(5, 8), Enchantment.dynamicCost(13, 8), 4, ARMOR_SLOTS),
++            Enchantment.definition(ItemTags.ARMOR_ENCHANTABLE, 2, 4 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(5, 8), Enchantment.dynamicCost(13, 8), 4, ARMOR_SLOTS),
+             ProtectionEnchantment.Type.EXPLOSION
+         )
+     );
+     public static final Enchantment PROJECTILE_PROTECTION = register(
+         "projectile_protection",
+         new ProtectionEnchantment(
+-            Enchantment.definition(ItemTags.ARMOR_ENCHANTABLE, 5, 4, Enchantment.dynamicCost(3, 6), Enchantment.dynamicCost(9, 6), 2, ARMOR_SLOTS),
++            Enchantment.definition(ItemTags.ARMOR_ENCHANTABLE, 5, 4 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(3, 6), Enchantment.dynamicCost(9, 6), 2, ARMOR_SLOTS),
+             ProtectionEnchantment.Type.PROJECTILE
+         )
+     );
+     public static final Enchantment RESPIRATION = register(
+         "respiration",
+         new Enchantment(
+-            Enchantment.definition(ItemTags.HEAD_ARMOR_ENCHANTABLE, 2, 3, Enchantment.dynamicCost(10, 10), Enchantment.dynamicCost(40, 10), 4, ARMOR_SLOTS)
++            Enchantment.definition(ItemTags.HEAD_ARMOR_ENCHANTABLE, 2, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(10, 10), Enchantment.dynamicCost(40, 10), 4, ARMOR_SLOTS)
+         )
+     );
+     public static final Enchantment AQUA_AFFINITY = register(
+@@ -63,7 +63,7 @@ public class Enchantments {
+                 ItemTags.ARMOR_ENCHANTABLE,
+                 ItemTags.CHEST_ARMOR_ENCHANTABLE,
+                 1,
+-                3,
++                3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier,
+                 Enchantment.dynamicCost(10, 20),
+                 Enchantment.dynamicCost(60, 20),
+                 8,
+@@ -74,14 +74,14 @@ public class Enchantments {
+     public static final Enchantment DEPTH_STRIDER = register(
+         "depth_strider",
+         new WaterWalkerEnchantment(
+-            Enchantment.definition(ItemTags.FOOT_ARMOR_ENCHANTABLE, 2, 3, Enchantment.dynamicCost(10, 10), Enchantment.dynamicCost(25, 10), 4, ARMOR_SLOTS)
++            Enchantment.definition(ItemTags.FOOT_ARMOR_ENCHANTABLE, 2, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(10, 10), Enchantment.dynamicCost(25, 10), 4, ARMOR_SLOTS)
+         )
+     );
+     public static final Enchantment FROST_WALKER = register(
+         "frost_walker",
+         new FrostWalkerEnchantment(
+             Enchantment.definition(
+-                ItemTags.FOOT_ARMOR_ENCHANTABLE, 2, 2, Enchantment.dynamicCost(10, 10), Enchantment.dynamicCost(25, 10), 4, EquipmentSlot.FEET
++                ItemTags.FOOT_ARMOR_ENCHANTABLE, 2, 2 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(10, 10), Enchantment.dynamicCost(25, 10), 4, EquipmentSlot.FEET
+             )
+         )
+     );
+@@ -95,7 +95,7 @@ public class Enchantments {
+         "soul_speed",
+         new SoulSpeedEnchantment(
+             Enchantment.definition(
+-                ItemTags.FOOT_ARMOR_ENCHANTABLE, 1, 3, Enchantment.dynamicCost(10, 10), Enchantment.dynamicCost(25, 10), 8, EquipmentSlot.FEET
++                ItemTags.FOOT_ARMOR_ENCHANTABLE, 1, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(10, 10), Enchantment.dynamicCost(25, 10), 8, EquipmentSlot.FEET
+             )
+         )
+     );
+@@ -103,7 +103,7 @@ public class Enchantments {
+         "swift_sneak",
+         new SwiftSneakEnchantment(
+             Enchantment.definition(
+-                ItemTags.LEG_ARMOR_ENCHANTABLE, 1, 3, Enchantment.dynamicCost(25, 25), Enchantment.dynamicCost(75, 25), 8, EquipmentSlot.LEGS
++                ItemTags.LEG_ARMOR_ENCHANTABLE, 1, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(25, 25), Enchantment.dynamicCost(75, 25), 8, EquipmentSlot.LEGS
+             )
+         )
+     );
+@@ -114,7 +114,7 @@ public class Enchantments {
+                 ItemTags.SHARP_WEAPON_ENCHANTABLE,
+                 ItemTags.SWORD_ENCHANTABLE,
+                 10,
+-                5,
++                5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier,
+                 Enchantment.dynamicCost(1, 11),
+                 Enchantment.dynamicCost(21, 11),
+                 1,
+@@ -130,7 +130,7 @@ public class Enchantments {
+                 ItemTags.WEAPON_ENCHANTABLE,
+                 ItemTags.SWORD_ENCHANTABLE,
+                 5,
+-                5,
++                5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier,
+                 Enchantment.dynamicCost(5, 8),
+                 Enchantment.dynamicCost(25, 8),
+                 2,
+@@ -146,7 +146,7 @@ public class Enchantments {
+                 ItemTags.WEAPON_ENCHANTABLE,
+                 ItemTags.SWORD_ENCHANTABLE,
+                 5,
+-                5,
++                5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier,
+                 Enchantment.dynamicCost(5, 8),
+                 Enchantment.dynamicCost(25, 8),
+                 2,
+@@ -158,34 +158,34 @@ public class Enchantments {
+     public static final Enchantment KNOCKBACK = register(
+         "knockback",
+         new Enchantment(
+-            Enchantment.definition(ItemTags.SWORD_ENCHANTABLE, 5, 2, Enchantment.dynamicCost(5, 20), Enchantment.dynamicCost(55, 20), 2, EquipmentSlot.MAINHAND)
++            Enchantment.definition(ItemTags.SWORD_ENCHANTABLE, 5, 2 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(5, 20), Enchantment.dynamicCost(55, 20), 2, EquipmentSlot.MAINHAND)
+         )
+     );
+     public static final Enchantment FIRE_ASPECT = register(
+         "fire_aspect",
+         new Enchantment(
+             Enchantment.definition(
+-                ItemTags.FIRE_ASPECT_ENCHANTABLE, 2, 2, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlot.MAINHAND
++                ItemTags.FIRE_ASPECT_ENCHANTABLE, 2, 2 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlot.MAINHAND
+             )
+         )
+     );
+     public static final Enchantment LOOTING = register(
+         "looting",
+         new LootBonusEnchantment(
+-            Enchantment.definition(ItemTags.SWORD_ENCHANTABLE, 2, 3, Enchantment.dynamicCost(15, 9), Enchantment.dynamicCost(65, 9), 4, EquipmentSlot.MAINHAND)
++            Enchantment.definition(ItemTags.SWORD_ENCHANTABLE, 2, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(15, 9), Enchantment.dynamicCost(65, 9), 4, EquipmentSlot.MAINHAND)
+         )
+     );
+     public static final Enchantment SWEEPING_EDGE = register(
+         "sweeping_edge",
+         new Enchantment(
+-            Enchantment.definition(ItemTags.SWORD_ENCHANTABLE, 2, 3, Enchantment.dynamicCost(5, 9), Enchantment.dynamicCost(20, 9), 4, EquipmentSlot.MAINHAND)
++            Enchantment.definition(ItemTags.SWORD_ENCHANTABLE, 2, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(5, 9), Enchantment.dynamicCost(20, 9), 4, EquipmentSlot.MAINHAND)
+         )
+     );
+     public static final Enchantment EFFICIENCY = register(
+         "efficiency",
+         new Enchantment(
+             Enchantment.definition(
+-                ItemTags.MINING_ENCHANTABLE, 10, 5, Enchantment.dynamicCost(1, 10), Enchantment.dynamicCost(51, 10), 1, EquipmentSlot.MAINHAND
++                ItemTags.MINING_ENCHANTABLE, 10, 5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(1, 10), Enchantment.dynamicCost(51, 10), 1, EquipmentSlot.MAINHAND
+             )
+         )
+     );
+@@ -201,7 +201,7 @@ public class Enchantments {
+         "unbreaking",
+         new DigDurabilityEnchantment(
+             Enchantment.definition(
+-                ItemTags.DURABILITY_ENCHANTABLE, 5, 3, Enchantment.dynamicCost(5, 8), Enchantment.dynamicCost(55, 8), 2, EquipmentSlot.MAINHAND
++                ItemTags.DURABILITY_ENCHANTABLE, 5, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(5, 8), Enchantment.dynamicCost(55, 8), 2, EquipmentSlot.MAINHAND
+             )
+         )
+     );
+@@ -209,20 +209,20 @@ public class Enchantments {
+         "fortune",
+         new LootBonusEnchantment(
+             Enchantment.definition(
+-                ItemTags.MINING_LOOT_ENCHANTABLE, 2, 3, Enchantment.dynamicCost(15, 9), Enchantment.dynamicCost(65, 9), 4, EquipmentSlot.MAINHAND
++                ItemTags.MINING_LOOT_ENCHANTABLE, 2, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(15, 9), Enchantment.dynamicCost(65, 9), 4, EquipmentSlot.MAINHAND
+             )
+         )
+     );
+     public static final Enchantment POWER = register(
+         "power",
+         new Enchantment(
+-            Enchantment.definition(ItemTags.BOW_ENCHANTABLE, 10, 5, Enchantment.dynamicCost(1, 10), Enchantment.dynamicCost(16, 10), 1, EquipmentSlot.MAINHAND)
++            Enchantment.definition(ItemTags.BOW_ENCHANTABLE, 10, 5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(1, 10), Enchantment.dynamicCost(16, 10), 1, EquipmentSlot.MAINHAND)
+         )
+     );
+     public static final Enchantment PUNCH = register(
+         "punch",
+         new Enchantment(
+-            Enchantment.definition(ItemTags.BOW_ENCHANTABLE, 2, 2, Enchantment.dynamicCost(12, 20), Enchantment.dynamicCost(37, 20), 4, EquipmentSlot.MAINHAND)
++            Enchantment.definition(ItemTags.BOW_ENCHANTABLE, 2, 2 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(12, 20), Enchantment.dynamicCost(37, 20), 4, EquipmentSlot.MAINHAND)
+         )
+     );
+     public static final Enchantment FLAME = register(
+@@ -241,7 +241,7 @@ public class Enchantments {
+         "luck_of_the_sea",
+         new LootBonusEnchantment(
+             Enchantment.definition(
+-                ItemTags.FISHING_ENCHANTABLE, 2, 3, Enchantment.dynamicCost(15, 9), Enchantment.dynamicCost(65, 9), 4, EquipmentSlot.MAINHAND
++                ItemTags.FISHING_ENCHANTABLE, 2, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(15, 9), Enchantment.dynamicCost(65, 9), 4, EquipmentSlot.MAINHAND
+             )
+         )
+     );
+@@ -249,27 +249,27 @@ public class Enchantments {
+         "lure",
+         new Enchantment(
+             Enchantment.definition(
+-                ItemTags.FISHING_ENCHANTABLE, 2, 3, Enchantment.dynamicCost(15, 9), Enchantment.dynamicCost(65, 9), 4, EquipmentSlot.MAINHAND
++                ItemTags.FISHING_ENCHANTABLE, 2, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(15, 9), Enchantment.dynamicCost(65, 9), 4, EquipmentSlot.MAINHAND
+             )
+         )
+     );
+     public static final Enchantment LOYALTY = register(
+         "loyalty",
+         new Enchantment(
+-            Enchantment.definition(ItemTags.TRIDENT_ENCHANTABLE, 5, 3, Enchantment.dynamicCost(12, 7), Enchantment.constantCost(50), 2, EquipmentSlot.MAINHAND)
++            Enchantment.definition(ItemTags.TRIDENT_ENCHANTABLE, 5, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(12, 7), Enchantment.constantCost(50), 2, EquipmentSlot.MAINHAND)
+         )
+     );
+     public static final Enchantment IMPALING = register(
+         "impaling",
+         new DamageEnchantment(
+-            Enchantment.definition(ItemTags.TRIDENT_ENCHANTABLE, 2, 5, Enchantment.dynamicCost(1, 8), Enchantment.dynamicCost(21, 8), 4, EquipmentSlot.MAINHAND),
++            Enchantment.definition(ItemTags.TRIDENT_ENCHANTABLE, 2, 5 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(1, 8), Enchantment.dynamicCost(21, 8), 4, EquipmentSlot.MAINHAND),
+             Optional.of(EntityTypeTags.SENSITIVE_TO_IMPALING)
+         )
+     );
+     public static final Enchantment RIPTIDE = register(
+         "riptide",
+         new TridentRiptideEnchantment(
+-            Enchantment.definition(ItemTags.TRIDENT_ENCHANTABLE, 2, 3, Enchantment.dynamicCost(17, 7), Enchantment.constantCost(50), 4, EquipmentSlot.MAINHAND)
++            Enchantment.definition(ItemTags.TRIDENT_ENCHANTABLE, 2, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(17, 7), Enchantment.constantCost(50), 4, EquipmentSlot.MAINHAND)
+         )
+     );
+     public static final Enchantment CHANNELING = register(
+@@ -288,7 +288,7 @@ public class Enchantments {
+         "quick_charge",
+         new Enchantment(
+             Enchantment.definition(
+-                ItemTags.CROSSBOW_ENCHANTABLE, 5, 3, Enchantment.dynamicCost(12, 20), Enchantment.constantCost(50), 2, EquipmentSlot.MAINHAND
++                ItemTags.CROSSBOW_ENCHANTABLE, 5, 3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(12, 20), Enchantment.constantCost(50), 2, EquipmentSlot.MAINHAND
+             )
+         )
+     );
+@@ -296,7 +296,7 @@ public class Enchantments {
+         "piercing",
+         new ArrowPiercingEnchantment(
+             Enchantment.definition(
+-                ItemTags.CROSSBOW_ENCHANTABLE, 10, 4, Enchantment.dynamicCost(1, 10), Enchantment.constantCost(50), 1, EquipmentSlot.MAINHAND
++                ItemTags.CROSSBOW_ENCHANTABLE, 10, 4 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier, Enchantment.dynamicCost(1, 10), Enchantment.constantCost(50), 1, EquipmentSlot.MAINHAND
+             )
+         )
+     );
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/WindBurstEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/WindBurstEnchantment.java
+index 5c49fb2db326244746ce2057356f91b9e109626f..3689b9eae30fa00757812eff340520323f7869a8 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/WindBurstEnchantment.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/WindBurstEnchantment.java
+@@ -18,7 +18,7 @@ public class WindBurstEnchantment extends Enchantment {
+             Enchantment.definition(
+                 ItemTags.MACE_ENCHANTABLE,
+                 2,
+-                3,
++                3 * me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxEnchantLevelMultiplier,
+                 Enchantment.dynamicCost(15, 9),
+                 Enchantment.dynamicCost(65, 9),
+                 4,

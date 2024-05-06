@@ -246,10 +246,10 @@ index 7a2e2def54176ff599ee150a6cd99ec431afaec0..dd841b9fbc4ca0c71db7a8942f499998
 +    }
  }
 diff --git a/src/main/java/net/minecraft/network/Connection.java b/src/main/java/net/minecraft/network/Connection.java
-index 9f274048be29ed54dd91983447beadf076cf7438..7e0847769aa9b23c7db2d1a74d3c25d433cf0595 100644
+index 71b021513f30376c7b09d83059deea89cc92385f..c8d4818e0702b9caa87c4c514495de68cd4aeb8a 100644
 --- a/src/main/java/net/minecraft/network/Connection.java
 +++ b/src/main/java/net/minecraft/network/Connection.java
-@@ -729,6 +729,13 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
+@@ -730,6 +730,13 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
  
          return ((Bootstrap) ((Bootstrap) ((Bootstrap) (new Bootstrap()).group(eventloopgroup)).handler(new ChannelInitializer<Channel>() {
              protected void initChannel(Channel channel) {

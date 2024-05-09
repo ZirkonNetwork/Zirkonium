@@ -264,7 +264,7 @@ index 71b021513f30376c7b09d83059deea89cc92385f..c8d4818e0702b9caa87c4c514495de68
                      channel.config().setOption(ChannelOption.TCP_NODELAY, true);
                  } catch (ChannelException channelexception) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 9f868d777ec3d06a5a11886be38c81a50b6f75e8..e7540cece722acbbada3af96d8884ae1c635faaf 100644
+index 6be6a62006bc82b3a469800a0aa5a6f63b3a6d0c..f6c54887697e8408c7719876d8017ef4a30cef3d 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -880,6 +880,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -371,7 +371,7 @@ index 569516822319c885e76be1aa92580bdf0bc932f5..75fb3633dacc9308439e7ff8a3922ac0
      }
  
 diff --git a/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-index a57235284cfa2d289b601a53415b205d4193a243..0f01bf03d057bc5af74befa505a3d4b20b73588a 100644
+index 45a2683c9489bee6d67a1f3d702c17f2e9dc02e4..d5ebcceae3fd2baab1200304a702b13be122df91 100644
 --- a/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 @@ -50,6 +50,11 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL

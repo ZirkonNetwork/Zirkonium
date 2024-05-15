@@ -159,10 +159,10 @@ index 50dc68a005490415b88780397ef6c26859596dd5..79b9e6d30d1f930ba753e0c809500d63
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index c16735d998d5ab6b0afffa1b67bbaa67e4915874..711b4bc5dcc9177573eaafc5b02753c5c21407d1 100644
+index 0810a48490959eeab5f6158eea099bdf630691f5..b076f39ce2e688fb52417b35149b978570c3c436 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -697,8 +697,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -696,8 +696,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
      public boolean enforceSecureProfile() {
          DedicatedServerProperties dedicatedserverproperties = this.getProperties();
  
@@ -175,7 +175,7 @@ index c16735d998d5ab6b0afffa1b67bbaa67e4915874..711b4bc5dcc9177573eaafc5b02753c5
              && this.services.canValidateProfileKeys();
          // Paper end - Add setting for proxy online mode status
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index 8368c5ff929df9d32cdb95cc2da0e9f7f3b85d2a..69ba1860262f35a1707133494cdae16cb0eb6965 100644
+index b82a72775f9de5ad65ae46a8b97f93a7ef852265..ab42eb7a55a3d33f046107c74123d4dc0fe5433a 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -323,6 +323,12 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack

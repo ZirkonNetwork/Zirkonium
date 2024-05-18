@@ -75,10 +75,10 @@ paperweight {
             baseName("Purpur")
 
             apiPatchDir = layout.projectDirectory.dir("patches/api")
-            apiOutputDir = layout.projectDirectory.dir("zirkonium-api")
+            apiOutputDir = layout.projectDirectory.dir("Zirkonium-API")
 
             serverPatchDir = layout.projectDirectory.dir("patches/server")
-            serverOutputDir = layout.projectDirectory.dir("zirkonium-server")
+            serverOutputDir = layout.projectDirectory.dir("Zirkonium-Server")
         }
 
         patchTasks.register("generatedApi") {

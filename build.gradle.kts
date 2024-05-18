@@ -62,7 +62,7 @@ dependencies {
 }
 
 paperweight {
-    serverProject = project(":zirkonium-server")
+    serverProject = project(":Zirkonium-Server")
 
     remapRepo = paperMavenPublicUrl
     decompileRepo = paperMavenPublicUrl
@@ -85,7 +85,7 @@ paperweight {
             isBareDirectory = true
             upstreamDirPath = "paper-api-generator/generated"
             patchDir = layout.projectDirectory.dir("patches/generated-api")
-            outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
+            outputDir = layout.projectDirectory.dir("Paper-API-Generator/generated")
         }
     }
 }

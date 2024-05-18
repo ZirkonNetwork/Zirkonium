@@ -558,10 +558,10 @@ index 55b29e9a540cfc00dc32c7ae14d603c150e8863d..7cc84a57b54fa819da7159587f8fae66
              JfrCommand.register(this.dispatcher);
          }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index ae03b2ad3864ed5c3ab4f4672ef4c9842e7004e3..59237486a8dfd0b54063d031e868f42b063f0c13 100644
+index fd86628b88d48c98a6261ccefe260fba11883fe6..0e10a71969b30fd2208e62b5f307980dcd1d0f40 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1161,6 +1161,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1158,6 +1158,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
  
@@ -571,7 +571,7 @@ index ae03b2ad3864ed5c3ab4f4672ef4c9842e7004e3..59237486a8dfd0b54063d031e868f42b
              // Spigot start
              // Paper start - move done tracking
              LOGGER.info("Running delayed init tasks");
-@@ -1648,6 +1651,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1645,6 +1648,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          long endTime = System.nanoTime();
          long remaining = (TICK_TIME - (endTime - lastTick)) - catchupTime;
          new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();

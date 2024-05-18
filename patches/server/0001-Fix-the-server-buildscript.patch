@@ -5,10 +5,10 @@ Subject: [PATCH] Fix the server buildscript
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 89f21e21efc5f5ab99d1586f4f3b8f2f3c48ac06..930d69d6f495d41387dc346bce726ddc07d785ba 100644
+index d23ecfabf6bf1e355fb2efe5abd80236259ce3c4..f05274a6e8d24434742e411fb760284f0212c58c 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -12,7 +12,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
+@@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
  val alsoShade: Configuration by configurations.creating
  
  dependencies {

@@ -7,4 +7,4 @@ pluginManagement {
     }
 }
 
-include("zirkonium-api", "zirkonium-server", "paper-api-generator")
+include("Zirkonium-API", "Zirkonium-Server", "Paper-API-Generator")

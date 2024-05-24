@@ -539,7 +539,7 @@ index 646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5..7a2e2def54176ff599ee150a6cd99ec4
 +    }
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 55b29e9a540cfc00dc32c7ae14d603c150e8863d..7cc84a57b54fa819da7159587f8fae668dcd7115 100644
+index 7b3638212bcfffaa85d3bd033358817292d1f7f8..b50a194a73507f1fe1530787be13d835223bfb1c 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,5 +1,6 @@
@@ -558,10 +558,10 @@ index 55b29e9a540cfc00dc32c7ae14d603c150e8863d..7cc84a57b54fa819da7159587f8fae66
              JfrCommand.register(this.dispatcher);
          }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index fd86628b88d48c98a6261ccefe260fba11883fe6..0e10a71969b30fd2208e62b5f307980dcd1d0f40 100644
+index 1ed5e5794e0eef178c39e5fc6196470990142b8d..16a24b6c9bfecb80138971c0b7246bb4e563d082 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1158,6 +1158,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1155,6 +1155,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
  
@@ -571,7 +571,7 @@ index fd86628b88d48c98a6261ccefe260fba11883fe6..0e10a71969b30fd2208e62b5f307980d
              // Spigot start
              // Paper start - move done tracking
              LOGGER.info("Running delayed init tasks");
-@@ -1645,6 +1648,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1642,6 +1645,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          long endTime = System.nanoTime();
          long remaining = (TICK_TIME - (endTime - lastTick)) - catchupTime;
          new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();

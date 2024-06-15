@@ -246,10 +246,10 @@ index 7a2e2def54176ff599ee150a6cd99ec431afaec0..dd841b9fbc4ca0c71db7a8942f499998
 +    }
  }
 diff --git a/src/main/java/net/minecraft/network/Connection.java b/src/main/java/net/minecraft/network/Connection.java
-index 71b021513f30376c7b09d83059deea89cc92385f..c8d4818e0702b9caa87c4c514495de68cd4aeb8a 100644
+index 3b66ecc4f110d0f2dc0ef6c560801296d7e0be64..1e49111f665b8351d4eb82a772c134bd0f70cd5a 100644
 --- a/src/main/java/net/minecraft/network/Connection.java
 +++ b/src/main/java/net/minecraft/network/Connection.java
-@@ -730,6 +730,13 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
+@@ -731,6 +731,13 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
  
          return ((Bootstrap) ((Bootstrap) ((Bootstrap) (new Bootstrap()).group(eventloopgroup)).handler(new ChannelInitializer<Channel>() {
              protected void initChannel(Channel channel) {
@@ -264,7 +264,7 @@ index 71b021513f30376c7b09d83059deea89cc92385f..c8d4818e0702b9caa87c4c514495de68
                      channel.config().setOption(ChannelOption.TCP_NODELAY, true);
                  } catch (ChannelException channelexception) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 16a24b6c9bfecb80138971c0b7246bb4e563d082..bd2191cf9b19b53d03d984da94b67872fe9f28a6 100644
+index b5f79dab49e497327a61b8af6e7b003cd22d6d8a..c00790cecf026f1d842d79d530b643c4b28db32a 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -876,6 +876,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa

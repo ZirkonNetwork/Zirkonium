@@ -108,7 +108,7 @@ index a6e5950b5875cafd734300cdfbf58f5d3736f3c8..b1ed6e1f0a76e32591491b2cb366f549
              SharedConstants.getCurrentVersion().getName(),
              getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 330bae815c0a332e3dc9fa7b224c9f92098199b9..1ed5e5794e0eef178c39e5fc6196470990142b8d 100644
+index 678a448edb5e167d5d2d3d162034312b8a0bf468..377c2237f651b6365cd16ae11b9176927eb57c38 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -959,7 +959,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa

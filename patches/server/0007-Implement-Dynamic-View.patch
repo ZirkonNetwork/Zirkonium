@@ -539,7 +539,7 @@ index 646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5..7a2e2def54176ff599ee150a6cd99ec4
 +    }
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 7b3638212bcfffaa85d3bd033358817292d1f7f8..b50a194a73507f1fe1530787be13d835223bfb1c 100644
+index 72388f73dea8bbc22b0ae7e79427af71241417d2..8085c12a8001006940e11158ada6f1eab007941c 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,5 +1,6 @@
@@ -558,7 +558,7 @@ index 7b3638212bcfffaa85d3bd033358817292d1f7f8..b50a194a73507f1fe1530787be13d835
              JfrCommand.register(this.dispatcher);
          }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 1ed5e5794e0eef178c39e5fc6196470990142b8d..16a24b6c9bfecb80138971c0b7246bb4e563d082 100644
+index 377c2237f651b6365cd16ae11b9176927eb57c38..b5f79dab49e497327a61b8af6e7b003cd22d6d8a 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1155,6 +1155,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa

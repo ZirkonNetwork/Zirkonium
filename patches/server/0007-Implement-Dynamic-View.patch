@@ -539,7 +539,7 @@ index 646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5..7a2e2def54176ff599ee150a6cd99ec4
 +    }
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 72388f73dea8bbc22b0ae7e79427af71241417d2..8085c12a8001006940e11158ada6f1eab007941c 100644
+index 4288d131d24e0b71d8ae4af07f0a7f98d07e624d..594b891506ed82dceea6fb1117cc27525117d884 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,5 +1,6 @@

@@ -5,7 +5,7 @@ Subject: [PATCH] Fix the server buildscript
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index d23ecfabf6bf1e355fb2efe5abd80236259ce3c4..f05274a6e8d24434742e411fb760284f0212c58c 100644
+index 0635aacceec1ba9c753b4dde057876b91336d416..4d40b30cd4e4b660bca324ccf922bff9ca3064aa 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {

@@ -159,10 +159,10 @@ index 50dc68a005490415b88780397ef6c26859596dd5..79b9e6d30d1f930ba753e0c809500d63
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 39a588042067cc11c5c30ae6529cc73e1ec5ce39..7bd59d6205de6dc4c2c7fe44d3da292f21063c8f 100644
+index 0afe926e3fe11aae2951d96834b7fb1c85fbf393..183bae103d30295627ffd7b36c57f4fcd2a6f01f 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -673,8 +673,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -699,8 +699,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
      public boolean enforceSecureProfile() {
          DedicatedServerProperties dedicatedserverproperties = this.getProperties();
  

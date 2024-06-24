@@ -264,7 +264,7 @@ index f37857eb3973a0cf1a02041effd5491d711c2eb7..df83403f5bed0d3c651d8e9f84b2a894
                      channel.config().setOption(ChannelOption.TCP_NODELAY, true);
                  } catch (ChannelException channelexception) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 67b8abcd7d829042ab80c9fce00a9e45ee8c809a..abe8c078e115e6b993b4d9b4736c9e6c0c72bb6b 100644
+index 025f57c2cf9dfac275d5b61dee70ce67fdb0a8dd..5f6bf39e2f5aa70b29e970a81833410c95cdc89c 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -890,6 +890,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa

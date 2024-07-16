@@ -5,7 +5,7 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 4d40b30cd4e4b660bca324ccf922bff9ca3064aa..31bfd52b64347d9499afb93f0cd3696868101e38 100644
+index 35e1972e5f24cdd740d070e7003802265e03b8a1..78a7a137e0ce803602d4569e9b7fc299452bf2d4 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
@@ -107,19 +107,6 @@ index a6e5950b5875cafd734300cdfbf58f5d3736f3c8..b1ed6e1f0a76e32591491b2cb366f549
              SharedConstants.getCurrentVersion().getId(),
              SharedConstants.getCurrentVersion().getName(),
              getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)
-diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 6dbea75748021ecc950888213a431ab2495c4a18..c137b2d8ca97379f94edcfdce3f47905369c842e 100644
---- a/src/main/java/net/minecraft/server/MinecraftServer.java
-+++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -969,7 +969,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
-         shutdownThread = Thread.currentThread();
-         org.spigotmc.WatchdogThread.doStop(); // Paper
-         if (!isSameThread()) {
--            MinecraftServer.LOGGER.info("Stopping main thread (Ignore any thread death message you see! - DO NOT REPORT THREAD DEATH TO PURPUR)"); // Purpur
-+            MinecraftServer.LOGGER.info("Stopping main thread (Ignore any thread death message you see! - DO NOT REPORT THREAD DEATH TO ZIRKONIUM)"); // Purpur // Zirkonium
-             while (this.getRunningThread().isAlive()) {
-                 this.getRunningThread().stop();
-                 try {
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 index 99597258e8e88cd9e2c901c4ac3ff7faeeabee2b..ec90dbb33a9a438a01c558e99a257418994d41d4 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
@@ -134,10 +121,10 @@ index 99597258e8e88cd9e2c901c4ac3ff7faeeabee2b..ec90dbb33a9a438a01c558e99a257418
  
          if (stream != null) {
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index 71777757fc00dfb2f91abecc4443b65782e78300..75461bcc07a93e3f358546797e01e4ae48256cd3 100644
+index 08230ef6a705904440a677fba4c65386a3f540ed..9c5f07b42676b756a195c847c22fc19535468ecf 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
-@@ -83,14 +83,14 @@ public class WatchdogThread extends Thread
+@@ -155,14 +155,14 @@ public class WatchdogThread extends io.papermc.paper.util.TickThread // Paper -
                  if (isLongTimeout) {
                  // Paper end
                  log.log( Level.SEVERE, "------------------------------" );
@@ -155,7 +142,7 @@ index 71777757fc00dfb2f91abecc4443b65782e78300..75461bcc07a93e3f358546797e01e4ae
                  //
                  if ( net.minecraft.world.level.Level.lastPhysicsProblem != null )
                  {
-@@ -112,12 +112,12 @@ public class WatchdogThread extends Thread
+@@ -184,12 +184,12 @@ public class WatchdogThread extends io.papermc.paper.util.TickThread // Paper -
                  // Paper end
                  } else
                  {
@@ -168,9 +155,9 @@ index 71777757fc00dfb2f91abecc4443b65782e78300..75461bcc07a93e3f358546797e01e4ae
 -                log.log( Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Purpur!):" ); // Paper // Purpur
 +                log.log( Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Zirkonium!):" ); // Paper // Purpur // Zirkonium
                  ca.spottedleaf.moonrise.patches.chunk_system.scheduling.ChunkTaskScheduler.dumpAllChunkLoadInfo(MinecraftServer.getServer(), isLongTimeout); // Paper - rewrite chunk system
+                 this.dumpTickingInfo(); // Paper - log detailed tick information
                  WatchdogThread.dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE ), log );
-                 log.log( Level.SEVERE, "------------------------------" );
-@@ -132,7 +132,7 @@ public class WatchdogThread extends Thread
+@@ -205,7 +205,7 @@ public class WatchdogThread extends io.papermc.paper.util.TickThread // Paper -
                      WatchdogThread.dumpThread( thread, log );
                  }
                  } else {

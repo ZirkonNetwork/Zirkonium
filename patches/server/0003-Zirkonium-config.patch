@@ -113,7 +113,7 @@ index 002a3ee08d7e009ef1e4bd3bc274aa608846b219..140a3cf950190f0c8816ea621255fbd6
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index 930614ebfd3d6b6e011a58bbd5310620c02582db..bbe0a63ba5219193782d83d02802780a3045bd11 100644
+index f0e7f729e58fa1b297ae07edcf808f6211262189..2f6b7e3d0c95d046a7fb7f313bc82e702d6960a0 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
 @@ -184,6 +184,14 @@ public class Main {

@@ -204,10 +204,10 @@ index fac2fb82c381d245f77b7288c34920660ac2c3af..e5dce8ab58c7b4d8d3be8319c1c038c7
              ClientboundSetDefaultSpawnPositionPacket packet6 = (ClientboundSetDefaultSpawnPositionPacket) packet;
              this.player.compassTarget = CraftLocation.toBukkit(packet6.pos, this.getCraftPlayer().getWorld());
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 10c59d30da3c4713fb7cdcf2e600508c0dd3acf0..a57d9f44727617b9e6d394fb3857bcf585dd6a44 100644
+index b14e56c6b117b28c604259ad179d10e79f7c4cdd..a167dbdd646ca3212042b0c8918f594ac7b3c1e6 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1437,7 +1437,7 @@ public abstract class PlayerList {
+@@ -1451,7 +1451,7 @@ public abstract class PlayerList {
      }
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public

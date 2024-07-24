@@ -5,7 +5,7 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index f00e2881a4d202e6162082984569c986f0c74548..1008d29da691df59aca6a668692bce08da04293c 100644
+index f00e2881a4d202e6162082984569c986f0c74548..d33838b92ef79061cf84386d6391c268d0bf073e 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
@@ -17,7 +17,7 @@ index f00e2881a4d202e6162082984569c986f0c74548..1008d29da691df59aca6a668692bce08
      // Paper start
      implementation("org.jline:jline-terminal-jansi:3.21.0")
      implementation("net.minecrell:terminalconsoleappender:1.3.0")
-@@ -88,7 +88,7 @@ tasks.jar {
+@@ -88,14 +88,14 @@ tasks.jar {
          val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
@@ -25,7 +25,18 @@ index f00e2881a4d202e6162082984569c986f0c74548..1008d29da691df59aca6a668692bce08
 +            "Implementation-Title" to "Zirkonium", // Purpur // Zirkonium
              "Implementation-Version" to implementationVersion,
              "Implementation-Vendor" to date, // Paper
-             "Specification-Title" to "Purpur", // Purpur
+-            "Specification-Title" to "Purpur", // Purpur
++            "Specification-Title" to "Zirkonium", // Purpur // Zirkonium
+             "Specification-Version" to project.version,
+-            "Specification-Vendor" to "Purpur Team", // Purpur
+-            "Brand-Id" to "purpurmc:purpur", // Purpur
+-            "Brand-Name" to "Purpur", // Purpur
++            "Specification-Vendor" to "Zirkonium Team", // Purpur // Zirkonium
++            "Brand-Id" to "zirkonnetwork:zirkonium", // Purpur // Zirkonium
++            "Brand-Name" to "Zirkonium", // Purpur // Zirkonium
+             "Build-Number" to (build ?: ""),
+             "Build-Time" to Instant.now().toString(),
+             "Git-Branch" to gitBranch, // Paper
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
 index 8cde30544e14f8fc2dac32966ae3c21f8cf3a551..28508dc7ebfbfb1e5aa91e7d80da40e2bb713e94 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
@@ -84,7 +95,7 @@ index 3cb56595822799926a8141e60a42f5d1edfc6de5..cc3b6c4b80a17fb253f7bd5c74425bc3
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
-index a6e5950b5875cafd734300cdfbf58f5d3736f3c8..b1ed6e1f0a76e32591491b2cb366f549cf33245b 100644
+index a6e5950b5875cafd734300cdfbf58f5d3736f3c8..9749348755d19ff6cd3938b2fc4877d9fd1bdfa3 100644
 --- a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
 +++ b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
 @@ -32,6 +32,7 @@ public record ServerBuildInfoImpl(
@@ -107,6 +118,28 @@ index a6e5950b5875cafd734300cdfbf58f5d3736f3c8..b1ed6e1f0a76e32591491b2cb366f549
              SharedConstants.getCurrentVersion().getId(),
              SharedConstants.getCurrentVersion().getName(),
              getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)
+@@ -62,7 +63,7 @@ public record ServerBuildInfoImpl(
+ 
+     @Override
+     public boolean isBrandCompatible(final @NotNull Key brandId) {
+-        return brandId.equals(this.brandId) || brandId.equals(BRAND_PAPER_ID); // Purpur
++        return brandId.equals(this.brandId) || brandId.equals(BRAND_PAPER_ID) || brandId.equals(BRAND_PURPUR_ID); // Purpur // Zirkonium
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
+index 4c178b234bc1118a577d0e016f4b986e9197e99d..68367cb71dd4a7395ab10768ff561760ab3c1a0a 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
++++ b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
+@@ -177,7 +177,7 @@ public class RegionFileStorage implements AutoCloseable, ca.spottedleaf.moonrise
+ 
+     // Paper start
+     private static void printOversizedLog(String msg, Path file, int x, int z) {
+-        org.apache.logging.log4j.LogManager.getLogger().fatal(msg + " (" + file.toString().replaceAll(".+[\\\\/]", "") + " - " + x + "," + z + ") Go clean it up to remove this message. /minecraft:tp " + (x<<4)+" 128 "+(z<<4) + " - DO NOT REPORT THIS TO PURPUR - You may ask for help on Discord, but do not file an issue. These error messages can not be removed."); // Purpur
++        org.apache.logging.log4j.LogManager.getLogger().fatal(msg + " (" + file.toString().replaceAll(".+[\\\\/]", "") + " - " + x + "," + z + ") Go clean it up to remove this message. /minecraft:tp " + (x<<4)+" 128 "+(z<<4) + " - DO NOT REPORT THIS TO ZIRKONIUM - You may ask for help on Discord, but do not file an issue. These error messages can not be removed."); // Purpur // Zirkonium
+     }
+ 
+     private static CompoundTag readOversizedChunk(RegionFile regionfile, ChunkPos chunkCoordinate) throws IOException {
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 index 99597258e8e88cd9e2c901c4ac3ff7faeeabee2b..ec90dbb33a9a438a01c558e99a257418994d41d4 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java

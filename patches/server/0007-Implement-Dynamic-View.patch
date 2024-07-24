@@ -558,10 +558,10 @@ index f907150083ddabcf5be75730cbbca2259769ee7b..e93ee3898a302caa729235f569763520
              JfrCommand.register(this.dispatcher);
          }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index b8628e9ab434feaae40c65f0fa016f6d57352f38..36496cecede3cfcf36474bd65dab6dde8b343dd3 100644
+index d0c31849b67e19e9a14593b3907266a3759acb61..31c06039ab4d28222fb1e0b99d0a641570a46ef4 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1230,6 +1230,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1234,6 +1234,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
  
@@ -569,16 +569,16 @@ index b8628e9ab434feaae40c65f0fa016f6d57352f38..36496cecede3cfcf36474bd65dab6dde
 +                com.dynview.viewdisthandler.ServerDynamicViewDistanceManager.getInstance().initViewDist(); // Zirkonium - DynamicView
 +
              // Spigot start
-             // Paper start - move done tracking
+             // Paper start - Improved Watchdog Support
              LOGGER.info("Running delayed init tasks");
-@@ -1664,6 +1667,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1668,6 +1671,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          long endTime = System.nanoTime();
          long remaining = (TICK_TIME - (endTime - lastTick)) - catchupTime;
          new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();
 +        if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.dynamicView) com.dynview.util.TickTimeHandler.getInstance().onServerTick(); // Zirkonium - DynamicView
+         this.server.spark.tickEnd(((double)(endTime - lastTick) / 1000000D)); // Paper - spark
          // Paper end - Server Tick Events
          //this.profiler.push("tallying"); // Purpur
-         long j = Util.getNanos() - i;
 diff --git a/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java b/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java
 index 83f2c04d083eced64bc67661eed0ddfdddc497cc..55ee02e1d5ac91c1076bd8b8644488949972eec4 100644
 --- a/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java

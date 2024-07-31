@@ -5,19 +5,19 @@ Subject: [PATCH] Implement No Chat Reports
 
 
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index 7d35b880d5b58aebd220d83def3b997e15029b09..76ca77707a811c79a6b3a13d31ba1e9f49d20c08 100644
+index 4f58f9ff66879afd0d95f4893be89760ca73dd39..62d7ba4e9d999b75c15ce72fc8683ed4dd2cec2b 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-@@ -41,6 +41,8 @@ public class ZirkoniumConfig {
+@@ -40,6 +40,8 @@ public class ZirkoniumConfig {
      }
  
-     static void readConfig() {
+     static void saveConfig() {
 +        noChatReportsSettings();
-+
++        
          try {
              config.save(CONFIG_FILE);
          } catch (IOException ex) {
-@@ -62,4 +64,16 @@ public class ZirkoniumConfig {
+@@ -61,4 +63,16 @@ public class ZirkoniumConfig {
          config.addDefault(path, def);
          return config.getInt(path, config.getInt(path));
      }

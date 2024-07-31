@@ -498,18 +498,20 @@ index 0000000000000000000000000000000000000000..0cce33c1d04e5d6ee1dee2aecfd69baa
 +}
 \ No newline at end of file
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index 646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5..7a2e2def54176ff599ee150a6cd99ec431afaec0 100644
+index dc04ed05a39bdec55db69a914be7321593c88d5a..a6c561eb39d87a7cfa9110744247526b668f332f 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-@@ -43,6 +43,7 @@ public class ZirkoniumConfig {
-     static void readConfig() {
+@@ -42,7 +42,8 @@ public class ZirkoniumConfig {
+     static void saveConfig() {
          noChatReportsSettings();
          gameplaySettings();
+-        
 +        dynamicViewSettings();
- 
++
          try {
              config.save(CONFIG_FILE);
-@@ -90,4 +91,28 @@ public class ZirkoniumConfig {
+         } catch (IOException ex) {
+@@ -89,4 +90,28 @@ public class ZirkoniumConfig {
          }
          maxAnvilCost = getInt("gameplay.anvil.max-cost", maxAnvilCost);
      }
@@ -558,10 +560,10 @@ index f907150083ddabcf5be75730cbbca2259769ee7b..e93ee3898a302caa729235f569763520
              JfrCommand.register(this.dispatcher);
          }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index d0c31849b67e19e9a14593b3907266a3759acb61..31c06039ab4d28222fb1e0b99d0a641570a46ef4 100644
+index c56ffd2307b9c92742f760a51e16e48f3205f793..d0b469206440309318540c8bc0b1cc981e0ba182 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1234,6 +1234,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1235,6 +1235,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
  
@@ -571,7 +573,7 @@ index d0c31849b67e19e9a14593b3907266a3759acb61..31c06039ab4d28222fb1e0b99d0a6415
              // Spigot start
              // Paper start - Improved Watchdog Support
              LOGGER.info("Running delayed init tasks");
-@@ -1668,6 +1671,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1669,6 +1672,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          long endTime = System.nanoTime();
          long remaining = (TICK_TIME - (endTime - lastTick)) - catchupTime;
          new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();

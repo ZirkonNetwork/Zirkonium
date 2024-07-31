@@ -74,9 +74,49 @@ index 874dcbefea469440a9028ddc399a37c929429f62..575c829aab53cc29e9eea053780caccc
 +            true
 +    ); // Zirkonium end - Sneaky
  }
+diff --git a/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java b/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
+index 0cce33c1d04e5d6ee1dee2aecfd69baabc95c104..19c1d22ce9ef00020f0526e1cc39cc4d5126a042 100644
+--- a/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
++++ b/src/main/java/com/dynview/viewdisthandler/ServerDynamicViewDistanceManager.java
+@@ -55,7 +55,7 @@ public class ServerDynamicViewDistanceManager implements IDynamicViewDistanceMan
+                     this.reduceViewDistance = !adjustSimulationDistance;
+                     if (updateEvent.getNewDistance() != this.currentViewDist) this.currentViewDist = updateEvent.getNewDistance();
+                     if (logMessages) {
+-                        LOGGER.info("[DynView] Mean tick: " + round(meanTickTime) + "ms decreasing chunk view distance to: " + this.currentViewDist);
++                        LOGGER.info("[DynView] Mean tick: {}ms decreasing chunk view distance to: {}", round(meanTickTime), this.currentViewDist);
+                     }
+                     server.getPlayerList().setViewDistance(this.currentViewDist);
+                     return;
+@@ -68,7 +68,7 @@ public class ServerDynamicViewDistanceManager implements IDynamicViewDistanceMan
+                     this.reduceViewDistance = true;
+                     if (this.currentSimulationDistance != updateEvent.getNewDistance()) this.currentSimulationDistance = updateEvent.getNewDistance();
+                     if (logMessages) {
+-                        LOGGER.info("[DynView] Mean tick: " + round(meanTickTime) + "ms decreasing simulation distance to: " + this.currentSimulationDistance);
++                        LOGGER.info("[DynView] Mean tick: {}ms decreasing simulation distance to: {}", round(meanTickTime), this.currentSimulationDistance);
+                     }
+                     server.getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
+                 }
+@@ -88,7 +88,7 @@ public class ServerDynamicViewDistanceManager implements IDynamicViewDistanceMan
+                     this.increaseViewDistance = !adjustSimulationDistance;
+                     if (updateEvent.getNewDistance() != this.currentViewDist) this.currentViewDist = updateEvent.getNewDistance();
+                     if (logMessages) {
+-                        LOGGER.info("[DynView] Mean tick: " + round(meanTickTime) + "ms increasing chunk view distance to: " + this.currentViewDist);
++                        LOGGER.info("[DynView] Mean tick: {}ms increasing chunk view distance to: {}", round(meanTickTime), this.currentViewDist);
+                     }
+                     server.getPlayerList().setViewDistance(this.currentViewDist);
+                     return;
+@@ -101,7 +101,7 @@ public class ServerDynamicViewDistanceManager implements IDynamicViewDistanceMan
+                     this.increaseViewDistance = true;
+                     this.currentSimulationDistance = updateEvent.getNewDistance();
+                     if (logMessages) {
+-                        LOGGER.info("[DynView] Mean tick: " + round(meanTickTime) + "ms increasing simulation distance to: " + this.currentSimulationDistance);
++                        LOGGER.info("[DynView] Mean tick: {}ms increasing simulation distance to: {}", round(meanTickTime), this.currentSimulationDistance);
+                     }
+                     server.getAllLevels().forEach(level -> level.getChunkSource().setSimulationDistance(this.currentSimulationDistance));
+                 }
 diff --git a/src/main/java/me/elephant1214/zirkonium/SneakyManager.java b/src/main/java/me/elephant1214/zirkonium/SneakyManager.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..6057d4929294cdccadbd299b502872e544558fa8
+index 0000000000000000000000000000000000000000..30c1e0f5b1a051b5e2fdab6924ed910da21b7958
 --- /dev/null
 +++ b/src/main/java/me/elephant1214/zirkonium/SneakyManager.java
 @@ -0,0 +1,105 @@
@@ -119,9 +159,9 @@ index 0000000000000000000000000000000000000000..6057d4929294cdccadbd299b502872e5
 +            loaded = true;
 +            saveToFile(true);
 +        } catch (IOException e) {
-+            LOGGER.severe("[Sneaky] Failed to read allowed ping IPs list: " + e.getMessage());
++            LOGGER.error("[Sneaky] Failed to read allowed ping IPs list: {}", e.getMessage());
 +        } catch (NumberFormatException e) {
-+            LOGGER.severe("[Sneaky] Failed to parse allowed ping IPs list: " + e.getMessage());
++            LOGGER.error("[Sneaky] Failed to parse allowed ping IPs list: {}", e.getMessage());
 +        }
 +        loaded = true;
 +    }
@@ -149,7 +189,7 @@ index 0000000000000000000000000000000000000000..6057d4929294cdccadbd299b502872e5
 +        try {
 +            Files.writeString(IP_FILE.toPath(), configBuilder.toString());
 +        } catch (IOException e) {
-+            LOGGER.severe("[Sneaky] Failed to save allowed IPs list: " + e.getMessage());
++            LOGGER.error("[Sneaky] Failed to save allowed IPs list: {}", e.getMessage());
 +        }
 +    }
 +
@@ -159,7 +199,7 @@ index 0000000000000000000000000000000000000000..6057d4929294cdccadbd299b502872e5
 +
 +    public static boolean allowConnection(SocketAddress address) {
 +        @Nullable MinecraftServer server = MinecraftServer.getServer();
-+        return !ZirkoniumConfig.sneaky || !ZirkoniumConfig.disableConnectionsFromBannedIps || server == null || server.getPlayerList() == null || !server.getPlayerList().getIpBans().isBanned(address);
++        return !ZirkoniumConfig.sneaky || !ZirkoniumConfig.disableConnectionsFromBannedIps || server.getPlayerList() == null || !server.getPlayerList().getIpBans().isBanned(address);
 +    }
 +
 +    public static boolean canPing(SocketAddress address) {
@@ -186,7 +226,7 @@ index 0000000000000000000000000000000000000000..6057d4929294cdccadbd299b502872e5
 +    }
 +}
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index 7a2e2def54176ff599ee150a6cd99ec431afaec0..dd841b9fbc4ca0c71db7a8942f49999860049a36 100644
+index a6c561eb39d87a7cfa9110744247526b668f332f..de4c45f8d6fcdf74a13d3a4877ca05c52c9caadc 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -1,6 +1,7 @@
@@ -197,7 +237,7 @@ index 7a2e2def54176ff599ee150a6cd99ec431afaec0..dd841b9fbc4ca0c71db7a8942f499998
  import org.bukkit.configuration.InvalidConfigurationException;
  import org.bukkit.configuration.file.YamlConfiguration;
  
-@@ -34,8 +35,8 @@ public class ZirkoniumConfig {
+@@ -33,8 +34,8 @@ public class ZirkoniumConfig {
          config.options().header(HEADER);
          config.options().copyDefaults(true);
  
@@ -206,9 +246,9 @@ index 7a2e2def54176ff599ee150a6cd99ec431afaec0..dd841b9fbc4ca0c71db7a8942f499998
 +        version = getInt("config-version", 2);
 +        set("config-version", 2);
  
-         readConfig();
+         saveConfig();
      }
-@@ -44,6 +45,7 @@ public class ZirkoniumConfig {
+@@ -43,6 +44,7 @@ public class ZirkoniumConfig {
          noChatReportsSettings();
          gameplaySettings();
          dynamicViewSettings();
@@ -216,7 +256,7 @@ index 7a2e2def54176ff599ee150a6cd99ec431afaec0..dd841b9fbc4ca0c71db7a8942f499998
  
          try {
              config.save(CONFIG_FILE);
-@@ -115,4 +117,28 @@ public class ZirkoniumConfig {
+@@ -114,4 +116,28 @@ public class ZirkoniumConfig {
          minSimulationDistance = getInt("dynamic-view.min-simulation-distance", minSimulationDistance);
          maxSimulationDistance = getInt("dynamic-view.max-simulation-distance", maxSimulationDistance);
      }
@@ -264,10 +304,10 @@ index a937bc49a85c0e565f0400163c1c9174891fb48d..da557114e7b788d9a710ed0b6632589a
                      channel.config().setOption(ChannelOption.TCP_NODELAY, true);
                  } catch (ChannelException channelexception) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 31c06039ab4d28222fb1e0b99d0a641570a46ef4..c646a4d5851f913293b2b42851e0a1bbe655d0fe 100644
+index d0b469206440309318540c8bc0b1cc981e0ba182..953d8fb2431f23256f0f490592f18ec0314428f6 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -955,6 +955,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -956,6 +956,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      }
      public boolean saveAllChunks(boolean suppressLogs, boolean flush, boolean force, boolean close) {
          // Paper end - add close param

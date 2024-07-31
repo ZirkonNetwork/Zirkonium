@@ -5,10 +5,10 @@ Subject: [PATCH] Implement configurable maximum anvil cost
 
 
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index fc11e40392705071a27cec9df50155e7af27cf92..646aa4f575c2ec15a3f2706dce01b35bb8f2c7f5 100644
+index 303f97ad08ce1b189bb42d36e1f79457361deb32..dc04ed05a39bdec55db69a914be7321593c88d5a 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-@@ -79,6 +79,7 @@ public class ZirkoniumConfig {
+@@ -78,6 +78,7 @@ public class ZirkoniumConfig {
      }
  
      public static int maxEnchantLevelMultiplier = 1;
@@ -16,7 +16,7 @@ index fc11e40392705071a27cec9df50155e7af27cf92..646aa4f575c2ec15a3f2706dce01b35b
  
      private static void gameplaySettings() {
          maxEnchantLevelMultiplier = getInt("gameplay.enchantment.max-level-multiplier", maxEnchantLevelMultiplier);
-@@ -87,5 +88,6 @@ public class ZirkoniumConfig {
+@@ -86,5 +87,6 @@ public class ZirkoniumConfig {
              maxEnchantLevelMultiplier = 1;
              set("gameplay.enchantment.max-level-multiplier", 1);
          }

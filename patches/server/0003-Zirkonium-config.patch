@@ -6,23 +6,24 @@ Subject: [PATCH] Zirkonium config
 
 diff --git a/src/main/java/me/elephant1214/zirkonium/Zirkonium.java b/src/main/java/me/elephant1214/zirkonium/Zirkonium.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..97166ad691f76928d5ce58d56fd18ddf5a37e359
+index 0000000000000000000000000000000000000000..b7b1c5af289946d06dd28f6fb1afaddbbfc965d4
 --- /dev/null
 +++ b/src/main/java/me/elephant1214/zirkonium/Zirkonium.java
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,8 @@
 +package me.elephant1214.zirkonium;
 +
-+import java.util.logging.Logger;
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
 +
 +public final class Zirkonium {
-+    public static final Logger LOGGER = Logger.getLogger("Zirkonium");
++    public static final Logger LOGGER = LoggerFactory.getLogger("Zirkonium");
 +}
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7d35b880d5b58aebd220d83def3b997e15029b09
+index 0000000000000000000000000000000000000000..4f58f9ff66879afd0d95f4893be89760ca73dd39
 --- /dev/null
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-@@ -0,0 +1,65 @@
+@@ -0,0 +1,64 @@
 +package me.elephant1214.zirkonium.configuration;
 +
 +import com.google.common.base.Throwables;
@@ -31,7 +32,6 @@ index 0000000000000000000000000000000000000000..7d35b880d5b58aebd220d83def3b997e
 +
 +import java.io.File;
 +import java.io.IOException;
-+import java.util.logging.Level;
 +
 +import static me.elephant1214.zirkonium.Zirkonium.LOGGER;
 +
@@ -53,7 +53,7 @@ index 0000000000000000000000000000000000000000..7d35b880d5b58aebd220d83def3b997e
 +            config.load(CONFIG_FILE);
 +        } catch (IOException ignore) {
 +        } catch (InvalidConfigurationException ex) {
-+            LOGGER.log(Level.SEVERE, "Could not load zirkonium.yml, please correct your syntax errors", ex);
++            LOGGER.error("Could not load zirkonium.yml, please correct your syntax errors", ex);
 +            throw Throwables.propagate(ex);
 +        }
 +        config.options().header(HEADER);
@@ -62,14 +62,14 @@ index 0000000000000000000000000000000000000000..7d35b880d5b58aebd220d83def3b997e
 +        version = getInt("config-version", 1);
 +        set("config-version", 1);
 +
-+        readConfig();
++        saveConfig();
 +    }
 +
-+    static void readConfig() {
++    static void saveConfig() {
 +        try {
 +            config.save(CONFIG_FILE);
 +        } catch (IOException ex) {
-+            LOGGER.log(Level.SEVERE, "Could not save " + CONFIG_FILE, ex);
++            LOGGER.error("Could not save {}", CONFIG_FILE, ex);
 +        }
 +    }
 +

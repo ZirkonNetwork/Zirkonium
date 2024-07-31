@@ -5,18 +5,18 @@ Subject: [PATCH] Implement a configurable maximum enchantment level multiplier
 
 
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index 76ca77707a811c79a6b3a13d31ba1e9f49d20c08..fc11e40392705071a27cec9df50155e7af27cf92 100644
+index 62d7ba4e9d999b75c15ce72fc8683ed4dd2cec2b..303f97ad08ce1b189bb42d36e1f79457361deb32 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-@@ -42,6 +42,7 @@ public class ZirkoniumConfig {
+@@ -41,6 +41,7 @@ public class ZirkoniumConfig {
  
-     static void readConfig() {
+     static void saveConfig() {
          noChatReportsSettings();
 +        gameplaySettings();
- 
+         
          try {
              config.save(CONFIG_FILE);
-@@ -76,4 +77,15 @@ public class ZirkoniumConfig {
+@@ -75,4 +76,15 @@ public class ZirkoniumConfig {
          addQueryData = getBoolean("no-chat-reports.add-query-data", addQueryData) && noChatReports;
          convertToSystemMessage = getBoolean("no-chat-reports.convert-to-system-message", convertToSystemMessage) && noChatReports;
      }
@@ -26,12 +26,24 @@ index 76ca77707a811c79a6b3a13d31ba1e9f49d20c08..fc11e40392705071a27cec9df50155e7
 +    private static void gameplaySettings() {
 +        maxEnchantLevelMultiplier = getInt("gameplay.enchantment.max-level-multiplier", maxEnchantLevelMultiplier);
 +        if (maxEnchantLevelMultiplier < 1) {
-+            LOGGER.warning("The maximum enchantment level multiplier cannot be less than 1, resetting it");
++            LOGGER.warn("The maximum enchantment level multiplier cannot be less than 1, resetting it");
 +            maxEnchantLevelMultiplier = 1;
 +            set("gameplay.enchantment.max-level-multiplier", 1);
 +        }
 +    }
  }
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index a3a3a661321488b8c772d9491df81c9d56f2e262..b0f77e69f8c0a8f6b65008617cad564342c0a962 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -242,7 +242,6 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         // Purpur start
+         try {
+             org.purpurmc.purpur.PurpurConfig.init((java.io.File) options.valueOf("purpur-settings"));
+-            me.elephant1214.zirkonium.configuration.ZirkoniumConfig.init((java.io.File) options.valueOf("zirkonium-settings")); // Zirkonium
+         } catch (Exception e) {
+             DedicatedServer.LOGGER.error("Unable to load server configuration", e);
+             return false;
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/Enchantments.java b/src/main/java/net/minecraft/world/item/enchantment/Enchantments.java
 index 06ff34a333532c569d80919b702728d89e649969..7cfdb05381d8d48091d5418117fb8265e0436d70 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/Enchantments.java
@@ -333,3 +345,21 @@ index 06ff34a333532c569d80919b702728d89e649969..7cfdb05381d8d48091d5418117fb8265
                          Enchantment.dynamicCost(15, 9),
                          Enchantment.dynamicCost(65, 9),
                          4,
+diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
+index baff257c980dc3be8628467a3a8e26bf3885d9c3..8ac96c2186afac073037acabf71f1f38fd8bee45 100644
+--- a/src/main/java/org/bukkit/craftbukkit/Main.java
++++ b/src/main/java/org/bukkit/craftbukkit/Main.java
+@@ -300,6 +300,13 @@ public class Main {
+ 
+                 //System.out.println("Loading libraries, please wait...");
+                 //net.minecraft.server.Main.main(options);
++                // Zirkonium start
++                try {
++                    me.elephant1214.zirkonium.configuration.ZirkoniumConfig.init((java.io.File) options.valueOf("zirkonium-settings"));
++                } catch (Exception e) {
++                    throw new RuntimeException("Unable to load Zirkonium configuration", e);
++                } // Zirkonium end
++
+                 io.papermc.paper.PaperBootstrap.boot(options);
+             } catch (Throwable t) {
+                 t.printStackTrace();

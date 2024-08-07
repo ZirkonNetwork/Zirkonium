@@ -5,23 +5,19 @@ Subject: [PATCH] Implement configurable maximum anvil cost
 
 
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index 303f97ad08ce1b189bb42d36e1f79457361deb32..dc04ed05a39bdec55db69a914be7321593c88d5a 100644
+index 62d7ba4e9d999b75c15ce72fc8683ed4dd2cec2b..5e54a277214bbd947b6a9efeb77cf08d3c615664 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-@@ -78,6 +78,7 @@ public class ZirkoniumConfig {
+@@ -75,4 +75,10 @@ public class ZirkoniumConfig {
+         addQueryData = getBoolean("no-chat-reports.add-query-data", addQueryData) && noChatReports;
+         convertToSystemMessage = getBoolean("no-chat-reports.convert-to-system-message", convertToSystemMessage) && noChatReports;
      }
- 
-     public static int maxEnchantLevelMultiplier = 1;
++    
 +    public static int maxAnvilCost = 40;
- 
-     private static void gameplaySettings() {
-         maxEnchantLevelMultiplier = getInt("gameplay.enchantment.max-level-multiplier", maxEnchantLevelMultiplier);
-@@ -86,5 +87,6 @@ public class ZirkoniumConfig {
-             maxEnchantLevelMultiplier = 1;
-             set("gameplay.enchantment.max-level-multiplier", 1);
-         }
++
++    private static void gameplaySettings() {
 +        maxAnvilCost = getInt("gameplay.anvil.max-cost", maxAnvilCost);
-     }
++    }
  }
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 index 60260bcb568613b4a076385e9329a06f3e0fb885..567923b707e3641f83cea3b638bd129bd117237b 100644

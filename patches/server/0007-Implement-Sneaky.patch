@@ -226,7 +226,7 @@ index 0000000000000000000000000000000000000000..30c1e0f5b1a051b5e2fdab6924ed910d
 +    }
 +}
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index a6c561eb39d87a7cfa9110744247526b668f332f..de4c45f8d6fcdf74a13d3a4877ca05c52c9caadc 100644
+index 5d638dc715e0844cab694acabc5b18b5390fd356..d2290356013f6d8570e8ee6ecd99c17ed7f646cd 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 @@ -1,6 +1,7 @@
@@ -253,10 +253,10 @@ index a6c561eb39d87a7cfa9110744247526b668f332f..de4c45f8d6fcdf74a13d3a4877ca05c5
          gameplaySettings();
          dynamicViewSettings();
 +        sneakySettings();
- 
+         
          try {
              config.save(CONFIG_FILE);
-@@ -114,4 +116,28 @@ public class ZirkoniumConfig {
+@@ -107,4 +109,28 @@ public class ZirkoniumConfig {
          minSimulationDistance = getInt("dynamic-view.min-simulation-distance", minSimulationDistance);
          maxSimulationDistance = getInt("dynamic-view.max-simulation-distance", maxSimulationDistance);
      }

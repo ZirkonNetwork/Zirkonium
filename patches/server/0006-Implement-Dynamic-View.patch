@@ -498,21 +498,20 @@ index 0000000000000000000000000000000000000000..0cce33c1d04e5d6ee1dee2aecfd69baa
 +}
 \ No newline at end of file
 diff --git a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-index dc04ed05a39bdec55db69a914be7321593c88d5a..a6c561eb39d87a7cfa9110744247526b668f332f 100644
+index 5e54a277214bbd947b6a9efeb77cf08d3c615664..5d638dc715e0844cab694acabc5b18b5390fd356 100644
 --- a/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
 +++ b/src/main/java/me/elephant1214/zirkonium/configuration/ZirkoniumConfig.java
-@@ -42,7 +42,8 @@ public class ZirkoniumConfig {
+@@ -41,6 +41,8 @@ public class ZirkoniumConfig {
+ 
      static void saveConfig() {
          noChatReportsSettings();
-         gameplaySettings();
--        
++        gameplaySettings();
 +        dynamicViewSettings();
-+
+         
          try {
              config.save(CONFIG_FILE);
-         } catch (IOException ex) {
-@@ -89,4 +90,28 @@ public class ZirkoniumConfig {
-         }
+@@ -81,4 +83,28 @@ public class ZirkoniumConfig {
+     private static void gameplaySettings() {
          maxAnvilCost = getInt("gameplay.anvil.max-cost", maxAnvilCost);
      }
 +

@@ -20,7 +20,7 @@ index 62d7ba4e9d999b75c15ce72fc8683ed4dd2cec2b..5e54a277214bbd947b6a9efeb77cf08d
 +    }
  }
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 60260bcb568613b4a076385e9329a06f3e0fb885..567923b707e3641f83cea3b638bd129bd117237b 100644
+index eaef4f26901c9db4b24b003e2c90161e8ea53f9e..daed525f8ad4765f3b51b6c0dd723d650ccb42b5 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -56,7 +56,7 @@ public class AnvilMenu extends ItemCombinerMenu {
@@ -29,6 +29,6 @@ index 60260bcb568613b4a076385e9329a06f3e0fb885..567923b707e3641f83cea3b638bd129b
      public static final int DEFAULT_DENIED_COST = -1;
 -    public int maximumRepairCost = 40;
 +    public int maximumRepairCost = me.elephant1214.zirkonium.configuration.ZirkoniumConfig.maxAnvilCost;
-     private CraftInventoryView bukkitEntity;
+     private CraftAnvilView bukkitEntity;
      // CraftBukkit end
      // Purpur start - Anvil API

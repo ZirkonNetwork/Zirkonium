@@ -5,35 +5,35 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index f00e2881a4d202e6162082984569c986f0c74548..d33838b92ef79061cf84386d6391c268d0bf073e 100644
+index 864991f076c106e37c5b7473733460941f20434d..78795c0c6f32e783e1a07b94bb9551b0620c3f1d 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
  val alsoShade: Configuration by configurations.creating
  
  dependencies {
--    implementation(project(":zirkonium-api")) // Purpur // Zirkonium
-+    implementation(project(":Zirkonium-API")) // Purpur // Zirkonium
+-    implementation(project(":zirkonium-api")) // Pufferfish // Paper // Purpur // Zirkonium
++    implementation(project(":Zirkonium-API")) // Pufferfish // Paper // Purpur // Zirkonium
      // Paper start
      implementation("org.jline:jline-terminal-jansi:3.21.0")
      implementation("net.minecrell:terminalconsoleappender:1.3.0")
-@@ -88,14 +88,14 @@ tasks.jar {
+@@ -103,14 +103,14 @@ tasks.jar {
          val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
--            "Implementation-Title" to "Purpur", // Purpur
-+            "Implementation-Title" to "Zirkonium", // Purpur // Zirkonium
+-            "Implementation-Title" to "Purpur", // Pufferfish // Purpur
++            "Implementation-Title" to "Zirkonium", // Pufferfish // Purpur // Zirkonium
              "Implementation-Version" to implementationVersion,
              "Implementation-Vendor" to date, // Paper
--            "Specification-Title" to "Purpur", // Purpur
-+            "Specification-Title" to "Zirkonium", // Purpur // Zirkonium
+-            "Specification-Title" to "Purpur", // Pufferfish // Purpur
++            "Specification-Title" to "Zirkonium", // Pufferfish // Purpur // Zirkonium
              "Specification-Version" to project.version,
--            "Specification-Vendor" to "Purpur Team", // Purpur
--            "Brand-Id" to "purpurmc:purpur", // Purpur
--            "Brand-Name" to "Purpur", // Purpur
-+            "Specification-Vendor" to "Zirkonium Team", // Purpur // Zirkonium
-+            "Brand-Id" to "zirkonnetwork:zirkonium", // Purpur // Zirkonium
-+            "Brand-Name" to "Zirkonium", // Purpur // Zirkonium
+-            "Specification-Vendor" to "Purpur Team", // Pufferfish // Purpur
+-            "Brand-Id" to "purpurmc:purpur", // Pufferfish // Purpur
+-            "Brand-Name" to "Purpur", // Pufferfish // Purpur
++            "Specification-Vendor" to "Zirkonium Team", // Pufferfish // Purpur // Zirkonium
++            "Brand-Id" to "zirkonnetwork:zirkonium", // Pufferfish // Purpur // Zirkonium
++            "Brand-Name" to "Zirkonium", // Pufferfish // Purpur // Zirkonium
              "Build-Number" to (build ?: ""),
              "Build-Time" to Instant.now().toString(),
              "Git-Branch" to gitBranch, // Paper
@@ -95,18 +95,18 @@ index 3cb56595822799926a8141e60a42f5d1edfc6de5..cc3b6c4b80a17fb253f7bd5c74425bc3
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
-index a6e5950b5875cafd734300cdfbf58f5d3736f3c8..9749348755d19ff6cd3938b2fc4877d9fd1bdfa3 100644
+index 3099c21ee589acf6edff5903a23673adf489024f..3d590fa128437581c6009cfd5380c6aeac148cb8 100644
 --- a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
 +++ b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
-@@ -32,6 +32,7 @@ public record ServerBuildInfoImpl(
- 
+@@ -33,6 +33,7 @@ public record ServerBuildInfoImpl(
      private static final String BRAND_PAPER_NAME = "Paper";
+     private static final String BRAND_PUFFERFISH_NAME = "Pufferfish"; // Purpur
      private static final String BRAND_PURPUR_NAME = "Purpur"; // Purpur
 +    private static final String BRAND_ZIRKONIUM_NAME = "Zirkonium"; // Zirkonium
  
      private static final String BUILD_DEV = "DEV";
  
-@@ -43,9 +44,9 @@ public record ServerBuildInfoImpl(
+@@ -44,9 +45,9 @@ public record ServerBuildInfoImpl(
          this(
              getManifestAttribute(manifest, ATTRIBUTE_BRAND_ID)
                  .map(Key::key)
@@ -118,12 +118,12 @@ index a6e5950b5875cafd734300cdfbf58f5d3736f3c8..9749348755d19ff6cd3938b2fc4877d9
              SharedConstants.getCurrentVersion().getId(),
              SharedConstants.getCurrentVersion().getName(),
              getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)
-@@ -62,7 +63,7 @@ public record ServerBuildInfoImpl(
+@@ -63,7 +64,7 @@ public record ServerBuildInfoImpl(
  
      @Override
      public boolean isBrandCompatible(final @NotNull Key brandId) {
--        return brandId.equals(this.brandId) || brandId.equals(BRAND_PAPER_ID); // Purpur
-+        return brandId.equals(this.brandId) || brandId.equals(BRAND_PAPER_ID) || brandId.equals(BRAND_PURPUR_ID); // Purpur // Zirkonium
+-        return brandId.equals(this.brandId) || brandId.equals(BRAND_PAPER_ID) || brandId.equals(BRAND_PUFFERFISH_ID); // Purpur
++        return brandId.equals(this.brandId) || brandId.equals(BRAND_PAPER_ID) || brandId.equals(BRAND_PUFFERFISH_ID) || brandId.equals(BRAND_PURPUR_ID); // Purpur // Zirkonium
      }
  
      @Override

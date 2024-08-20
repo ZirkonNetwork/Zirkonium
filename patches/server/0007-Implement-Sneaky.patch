@@ -304,10 +304,10 @@ index a937bc49a85c0e565f0400163c1c9174891fb48d..da557114e7b788d9a710ed0b6632589a
                      channel.config().setOption(ChannelOption.TCP_NODELAY, true);
                  } catch (ChannelException channelexception) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index d0b469206440309318540c8bc0b1cc981e0ba182..953d8fb2431f23256f0f490592f18ec0314428f6 100644
+index 757eafe14722856955b705450611b0ceb5870d57..b565f01935dcb0e98db10345158551e4725648c4 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -956,6 +956,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -957,6 +957,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      }
      public boolean saveAllChunks(boolean suppressLogs, boolean flush, boolean force, boolean close) {
          // Paper end - add close param

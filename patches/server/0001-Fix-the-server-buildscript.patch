@@ -5,15 +5,15 @@ Subject: [PATCH] Fix the server buildscript
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 409a46eb82262b00a626683072f2734255f2c2b8..f00e2881a4d202e6162082984569c986f0c74548 100644
+index 97a4a54dfa74df7aafd9df5a0f2fdac72471c2d5..864991f076c106e37c5b7473733460941f20434d 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
  val alsoShade: Configuration by configurations.creating
  
  dependencies {
--    implementation(project(":purpur-api")) // Purpur
-+    implementation(project(":zirkonium-api")) // Purpur // Zirkonium
+-    implementation(project(":purpur-api")) // Pufferfish // Paper // Purpur
++    implementation(project(":zirkonium-api")) // Pufferfish // Paper // Purpur // Zirkonium
      // Paper start
      implementation("org.jline:jline-terminal-jansi:3.21.0")
      implementation("net.minecrell:terminalconsoleappender:1.3.0")

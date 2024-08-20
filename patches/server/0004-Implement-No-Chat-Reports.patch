@@ -159,10 +159,10 @@ index 50dc68a005490415b88780397ef6c26859596dd5..79b9e6d30d1f930ba753e0c809500d63
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 077c6c87a711465879d83e096da56b010b7f4c25..a3a3a661321488b8c772d9491df81c9d56f2e262 100644
+index 108bdf28e84c497226f907daaeccc228218a0ad2..e1452bbfa46286896c86650317c29206b5e69957 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -701,8 +701,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -705,8 +705,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
      public boolean enforceSecureProfile() {
          DedicatedServerProperties dedicatedserverproperties = this.getProperties();
  
@@ -204,10 +204,10 @@ index fac2fb82c381d245f77b7288c34920660ac2c3af..e5dce8ab58c7b4d8d3be8319c1c038c7
              ClientboundSetDefaultSpawnPositionPacket packet6 = (ClientboundSetDefaultSpawnPositionPacket) packet;
              this.player.compassTarget = CraftLocation.toBukkit(packet6.pos, this.getCraftPlayer().getWorld());
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 1b1008ffd544dcddc31238e10c06df0d7aa68793..991b801fe50035540570e4d393d2887c9f3453fe 100644
+index 1babe6756b904fd2e5b2d62f6adfa153e3b772f1..877a0b3bc9568365abe446d87302e97640ec12a8 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1452,7 +1452,7 @@ public abstract class PlayerList {
+@@ -1455,7 +1455,7 @@ public abstract class PlayerList {
      }
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public

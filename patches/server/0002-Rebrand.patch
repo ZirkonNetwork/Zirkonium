@@ -5,7 +5,7 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index ad2e48301b8564d905d7a9e54d41ecdfc6610add..9a49a1e4fb806f9be6873c4a87b502bcb96d5593 100644
+index f05dae39cd504fd5b3d3f16fc895dfb76bf35f5a..677b538b612a9713eec08c03ab90a8a9080677a9 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
@@ -82,10 +82,10 @@ index 6d36fc6d8e22d9b68dea3830f6ecc8763184c343..8e8157706152ee2802aa5eee21f10a7c
          final @Nullable Component history = this.getHistory();
  
 diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
-index 3cb56595822799926a8141e60a42f5d1edfc6de5..cc3b6c4b80a17fb253f7bd5c74425bc3ae087bba 100644
+index 90b3526479320064378f2cde6c2f2b8e48a59ba6..058a99aeb778f78a84a150231b185d0fdc2f935c 100644
 --- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 +++ b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
-@@ -17,7 +17,7 @@ public final class PaperConsole extends SimpleTerminalConsole {
+@@ -20,7 +20,7 @@ public final class PaperConsole extends SimpleTerminalConsole {
      @Override
      protected LineReader buildReader(LineReaderBuilder builder) {
          builder

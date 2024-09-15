@@ -38,10 +38,10 @@ index 0000000000000000000000000000000000000000..a6631074fbde09598b89262a0459c640
 +    }
 +}
 diff --git a/src/main/java/com/destroystokyo/paper/network/StandardPaperServerListPingEventImpl.java b/src/main/java/com/destroystokyo/paper/network/StandardPaperServerListPingEventImpl.java
-index 874dcbefea469440a9028ddc399a37c929429f62..575c829aab53cc29e9eea053780caccca60d262f 100644
+index 30a19d10869f73d67b794e8e4c035bc5c10209e6..3e732e64130aa63d1155762aa43d4b456971ccf3 100644
 --- a/src/main/java/com/destroystokyo/paper/network/StandardPaperServerListPingEventImpl.java
 +++ b/src/main/java/com/destroystokyo/paper/network/StandardPaperServerListPingEventImpl.java
-@@ -88,10 +88,31 @@ public final class StandardPaperServerListPingEventImpl extends PaperServerListP
+@@ -96,10 +96,31 @@ public final class StandardPaperServerListPingEventImpl extends PaperServerListP
          } else {
              favicon = Optional.empty();
          }

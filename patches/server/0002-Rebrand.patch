@@ -5,7 +5,7 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index f05dae39cd504fd5b3d3f16fc895dfb76bf35f5a..677b538b612a9713eec08c03ab90a8a9080677a9 100644
+index fd4f2cd7e99506ef801cb4e5977d3ba08a0f5c32..5c86a550ffaebcf5f600c7b6439e6e1ba1eb9894 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {

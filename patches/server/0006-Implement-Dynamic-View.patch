@@ -540,7 +540,7 @@ index 5e54a277214bbd947b6a9efeb77cf08d3c615664..5d638dc715e0844cab694acabc5b18b5
 +    }
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 8d82425ccbc30b3f4a59767ca72bf37311ddeda0..94ef3f35f1d3dd6cc2d60b7eb803959eefb5ea0b 100644
+index a5e8f2d8e5963c730a9509eddfadb9ca322c7183..b80089f133422da7a2fa1dfcd349105312c12894 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,5 +1,6 @@
@@ -559,20 +559,23 @@ index 8d82425ccbc30b3f4a59767ca72bf37311ddeda0..94ef3f35f1d3dd6cc2d60b7eb803959e
              JfrCommand.register(this.dispatcher);
          }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 23505b0f80d643d9ef569b49192f44e0373dfb5f..d996e5c95796e97b4fed6754c7a912682bd0e0d0 100644
+index 95f1e0ae174400f2cf7bfed2897259d5aa2cfcb5..65d8b300a79a460cd11ae4ff311bbcbea43bf563 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1256,6 +1256,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1256,8 +1256,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+             this.nextTickTimeNanos = Util.getNanos();
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
- 
+-
++            
+             this.server.spark.enableBeforePlugins(); // Paper - spark
 +            if (me.elephant1214.zirkonium.configuration.ZirkoniumConfig.dynamicView)
 +                com.dynview.viewdisthandler.ServerDynamicViewDistanceManager.getInstance().initViewDist(); // Zirkonium - DynamicView
-+
++            
              // Spigot start
              // Paper start - Improved Watchdog Support
              LOGGER.info("Running delayed init tasks");
-@@ -1747,7 +1750,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1748,7 +1751,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          long endTime = System.nanoTime();
          long remaining = (TICK_TIME - (endTime - lastTick)) - catchupTime;
          new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();

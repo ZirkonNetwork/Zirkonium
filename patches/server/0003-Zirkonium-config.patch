@@ -101,7 +101,7 @@ index 7a442fb4cf78bcb1268359ee41a6de138edb76b6..938b3de43823fcccc14702aefb551420
              DedicatedServer.LOGGER.error("Unable to load server configuration", e);
              return false;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 81922bf93f8a96e6cf05944ca98a82cc5945a6c6..0ca3e54b99c5e361d372d26074879bfb9cbcb08f 100644
+index d74591cd30b19f0d5cbfdb81e0607ccd4bdd91d4..c3f90797d8bb633883dd707d67cee06874b2b0a8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -1101,6 +1101,7 @@ public final class CraftServer implements Server {
@@ -113,7 +113,7 @@ index 81922bf93f8a96e6cf05944ca98a82cc5945a6c6..0ca3e54b99c5e361d372d26074879bfb
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index 430407b0cf06ba337c59cd576c7e40a8e5fe8229..3ff2a46d05aa33e35410ec778ce2156e33d41a08 100644
+index c471a8c81ba067abcb22956ad1a30b5a9b64fc87..7022e6cadb7494186327786a9ee0c5fd89ee9589 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
 @@ -190,6 +190,14 @@ public class Main {

@@ -5,7 +5,7 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index f785d43af00af75011b66ef152c6e20e8daa43a7..a1984cfa4ddc774ff632bc6df61633a5a8c6b024 100644
+index bedf270875cb3076d321d9e8d4b1570b114be3e6..24e54e1038779798a52149390eb6ddecd0005809 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -25,7 +25,7 @@ abstract class MockitoAgentProvider : CommandLineArgumentProvider {
@@ -14,10 +14,10 @@ index f785d43af00af75011b66ef152c6e20e8daa43a7..a1984cfa4ddc774ff632bc6df61633a5
  dependencies {
 -    implementation(project(":zirkonium-api")) // Pufferfish // Paper // Purpur // Zirkonium
 +    implementation(project(":Zirkonium-API")) // Pufferfish // Paper // Purpur // Zirkonium
+     implementation("ca.spottedleaf:concurrentutil:0.0.2") // Paper - Add ConcurrentUtil dependency
      // Paper start
      implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
-     implementation("org.jline:jline-terminal-jni:3.27.1") // fall back to jni on java 21
-@@ -118,14 +118,14 @@ tasks.jar {
+@@ -119,14 +119,14 @@ tasks.jar {
          val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
@@ -38,10 +38,10 @@ index f785d43af00af75011b66ef152c6e20e8daa43a7..a1984cfa4ddc774ff632bc6df61633a5
              "Build-Time" to Instant.now().toString(),
              "Git-Branch" to gitBranch, // Paper
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 8cde30544e14f8fc2dac32966ae3c21f8cf3a551..28508dc7ebfbfb1e5aa91e7d80da40e2bb713e94 100644
+index 4a8f95670e25c81952cccbaf4c6e49514cacd529..a723dd02aab99f62924b597f5dec296473f82eac 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
-@@ -593,7 +593,7 @@ public class Metrics {
+@@ -592,7 +592,7 @@ public class Metrics {
              boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
              // Only start Metrics, if it's enabled in the config
              if (config.getBoolean("enabled", true)) {
@@ -50,7 +50,7 @@ index 8cde30544e14f8fc2dac32966ae3c21f8cf3a551..28508dc7ebfbfb1e5aa91e7d80da40e2
  
                  metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
                      String minecraftVersion = Bukkit.getVersion();
-@@ -603,7 +603,7 @@ public class Metrics {
+@@ -602,7 +602,7 @@ public class Metrics {
  
                  metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
                  metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() ? "bungee" : "offline"))); // Purpur

@@ -540,7 +540,7 @@ index 5e54a277214bbd947b6a9efeb77cf08d3c615664..5d638dc715e0844cab694acabc5b18b5
 +    }
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index f907150083ddabcf5be75730cbbca2259769ee7b..e93ee3898a302caa729235f569763520af802eb2 100644
+index ac93dcca5576b9d4e7d15305f5d0dbaf940b7b1d..7859021cd66f685a8f320949d0f04f535b49703f 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,5 +1,6 @@
@@ -559,10 +559,10 @@ index f907150083ddabcf5be75730cbbca2259769ee7b..e93ee3898a302caa729235f569763520
              JfrCommand.register(this.dispatcher);
          }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 6fb35c36d964c96a42911b8a9e11590aaa5cca59..757eafe14722856955b705450611b0ceb5870d57 100644
+index d78cb68c3a53b277aa26186062efc716c8f80f36..b546f1ce18672397858ea120345deaa704b32a46 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1236,6 +1236,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1235,6 +1235,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
  
@@ -572,7 +572,7 @@ index 6fb35c36d964c96a42911b8a9e11590aaa5cca59..757eafe14722856955b705450611b0ce
              // Spigot start
              // Paper start - Improved Watchdog Support
              LOGGER.info("Running delayed init tasks");
-@@ -1670,6 +1673,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1677,6 +1680,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          long endTime = System.nanoTime();
          long remaining = (TICK_TIME - (endTime - lastTick)) - catchupTime;
          new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();
@@ -581,10 +581,10 @@ index 6fb35c36d964c96a42911b8a9e11590aaa5cca59..757eafe14722856955b705450611b0ce
          // Paper end - Server Tick Events
          //this.profiler.push("tallying"); // Purpur
 diff --git a/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java b/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java
-index 83f2c04d083eced64bc67661eed0ddfdddc497cc..55ee02e1d5ac91c1076bd8b8644488949972eec4 100644
+index 180c0a532bbac10a8280b63eb7aa783a1bfbb237..f49e6463a74872bd57fbeb1fd04d7be752cc6edb 100644
 --- a/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java
 +++ b/src/test/java/io/papermc/paper/permissions/MinecraftCommandPermissionsTest.java
-@@ -58,6 +58,7 @@ public class MinecraftCommandPermissionsTest extends AbstractTestingBase {
+@@ -59,6 +59,7 @@ public class MinecraftCommandPermissionsTest {
      }
  
      private static final List<String> TO_SKIP = List.of(

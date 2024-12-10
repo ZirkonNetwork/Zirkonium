@@ -159,7 +159,7 @@ index 50dc68a005490415b88780397ef6c26859596dd5..79b9e6d30d1f930ba753e0c809500d63
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 108bdf28e84c497226f907daaeccc228218a0ad2..e1452bbfa46286896c86650317c29206b5e69957 100644
+index 52da9f9803c994d24a6b9322419eb60accf6627d..17bdfcfdb22a5239db33b7ac77fa342d98e805d5 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -705,8 +705,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -175,10 +175,10 @@ index 108bdf28e84c497226f907daaeccc228218a0ad2..e1452bbfa46286896c86650317c29206
              && this.services.canValidateProfileKeys();
          // Paper end - Add setting for proxy online mode status
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index fac2fb82c381d245f77b7288c34920660ac2c3af..e5dce8ab58c7b4d8d3be8319c1c038c7a6160a1a 100644
+index a9d54c80f682d826ad272731bd6477eed0fd44d5..2e217a5a96292ab3c1d8dc58fb038d6bfc1cc598 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -324,6 +324,12 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -325,6 +325,12 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      }
  
      public void send(Packet<?> packet) {
@@ -191,7 +191,7 @@ index fac2fb82c381d245f77b7288c34920660ac2c3af..e5dce8ab58c7b4d8d3be8319c1c038c7
          this.send(packet, (PacketSendListener) null);
      }
  
-@@ -331,6 +337,11 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -332,6 +338,11 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
          // CraftBukkit start
          if (packet == null || this.processedDisconnect) { // Spigot
              return;
@@ -204,10 +204,10 @@ index fac2fb82c381d245f77b7288c34920660ac2c3af..e5dce8ab58c7b4d8d3be8319c1c038c7
              ClientboundSetDefaultSpawnPositionPacket packet6 = (ClientboundSetDefaultSpawnPositionPacket) packet;
              this.player.compassTarget = CraftLocation.toBukkit(packet6.pos, this.getCraftPlayer().getWorld());
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index e4978abcc79ee51fa95442b82d9079c8ee1e60d6..f4d6749509ccce56f52c5845e19f6254bfbbbd86 100644
+index 33b7f0f14c826e9baa8b562a852cd4d46882622c..15c31fac1b4e8252851bc01b9d3d43c20ddb37cd 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1456,7 +1456,7 @@ public abstract class PlayerList {
+@@ -1462,7 +1462,7 @@ public abstract class PlayerList {
      }
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public

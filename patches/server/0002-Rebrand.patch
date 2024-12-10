@@ -5,19 +5,19 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 02ab0aa368456b18b7e21f93307e89008cdecf88..5248f43e643975d51fc6bacd5e675fc3c09f5e07 100644
+index f785d43af00af75011b66ef152c6e20e8daa43a7..a1984cfa4ddc774ff632bc6df61633a5a8c6b024 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
- val alsoShade: Configuration by configurations.creating
+@@ -25,7 +25,7 @@ abstract class MockitoAgentProvider : CommandLineArgumentProvider {
+ // Paper end - configure mockito agent that is needed in newer java versions
  
  dependencies {
 -    implementation(project(":zirkonium-api")) // Pufferfish // Paper // Purpur // Zirkonium
 +    implementation(project(":Zirkonium-API")) // Pufferfish // Paper // Purpur // Zirkonium
      // Paper start
-     implementation("org.jline:jline-terminal-jansi:3.21.0")
-     implementation("net.minecrell:terminalconsoleappender:1.3.0")
-@@ -104,14 +104,14 @@ tasks.jar {
+     implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
+     implementation("org.jline:jline-terminal-jni:3.27.1") // fall back to jni on java 21
+@@ -118,14 +118,14 @@ tasks.jar {
          val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
@@ -128,10 +128,10 @@ index 3099c21ee589acf6edff5903a23673adf489024f..3d590fa128437581c6009cfd5380c6ae
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
-index 4c178b234bc1118a577d0e016f4b986e9197e99d..68367cb71dd4a7395ab10768ff561760ab3c1a0a 100644
+index cf0f3a14584b9280211f88808cb1ddfb10105ec5..1f8b5d371a51b0d43aa01a76aef11fa6284d2d4d 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
-@@ -177,7 +177,7 @@ public class RegionFileStorage implements AutoCloseable, ca.spottedleaf.moonrise
+@@ -289,7 +289,7 @@ public class RegionFileStorage implements AutoCloseable, ca.spottedleaf.moonrise
  
      // Paper start
      private static void printOversizedLog(String msg, Path file, int x, int z) {

@@ -56,7 +56,7 @@ index 479e6e2aa88a22ef7f8fccb06add6806f5b71d9d..baac9ef450d00352d474a46c735fe4b3
  
      @FunctionalInterface
 diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
-index 0cd6a50837efce87ca052a0e1e24db2b75761196..6771fb0638903fb07bfd16cc4545cbc81b7be23f 100644
+index a523a83aec3a6ecbec4d60a187edc0c0167d15b4..d9b2f5f93576ab2afe1cc5bf6afc74bb10ef3514 100644
 --- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 +++ b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 @@ -113,6 +113,21 @@ public class FriendlyByteBuf extends ByteBuf {
@@ -159,10 +159,10 @@ index 50dc68a005490415b88780397ef6c26859596dd5..79b9e6d30d1f930ba753e0c809500d63
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 52da9f9803c994d24a6b9322419eb60accf6627d..17bdfcfdb22a5239db33b7ac77fa342d98e805d5 100644
+index 938b3de43823fcccc14702aefb5514205b3fe504..8da6c2c29c3028f2ce55e165be72098609d35975 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -705,8 +705,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -683,8 +683,9 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
      public boolean enforceSecureProfile() {
          DedicatedServerProperties dedicatedserverproperties = this.getProperties();
  
@@ -175,10 +175,10 @@ index 52da9f9803c994d24a6b9322419eb60accf6627d..17bdfcfdb22a5239db33b7ac77fa342d
              && this.services.canValidateProfileKeys();
          // Paper end - Add setting for proxy online mode status
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index a9d54c80f682d826ad272731bd6477eed0fd44d5..2e217a5a96292ab3c1d8dc58fb038d6bfc1cc598 100644
+index 7d276c191b391bca24948ddb36b8b7d0f1f03b03..ec56fd603bd6691ca516e9c16a6da83095a80a1d 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -325,6 +325,12 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -332,6 +332,12 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      }
  
      public void send(Packet<?> packet) {
@@ -191,7 +191,7 @@ index a9d54c80f682d826ad272731bd6477eed0fd44d5..2e217a5a96292ab3c1d8dc58fb038d6b
          this.send(packet, (PacketSendListener) null);
      }
  
-@@ -332,6 +338,11 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -339,6 +345,11 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
          // CraftBukkit start
          if (packet == null || this.processedDisconnect) { // Spigot
              return;
@@ -204,10 +204,10 @@ index a9d54c80f682d826ad272731bd6477eed0fd44d5..2e217a5a96292ab3c1d8dc58fb038d6b
              ClientboundSetDefaultSpawnPositionPacket packet6 = (ClientboundSetDefaultSpawnPositionPacket) packet;
              this.player.compassTarget = CraftLocation.toBukkit(packet6.pos, this.getCraftPlayer().getWorld());
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 33b7f0f14c826e9baa8b562a852cd4d46882622c..15c31fac1b4e8252851bc01b9d3d43c20ddb37cd 100644
+index 16999fa20c3621e016d1b0fadfb76f2fe03a2a69..dd143801f64082db1e1b70fe6efa242115e4fee9 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1462,7 +1462,7 @@ public abstract class PlayerList {
+@@ -1426,7 +1426,7 @@ public abstract class PlayerList {
      }
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public

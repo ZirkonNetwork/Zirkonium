@@ -5,20 +5,20 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/src/main/java/io/papermc/paper/ServerBuildInfo.java b/src/main/java/io/papermc/paper/ServerBuildInfo.java
-index 7196594e07af19a14c320d77df893978525fe386..e7fa6f0e558d565feaf5ce2c7413439726d3b541 100644
+index 7196594e07af19a14c320d77df893978525fe386..72112c2b12bca13bd2e8a2052b5f693fb9ae4e30 100644
 --- a/src/main/java/io/papermc/paper/ServerBuildInfo.java
 +++ b/src/main/java/io/papermc/paper/ServerBuildInfo.java
-@@ -33,6 +33,13 @@ public interface ServerBuildInfo {
+@@ -32,6 +32,13 @@ public interface ServerBuildInfo {
+      */
      Key BRAND_PURPUR_ID = Key.key("purpurmc", "purpur");
      // Purpur end
- 
-+    // Zirkonium start
++    
++    // Zirkonium start - Rebrand
 +    /**
 +     * The brand id for Zirkonium.
 +     */
 +    Key BRAND_ZIRKONIUM_ID = Key.key("zirkonnetwork", "zirkonium");
-+    // Zirkonium end
-+
++    // Zirkonium end - Rebrand
+ 
      /**
       * Gets the {@code ServerBuildInfo}.
-      *

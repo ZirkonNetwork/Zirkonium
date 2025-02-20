@@ -1,0 +1,58 @@
+.gradle/
+build/
+
+# Eclipse stuff
+.classpath
+.project
+.settings/
+
+# VSCode stuff
+.vscode/
+
+# netbeans
+nbproject/
+nbactions.xml
+
+# we use maven!
+build.xml
+
+# maven
+target/
+dependency-reduced-pom.xml
+
+# vim
+.*.sw[a-p]
+
+# various other potential build files
+bin/
+dist/
+manifest.mf
+
+# Mac filesystem dust
+.DS_Store/
+.DS_Store
+
+# intellij
+*.iml
+*.ipr
+*.iws
+.idea/
+out/
+
+# Linux temp files
+*~
+
+# other stuff
+run/
+
+zirkonium-api/build.gradle.kts
+zirkonium-server/build.gradle.kts
+zirkonium-server/src/minecraft
+leaf-api
+leaf-server
+gale-api
+gale-server
+paper-api
+paper-server
+
+!gradle/wrapper/gradle-wrapper.jar

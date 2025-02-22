@@ -1,0 +1,80 @@
+name: Automatically update Leaf commit hash
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Zirkonium repository
+        uses: actions/checkout@main
+        with:
+          path: 'Zirkonium'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout Leaf repository
+        uses: actions/checkout@main
+        with:
+          path: 'Leaf'
+          repository: "Winds-Studio/Leaf"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Leaf latest commit Hash
+        id: leafCommit
+        run: |
+          cd Leaf
+          echo "leafCommit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Get Zirkonium Current Leaf commit Hash
+        id: currLeafRef
+        run: |
+          cd Zirkonium
+          currLeafRef=$(grep "^leafCommit\s*=" gradle.properties | sed 's/^leafCommit\s*=\s*//')
+          echo "currLeafRef=$currLeafRef" >> $GITHUB_OUTPUT
+
+      - name: Update leafCommit in Zirkonium
+        run: |
+          cd Zirkonium
+          sed -i "s/\(leafCommit\s*=\s*\).*/\1$PAPER_REF/" gradle.properties
+        env:
+          PAPER_REF: ${{ steps.leafCommit.outputs.leafCommit }}
+
+      - name: Grant execute permission for gradlew
+        run: |
+          cd Zirkonium
+          git config --global user.name "Elephant1214"
+          git config --global user.email 46881115+Elephant1214@users.noreply.github.com
+          chmod +x gradlew
+
+      - uses: actions/setup-java@main
+        with:
+          distribution: 'zulu'
+          java-version:  '21'
+
+      - name: Running tests before push
+        run: |
+          cd Zirkonium
+          if ! git diff --quiet; then
+            echo "Running tests...."
+            ./gradlew applyAllPatches
+            ./gradlew build -x test
+            ./gradlew rebuildAllServerPatches
+          fi
+
+      - name: Check for changes and write to repository
+        run: |
+          cd Zirkonium
+          if ! git diff --quiet; then
+            echo "Writing to repo....."
+            git add .
+            chmod +x ./scripts/upstreamCommit.sh
+            ./scripts/upstreamCommit.sh --leaf $CURR_LEAF_REF
+            git push
+          else
+            echo "No changes to commit."
+          fi
+        env:
+          CURR_LEAF_REF: ${{ steps.currLeafRef.outputs.currLeafRef }}

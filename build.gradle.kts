@@ -8,7 +8,7 @@ plugins {
 paperweight {
     upstreams.register("leaf") {
         repo = github("Winds-Studio", "Leaf")
-        ref = providers.gradleProperty("forkRef")
+        ref = providers.gradleProperty("leafCommit")
 
         patchFile {
             path = "leaf-server/build.gradle.kts"
@@ -68,6 +68,7 @@ subprojects {
         options.encoding = Charsets.UTF_8.name()
         options.release = 21
         options.isFork = true
+        options.forkOptions.memoryMaximumSize = "6G"
     }
     tasks.withType<Javadoc> {
         options.encoding = Charsets.UTF_8.name()

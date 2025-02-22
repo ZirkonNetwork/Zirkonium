@@ -2,9 +2,9 @@ name: Build Zirkonium 1.21.4
 
 on:
   push:
-    branches: [ "ver/1.21.4" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "ver/1.21.4" ]
+    branches: [ "main" ]
 
 jobs:
   build:

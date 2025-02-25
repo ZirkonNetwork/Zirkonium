@@ -22,7 +22,7 @@ if (!file(".git").exists()) {
          the Zirkonium repository using Git, not download a code
          zip from GitHub.
          
-         Built Gale jars are available for download at
+         Built Zirkonium jars are available for download at
          https://github.com/ZirkonNetwork/Zirkonium/actions
          
          See https://github.com/PaperMC/Paper/blob/main/CONTRIBUTING.md
@@ -32,7 +32,7 @@ if (!file(".git").exists()) {
     error(errorText)
 }
 
-rootProject.name = "Zirkonium"
+rootProject.name = "zirkonium"
 
 for (name in listOf("zirkonium-api", "zirkonium-server")) {
     val projName = name.lowercase(Locale.ENGLISH)

@@ -32,18 +32,18 @@ jobs:
 
       - name: Rename Paperclip Jar
         run: |
-          mv zirkonium-server/build/libs/zirkonium-paperclip-1.21.4-R0.1-SNAPSHOT-mojmap.jar ./zirkonium-1.21.4-mojmap.jar
-          mv zirkonium-server/build/libs/zirkonium-paperclip-1.21.4-R0.1-SNAPSHOT-reobf.jar ./zirkonium-1.21.4-reobf.jar
+          mv zirkonium-server/build/libs/Zirkonium-paperclip-1.21.4-R0.1-SNAPSHOT-mojmap.jar ./Zirkonium-1.21.4-mojmap.jar
+          mv zirkonium-server/build/libs/Zirkonium-paperclip-1.21.4-R0.1-SNAPSHOT-reobf.jar ./Zirkonium-1.21.4-reobf.jar
 
       - name: Upload Zirkonium
         uses: actions/upload-artifact@main
         with:
           name: Zirkonium 1.21.4
-          path: ./zirkonium-1.21.4-*.jar
+          path: ./Zirkonium-1.21.4-*.jar
 
       - name: Rename Zirkonium Jar
         run: |
-          mv ./zirkonium-1.21.4-mojmap.jar ./zirkonium-1.21.4.jar
+          mv ./Zirkonium-1.21.4-mojmap.jar ./Zirkonium-1.21.4.jar
 
       - name: Release Zirkonium
         if: github.event_name != 'pull_request'
@@ -52,5 +52,5 @@ jobs:
           title: "Zirkonium 1.21.4"
           automatic_release_tag: "ver-1.21.4"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          files: "./zirkonium-1.21.4.jar"
+          files: "./Zirkonium-1.21.4.jar"
           prerelease: false

@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <46881115+Elephant1214@users.noreply.github.com>
+Date: Tue, 25 Feb 2025 20:35:45 -0700
+Subject: [PATCH] Rebrand
+
+
+diff --git a/src/main/java/io/papermc/paper/ServerBuildInfo.java b/src/main/java/io/papermc/paper/ServerBuildInfo.java
+index 66a9fc729182476c4f601cdb32bcb10970a9498c..577c01b9a1d9a051d0be9d3994e6cecb1a6bed6b 100644
+--- a/src/main/java/io/papermc/paper/ServerBuildInfo.java
++++ b/src/main/java/io/papermc/paper/ServerBuildInfo.java
+@@ -44,6 +44,13 @@ public interface ServerBuildInfo {
+     Key BRAND_LEAF_ID = Key.key("winds-studio", "leaf");
+     // Leaf end - Rebrand
+ 
++    // Zirkonium start - Rebrand
++    /**
++     * The brand id for Zirkonium.
++     */
++    Key BRAND_ZIRKONIUM_ID = Key.key("zirkon-network", "zirkonium");
++    // Zirkonium end - Rebrand
++    
+     /**
+      * Gets the {@code ServerBuildInfo}.
+      *

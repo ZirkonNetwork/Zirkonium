@@ -1,0 +1,158 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <46881115+Elephant1214@users.noreply.github.com>
+Date: Tue, 25 Feb 2025 20:23:43 -0700
+Subject: [PATCH] Rebrand
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
+index 49ac2b52fc134bfa77a108bf58de3e81be38c683..878eaf03624265e05ab0c04a8adbbb6756ee38b8 100644
+--- a/src/main/java/com/destroystokyo/paper/Metrics.java
++++ b/src/main/java/com/destroystokyo/paper/Metrics.java
+@@ -592,7 +592,7 @@ public class Metrics {
+             boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
+             // Only start Metrics, if it's enabled in the config
+             if (config.getBoolean("enabled", true)) {
+-                Metrics metrics = new Metrics("Leaf", serverUUID, logFailedRequests, Bukkit.getLogger()); // Gale - branding changes - metrics // Leaf - Rebrand
++                Metrics metrics = new Metrics("Zirkonium", serverUUID, logFailedRequests, Bukkit.getLogger()); // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
+ 
+                 metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
+                     String minecraftVersion = Bukkit.getVersion();
+@@ -602,15 +602,15 @@ public class Metrics {
+ 
+                 metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
+                 metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
+-                final String leafVersion; // Gale - branding changes - metrics // Leaf - Rebrand
++                final String zirkoniumVersion; // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
+                 final String implVersion = org.bukkit.craftbukkit.Main.class.getPackage().getImplementationVersion();
+                 if (implVersion != null) {
+                     final String buildOrHash = implVersion.substring(implVersion.lastIndexOf('-') + 1);
+-                    leafVersion = "git-Leaf-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash); // Gale - branding changes - metrics // Leaf - Rebrand
++                    zirkoniumVersion = "git-Zirkonium-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash); // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
+                 } else {
+-                    leafVersion = "unknown"; // Gale - branding changes - metrics // Leaf - Rebrand
++                    zirkoniumVersion = "unknown"; // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
+                 }
+-                metrics.addCustomChart(new Metrics.SimplePie("leaf_version", () -> leafVersion)); // Gale - branding changes - metrics // Leaf - Rebrand
++                metrics.addCustomChart(new Metrics.SimplePie("zirkonium_version", () -> zirkoniumVersion)); // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
+ 
+                 metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
+                     Map<String, Map<String, Integer>> map = new HashMap<>(2); // Gale - metrics - reduce HashMap capacity
+diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
+index f59879ae7d3c73cd4c4233d30667988bf22f12f1..fa367cb1c2b7000a50d0ad3c6ab456a02c75186d 100644
+--- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
++++ b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
+@@ -20,7 +20,7 @@ public final class PaperConsole extends SimpleTerminalConsole {
+     @Override
+     protected LineReader buildReader(LineReaderBuilder builder) {
+         builder
+-                .appName("Leaf") // Gale - branding changes // Leaf - Rebrand
++                .appName("Zirkonium") // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
+                 .variable(LineReader.HISTORY_FILE, java.nio.file.Paths.get(".console_history"))
+                 .completer(new ConsoleCommandCompleter(this.server))
+                 .option(LineReader.Option.COMPLETE_IN_WORD, true);
+diff --git a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
+index f267abd6f905180cfa5cf4961cf79f57544a891c..06477b516f90eab7fb8993eb2c292bb05b19ddf3 100644
+--- a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
++++ b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
+@@ -37,6 +37,7 @@ public record ServerBuildInfoImpl(
+     private static final String BRAND_PURPUR_NAME = "Purpur";
+     private static final String BRAND_LEAF_NAME = "Leaf";
+     // Leaf end - Rebrand & Fix Pufferfish and Purpur patches
++    private static final String BRAND_ZIRKONIUM_NAME = "Zirkonium"; // Zirkonium - Rebrand
+ 
+     private static final String BUILD_DEV = "DEV";
+ 
+@@ -48,9 +49,9 @@ public record ServerBuildInfoImpl(
+         this(
+             getManifestAttribute(manifest, ATTRIBUTE_BRAND_ID)
+                 .map(Key::key)
+-                .orElse(BRAND_LEAF_ID), // Gale - branding changes // Leaf - Rebrand
++                .orElse(BRAND_ZIRKONIUM_ID), // Gale - branding changes // Leaf - Rebrand
+             getManifestAttribute(manifest, ATTRIBUTE_BRAND_NAME)
+-                .orElse(BRAND_LEAF_NAME), // Gale - branding changes // Leaf - Rebrand
++                .orElse(BRAND_ZIRKONIUM_NAME), // Gale - branding changes // Leaf - Rebrand
+             SharedConstants.getCurrentVersion().getId(),
+             SharedConstants.getCurrentVersion().getName(),
+             getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)
+@@ -71,6 +72,7 @@ public record ServerBuildInfoImpl(
+         return brandId.equals(this.brandId)
+             || brandId.equals(BRAND_PAPER_ID)
+             || brandId.equals(BRAND_GALE_ID) // Gale - branding changes
++            || brandId.equals(BRAND_LEAF_ID) // Zirkonium - Rebrand
+             || brandId.equals(BRAND_PUFFERFISH_ID)
+             || brandId.equals(BRAND_PURPUR_ID);
+             // Leaf end - Rebrand & Fix Pufferfish and Purpur patches
+diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
+index f6f787db016f4d1ac14648ebf2b8e162a3e85962..23be608c6e616559e2a59ba7b4d5a6b7fbbab0bc 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
++++ b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
+@@ -491,7 +491,7 @@ public class CraftScheduler implements BukkitScheduler {
+                 this.parsePending();
+             } else {
+                 // this.debugTail = this.debugTail.setNext(new CraftAsyncDebugger(this.currentTick + CraftScheduler.RECENT_TICKS, task.getOwner(), task.getTaskClass())); // Paper
+-                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to Leaf"); // Paper // Gale - branding changes // Leaf - Rebrand
++                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to Zirkonium"); // Paper // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
+                 // We don't need to parse pending
+                 // (async tasks must live with race-conditions if they attempt to cancel between these few lines of code)
+             }
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index c3d45e60e262b8e34d76f0425f6bef79f034e8ab..48b01996086a2e9141fbde1c750cd05b0c316307 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -11,7 +11,7 @@ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+ 
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/cn.dreeam.leaf/leaf-api/pom.properties"); // Gale - branding changes // Leaf - Rebrand
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/me.elephant1214.zirkonium/zirkonium-api/pom.properties"); // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
+         Properties properties = new Properties();
+ 
+         if (stream != null) {
+diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
+index e45d5da04428c26fc6aa97fba974bde3573d7950..033e4af91dcba664dfbc317dd259bcbb3429d04f 100644
+--- a/src/main/java/org/spigotmc/WatchdogThread.java
++++ b/src/main/java/org/spigotmc/WatchdogThread.java
+@@ -82,15 +82,15 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
+                     We do not want people to report thread issues to Paper,
+                     but we do want people to report thread issues to Gale.
+                     */
+-                    logger.log(Level.SEVERE, "The server has stopped responding! This is (probably) not a Paper bug. This could be a Leaf bug."); // Paper // Leaf - Rebrand
++                    logger.log(Level.SEVERE, "The server has stopped responding! This is (probably) not a Paper bug. This could be a Zirkonium bug."); // Paper // Leaf - Rebrand // Zirkonium - Rebrand
+                     // Gale end - branding changes
+                     logger.log(Level.SEVERE, "If you see a plugin in the Server thread dump below, then please report it to that author");
+                     logger.log(Level.SEVERE, "\t *Especially* if it looks like HTTP or MySQL operations are occurring");
+                     logger.log(Level.SEVERE, "If you see a world save or edit, then it means you did far more than your server can handle at once");
+                     logger.log(Level.SEVERE, "\t If this is the case, consider increasing timeout-time in spigot.yml but note that this will replace the crash with LARGE lag spikes");
+-                    logger.log(Level.SEVERE, "If you are unsure or think this is a Leaf bug, please report this to https://github.com/Winds-Studio/Leaf/issues - and if you think this is a Paper bug, please report this to https://github.com/PaperMC/Paper/issues"); // Gale - branding changes // Leaf - Rebrand
++                    logger.log(Level.SEVERE, "If you are unsure or think this is a Zirkonium bug, please report this to https://github.com/ZirkonNetwork/Zirkonium/issues - and if you think this is a Paper bug, please report this to https://github.com/PaperMC/Paper/issues"); // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
+                     logger.log(Level.SEVERE, "Be sure to include ALL relevant console errors and Minecraft crash reports");
+-                    logger.log(Level.SEVERE, "Leaf version: " + Bukkit.getServer().getVersion()); // Gale - branding changes // Leaf - Rebrand
++                    logger.log(Level.SEVERE, "Zirkonium version: " + Bukkit.getServer().getVersion()); // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
+ 
+                     if (net.minecraft.world.level.Level.lastPhysicsProblem != null) {
+                         logger.log(Level.SEVERE, "------------------------------");
+@@ -115,13 +115,13 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
+                     We do not want people to report thread issues to Paper,
+                     but we do want people to report thread issues to Gale.
+                     */
+-                    logger.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - If you think this is a Leaf bug, please report it at https://github.com/Winds-Studio/Leaf/issues - THIS IS NOT A PAPER BUG OR CRASH - " + Bukkit.getServer().getVersion() + " ---"); // Leaf - Rebrand
++                    logger.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - If you think this is a Zirkonium bug, please report it at https://github.com/ZirkonNetwork/Zirkonium/issues - THIS IS NOT A PAPER BUG OR CRASH - " + Bukkit.getServer().getVersion() + " ---"); // Leaf - Rebrand // Zirkonium - Rebrand
+                     // Gale end - branding changes
+                     logger.log(Level.SEVERE, "The server has not responded for " + (currentTime - lastTick) / 1000 + " seconds! Creating thread dump");
+                 }
+                 // Paper end - Different message for short timeout
+                 logger.log(Level.SEVERE, "------------------------------");
+-                logger.log(Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Leaf!):"); // Paper // Gale - branding changes // Leaf - Rebrand
++                logger.log(Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Zirkonium!):"); // Paper // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
+                 FeatureHooks.dumpAllChunkLoadInfo(MinecraftServer.getServer(), isLongTimeout); // Paper - log detailed tick information
+                 WatchdogThread.dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE), logger);
+                 logger.log(Level.SEVERE, "------------------------------");
+@@ -139,7 +139,7 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
+                     We do not want people to report thread issues to Paper,
+                     but we do want people to report thread issues to Gale.
+                     */
+-                    logger.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - If you think this is a Leaf bug, please report it at https://github.com/Winds-Studio/Leaf/issues - THIS IS NOT A PAPER BUG OR CRASH ---"); // Leaf - Rebrand
++                    logger.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - If you think this is a Zirkonium bug, please report it at https://github.com/ZirkonNetwork/Zirkonium/issues - THIS IS NOT A PAPER BUG OR CRASH ---"); // Leaf - Rebrand // Zirkonium - Rebrand
+                     // Gale end - branding changes
+                 }
+ 

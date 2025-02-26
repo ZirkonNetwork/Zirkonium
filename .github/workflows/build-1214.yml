@@ -44,7 +44,7 @@ jobs:
 
       - name: Rename Zirkonium Jar
         run: |
-          mv ./zirkonium-1.21.4-mojmap.jar ./zirkonium-1.21.4.jar
+          mv ./zirkonium-1.21.4-mojmap.jar ./zirkonium-1.21.4-$(date +%Y%m%d_%H%M%S).jar
 
       - name: Release Zirkonium
         if: github.event_name != 'pull_request'

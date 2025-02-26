@@ -28,6 +28,8 @@ jobs:
         run: ./gradlew -Dorg.gradle.jvmargs="-Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true --add-modules jdk.incubator.vector" applyAllPatches --stacktrace --no-daemon
       - name: Create MojmapPaperclipJar
         run: ./gradlew -Dorg.gradle.jvmargs="-Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true --add-modules jdk.incubator.vector" createMojmapPaperclipJar --stacktrace --no-daemon
+      - name: Set Build Timestamp
+        run: echo "TIMESTAMP=$(date +%Y%m%d_%H%M%S)" >> $GITHUB_ENV
       - name: Create ReobfPaperclipJar
         run: ./gradlew -Dorg.gradle.jvmargs="-Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true --add-modules jdk.incubator.vector" -Dpaperweight.debug=true createReobfPaperclipJar --stacktrace --no-daemon
 
@@ -44,7 +46,7 @@ jobs:
 
       - name: Rename Zirkonium Jar
         run: |
-          mv ./zirkonium-1.21.4-mojmap.jar ./zirkonium-1.21.4-$(date +%Y%m%d_%H%M%S).jar
+          mv ./zirkonium-1.21.4-mojmap.jar ./zirkonium-1.21.4-${{ env.TIMESTAMP }}.jar
 
       - name: Release Zirkonium
         if: github.event_name != 'pull_request'
@@ -53,5 +55,5 @@ jobs:
           title: "Zirkonium 1.21.4"
           automatic_release_tag: "ver-1.21.4"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          files: "./zirkonium-1.21.4.jar"
+          files: "./zirkonium-1.21.4-${{ env.TIMESTAMP }}.jar"
           prerelease: false

@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Elephant1214 <46881115+Elephant1214@users.noreply.github.com>
+Date: Fri, 28 Feb 2025 09:43:49 -0700
+Subject: [PATCH] Disable chat signatures by default
+
+
+diff --git a/src/main/java/org/dreeam/leaf/config/modules/network/ChatMessageSignature.java b/src/main/java/org/dreeam/leaf/config/modules/network/ChatMessageSignature.java
+index 08e6a5e08a13130256a1168712c2f076948b945b..7bd5f68611030be238202df0987e91f7bc697872 100644
+--- a/src/main/java/org/dreeam/leaf/config/modules/network/ChatMessageSignature.java
++++ b/src/main/java/org/dreeam/leaf/config/modules/network/ChatMessageSignature.java
+@@ -9,7 +9,7 @@ public class ChatMessageSignature extends ConfigModules {
+         return EnumConfigCategory.NETWORK.getBaseKeyName();
+     }
+ 
+-    public static boolean enabled = true;
++    public static boolean enabled = false; // Zirkonium - Disable chat signatures by default
+ 
+     @Override
+     public void onLoaded() {

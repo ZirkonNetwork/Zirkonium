@@ -1,59 +1,82 @@
 name: Build Zirkonium 1.21.4
-
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
 jobs:
   build:
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.commits[0].message, '[ci-skip]')"
+    runs-on: blacksmith-8vcpu-ubuntu-2204
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+      GRAALVM_ARGS: "-Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.LoopUnroll=true -Dgraal.SpeculativeGuardMovement=true --add-modules jdk.incubator.vector"
+      GRADLE_OPTS: "-Dorg.gradle.parallel=true -Dorg.gradle.caching=true -Dorg.gradle.configureondemand=true -Dkotlin.incremental=true"
     steps:
-      - uses: actions/checkout@main
-      - name: Set up JDK
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Set up GraalVM JDK 21
         uses: graalvm/setup-graalvm@main
         with:
           java-version: 21
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           cache: gradle
+          set-java-home: true
+          components: 'native-image'
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: Configure Git
-        run: git config --global user.email "no-reply@github.com" && git config --global user.name "Github Actions"
+        run: |
+          git config --global user.email "no-reply@github.com"
+          git config --global user.name "Github Actions"
+
+      - name: Configure Gradle Properties
+        run: |
+          mkdir -p ~/.gradle
+          echo "org.gradle.daemon=true" >> ~/.gradle/gradle.properties
+          echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
+          echo "org.gradle.caching=true" >> ~/.gradle/gradle.properties
+          echo "org.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> ~/.gradle/gradle.properties
+          echo "kotlin.incremental=true" >> ~/.gradle/gradle.properties
 
       - name: Apply patches
-        run: ./gradlew -Dorg.gradle.jvmargs="-Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true --add-modules jdk.incubator.vector" applyAllPatches --stacktrace --no-daemon
+        run: ./gradlew -Dorg.gradle.jvmargs="${{ env.GRAALVM_ARGS }}" applyAllPatches --stacktrace --no-daemon --parallel
+
       - name: Create MojmapPaperclipJar
-        run: ./gradlew -Dorg.gradle.jvmargs="-Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true --add-modules jdk.incubator.vector" createMojmapPaperclipJar --stacktrace --no-daemon
-      - name: Set Build Timestamp
-        run: echo "TIMESTAMP=$(date +%Y%m%d_%H%M%S)" >> $GITHUB_ENV
+        run: ./gradlew -Dorg.gradle.jvmargs="${{ env.GRAALVM_ARGS }}" createMojmapPaperclipJar --stacktrace --no-daemon --parallel
+
       - name: Create ReobfPaperclipJar
-        run: ./gradlew -Dorg.gradle.jvmargs="-Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true --add-modules jdk.incubator.vector" -Dpaperweight.debug=true createReobfPaperclipJar --stacktrace --no-daemon
+        run: ./gradlew -Dorg.gradle.jvmargs="${{ env.GRAALVM_ARGS }}" -Dpaperweight.debug=true createReobfPaperclipJar --stacktrace --no-daemon --parallel
 
-      - name: Rename Paperclip Jar
+      - name: Rename Paperclip JARs
         run: |
-          mv zirkonium-server/build/libs/zirkonium-paperclip-1.21.4-R0.1-SNAPSHOT-mojmap.jar ./zirkonium-1.21.4-mojmap.jar
-          mv zirkonium-server/build/libs/zirkonium-paperclip-1.21.4-R0.1-SNAPSHOT-reobf.jar ./zirkonium-1.21.4-reobf.jar
+          mv zirkonium-server/build/libs/zirkonium-paperclip-1.21.4-R0.1-SNAPSHOT-mojmap.jar ./zirkonium-1.21.4-${{ env.BUILD_NUMBER }}-mojmap.jar
+          mv zirkonium-server/build/libs/zirkonium-paperclip-1.21.4-R0.1-SNAPSHOT-reobf.jar ./zirkonium-1.21.4-${{ env.BUILD_NUMBER }}-reobf.jar
 
-      - name: Upload Zirkonium
+      - name: Upload Zirkonium as build artifact
         uses: actions/upload-artifact@main
         with:
           name: Zirkonium 1.21.4
           path: ./zirkonium-1.21.4-*.jar
 
-      - name: Rename Zirkonium Jar
-        run: |
-          mv ./zirkonium-1.21.4-mojmap.jar ./zirkonium-1.21.4-${{ env.TIMESTAMP }}.jar
+      - name: Prepare jar for release
+        run: mv ./zirkonium-1.21.4-${{ env.BUILD_NUMBER }}-mojmap.jar ./zirkonium-1.21.4-${{ env.BUILD_NUMBER }}.jar
 
       - name: Release Zirkonium
-        if: github.event_name != 'pull_request'
         uses: marvinpinto/action-automatic-releases@master
         with:
           title: "Zirkonium 1.21.4"
           automatic_release_tag: "ver-1.21.4"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          files: "./zirkonium-1.21.4-${{ env.TIMESTAMP }}.jar"
+          files: "./zirkonium-1.21.4-${{ env.BUILD_NUMBER }}.jar"
           prerelease: false

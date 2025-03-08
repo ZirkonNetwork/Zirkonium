@@ -2,35 +2,29 @@ name: Build Zirkonium 1.21.4
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
       BUILD_NUMBER: ${{ github.run_number }}
       GRAALVM_ARGS: "-Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.LoopUnroll=true -Dgraal.SpeculativeGuardMovement=true --add-modules jdk.incubator.vector"
-      GRADLE_OPTS: "-Dorg.gradle.parallel=true -Dorg.gradle.caching=true -Dorg.gradle.configureondemand=true -Dkotlin.incremental=true"
+      GRADLE_MEMORY: "-Xmx4g -XX:MaxMetaspaceSize=2g"
+      PATCH_PARALLELISM: "16"
+    outputs:
+      build_number: ${{ env.BUILD_NUMBER }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
-
-      - name: Setup Gradle Cache
-        uses: actions/cache@v4
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          fetch-depth: 0
 
       - name: Set up GraalVM JDK 21
         uses: graalvm/setup-graalvm@main
         with:
           java-version: 21
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-          cache: gradle
-          set-java-home: true
-          components: 'native-image'
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -39,6 +33,10 @@ jobs:
         run: |
           git config --global user.email "no-reply@github.com"
           git config --global user.name "Github Actions"
+          # Speed up git operations
+          git config --global core.preloadindex true
+          git config --global core.fscache true
+          git config --global gc.auto 256
 
       - name: Configure Gradle Properties
         run: |
@@ -46,17 +44,42 @@ jobs:
           echo "org.gradle.daemon=true" >> ~/.gradle/gradle.properties
           echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
           echo "org.gradle.caching=true" >> ~/.gradle/gradle.properties
-          echo "org.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> ~/.gradle/gradle.properties
+          echo "org.gradle.jvmargs=${{ env.GRADLE_MEMORY }} -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> ~/.gradle/gradle.properties
           echo "kotlin.incremental=true" >> ~/.gradle/gradle.properties
+          # Add patch parallelism configuration 
+          echo "zirkoniumPatches.parallelism=${{ env.PATCH_PARALLELISM }}" >> ~/.gradle/gradle.properties
 
       - name: Apply patches
-        run: ./gradlew -Dorg.gradle.jvmargs="${{ env.GRAALVM_ARGS }}" applyAllPatches --stacktrace --no-daemon --parallel
+        run: |
+          # Analyze available system resources for optimal settings
+          echo "CPU cores: $(nproc)"
+          echo "Memory: $(free -h)"
+          
+          # Run patch application with optimized settings
+          ./gradlew -Dorg.gradle.jvmargs="${{ env.GRAALVM_ARGS }} ${{ env.GRADLE_MEMORY }}" \
+                   -Dzirkonium.patcher.parallelism=${{ env.PATCH_PARALLELISM }} \
+                   applyAllPatches \
+                   --stacktrace --no-daemon --parallel \
+                   --max-workers=8
 
       - name: Create MojmapPaperclipJar
-        run: ./gradlew -Dorg.gradle.jvmargs="${{ env.GRAALVM_ARGS }}" createMojmapPaperclipJar --stacktrace --no-daemon --parallel
+        run: ./gradlew -Dorg.gradle.jvmargs="${{ env.GRAALVM_ARGS }} ${{ env.GRADLE_MEMORY }}" createMojmapPaperclipJar --stacktrace --no-daemon --parallel --max-workers=8
 
       - name: Create ReobfPaperclipJar
-        run: ./gradlew -Dorg.gradle.jvmargs="${{ env.GRAALVM_ARGS }}" -Dpaperweight.debug=true createReobfPaperclipJar --stacktrace --no-daemon --parallel
+        run: ./gradlew -Dorg.gradle.jvmargs="${{ env.GRAALVM_ARGS }} ${{ env.GRADLE_MEMORY }}" -Dpaperweight.debug=true createReobfPaperclipJar --stacktrace --no-daemon --parallel --max-workers=8
+
+      - name: Gradle Cache Prune
+        run: |
+          if [ -d ~/.gradle/caches ]; then
+            echo "Before pruning:"
+            du -sh ~/.gradle/caches || echo "Could not determine cache size"
+            find ~/.gradle/caches -name "*.jar" -type f -atime +30 -delete || echo "No old JAR files to delete"
+            find ~/.gradle/caches -name "*.pom" -type f -atime +30 -delete || echo "No old POM files to delete"
+            echo "After pruning:"
+            du -sh ~/.gradle/caches || echo "Could not determine cache size"
+          else
+            echo "Gradle cache directory does not exist yet"
+          fi
 
       - name: Rename Paperclip JARs
         run: |
@@ -69,14 +92,22 @@ jobs:
           name: Zirkonium 1.21.4
           path: ./zirkonium-1.21.4-*.jar
 
-      - name: Prepare jar for release
-        run: mv ./zirkonium-1.21.4-${{ env.BUILD_NUMBER }}-mojmap.jar ./zirkonium-1.21.4-${{ env.BUILD_NUMBER }}.jar
+      - name: Prepare for release
+        continue-on-error: true
+        run: |
+          chmod +x ./scripts/prepareRelease.sh
+          ./scripts/prepareRelease.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
 
       - name: Release Zirkonium
-        uses: marvinpinto/action-automatic-releases@master
+        uses: softprops/action-gh-release@master
         with:
-          title: "Zirkonium 1.21.4"
-          automatic_release_tag: "ver-1.21.4"
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          name: "Zirkonium 1.21.4"
+          tag_name: "ver-1.21.4"
           files: "./zirkonium-1.21.4-${{ env.BUILD_NUMBER }}.jar"
+          body_path: "./release_notes.md"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          target_commitish: "${{ github.sha }}"
           prerelease: false

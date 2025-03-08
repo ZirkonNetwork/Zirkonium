@@ -1,6 +1,6 @@
 # Zirkonium
 A Leaf fork. Originally a Purpur fork for Zirkon Network.
-## Features
+## Features (soon)
 - [Dynamic View](https://github.com/ldtteam/DynView)
 - [Sneaky](https://github.com/adryd325/sneaky)
 ## Building

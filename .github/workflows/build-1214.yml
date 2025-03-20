@@ -31,7 +31,6 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           cache: gradle
           set-java-home: true
-          components: 'native-image'
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew

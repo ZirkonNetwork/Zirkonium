@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Elephant1214 <46881115+Elephant1214@users.noreply.github.com>
-Date: Tue, 25 Feb 2025 20:30:23 -0700
+Date: Mon, 14 Apr 2025 15:43:03 -0600
 Subject: [PATCH] Rebrand
 
 
@@ -18,7 +18,7 @@ index 5a9173b6039ee8404529a04904c5f9e9343d74d8..e7920897105021da5170aef434a37ee9
      public CrashReport(String title, Throwable exception) {
          io.papermc.paper.util.StacktraceDeobfuscator.INSTANCE.deobfuscateThrowable(exception); // Paper
 diff --git a/net/minecraft/world/damagesource/DamageSource.java b/net/minecraft/world/damagesource/DamageSource.java
-index bf9520bf4f314dacc66db9a7d30dbcc239db2c7d..5e7dc3db45372eb3a83aa8073f4d16be7fc64573 100644
+index bf9520bf4f314dacc66db9a7d30dbcc239db2c7d..27f797f66728e29e8341d43aa7b0d3fccebf3a91 100644
 --- a/net/minecraft/world/damagesource/DamageSource.java
 +++ b/net/minecraft/world/damagesource/DamageSource.java
 @@ -75,7 +75,7 @@ public class DamageSource {
@@ -26,12 +26,12 @@ index bf9520bf4f314dacc66db9a7d30dbcc239db2c7d..5e7dc3db45372eb3a83aa8073f4d16be
      public DamageSource eventEntityDamager(final Entity entity) {
          if (this.directEntity != null) {
 -            throw new IllegalStateException("Cannot set an event damager when a direct entity is already set (report a bug to Paper, if you think this is a Leaf bug, please report it at https://github.com/Winds-Studio/Leaf/issues)"); // Gale - branding changes // Leaf - Rebrand
-+            throw new IllegalStateException("Cannot set an event damager when a direct entity is already set (report a bug to Paper, if you think this is a Zirkonium bug, please report it at https://github.com/ZirkonNetwork/Zirkonium/issues)"); // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
++            throw new IllegalStateException("Cannot set an event damager when a direct entity is already set (report a bug to Paper, if you think this is a Leaf bug, please report it at https://github.com/ZirkonNetwork/Zirkonium/issues)"); // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
          }
          final DamageSource damageSource = this.copy();
          damageSource.eventEntityDamager = entity;
 diff --git a/net/minecraft/world/level/chunk/storage/RegionFileStorage.java b/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
-index 5d278003313fae60a5948eab207b5257cd8bb4bf..26a1a2909975310b4b99b7d01ecc59a59ae2a7dc 100644
+index 5d278003313fae60a5948eab207b5257cd8bb4bf..861b79c09c95e4055a93b297301effcc515505fb 100644
 --- a/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
 @@ -294,7 +294,7 @@ public class RegionFileStorage implements AutoCloseable, ca.spottedleaf.moonrise
@@ -39,7 +39,7 @@ index 5d278003313fae60a5948eab207b5257cd8bb4bf..26a1a2909975310b4b99b7d01ecc59a5
          but we do want people to report thread issues to Gale.
          */
 -        org.apache.logging.log4j.LogManager.getLogger().fatal(msg + " (" + file.toString().replaceAll(".+[\\\\/]", "") + " - " + x + "," + z + ") Go clean it up to remove this message. /minecraft:tp " + (x<<4)+" 128 "+(z<<4) + " - DO NOT REPORT THIS TO PAPER OR LEAF - You may ask for help on Discord, but do not file an issue. These error messages can not be removed. - If you think this is a Leaf bug, please report it at https://github.com/Winds-Studio/Leaf/issues)"); // Leaf - Rebrand
-+        org.apache.logging.log4j.LogManager.getLogger().fatal(msg + " (" + file.toString().replaceAll(".+[\\\\/]", "") + " - " + x + "," + z + ") Go clean it up to remove this message. /minecraft:tp " + (x<<4)+" 128 "+(z<<4) + " - DO NOT REPORT THIS TO PAPER OR ZIRKONIUM - You may ask for help on Discord, but do not file an issue. These error messages can not be removed. - If you think this is a Zirkonium bug, please report it at https://github.com/ZirkonNetwork/Zirkonium/issues)"); // Leaf - Rebrand // Zirkonium - Rebrand
++        org.apache.logging.log4j.LogManager.getLogger().fatal(msg + " (" + file.toString().replaceAll(".+[\\\\/]", "") + " - " + x + "," + z + ") Go clean it up to remove this message. /minecraft:tp " + (x<<4)+" 128 "+(z<<4) + " - DO NOT REPORT THIS TO PAPER, GALE, LEAF, OR ZIRKONIUM - You may ask for help on Discord, but do not file an issue. These error messages can not be removed. - If you think this is a Zirkonium bug, please report it at https://github.com/ZirkonNetwork/Zirkonium/issues)"); // Leaf - Rebrand // Zirkonium - Rebrand
          // Gale end - branding changes
      }
  

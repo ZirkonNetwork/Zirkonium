@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Elephant1214 <46881115+Elephant1214@users.noreply.github.com>
-Date: Tue, 25 Feb 2025 20:23:43 -0700
+Date: Mon, 14 Apr 2025 15:42:39 -0600
 Subject: [PATCH] Rebrand
 
 
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 49ac2b52fc134bfa77a108bf58de3e81be38c683..878eaf03624265e05ab0c04a8adbbb6756ee38b8 100644
+index 49ac2b52fc134bfa77a108bf58de3e81be38c683..60bd8feab0e8ee604fa74cb6c85fc540ef5e8ae4 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
 @@ -592,7 +592,7 @@ public class Metrics {
@@ -27,7 +27,7 @@ index 49ac2b52fc134bfa77a108bf58de3e81be38c683..878eaf03624265e05ab0c04a8adbbb67
                  if (implVersion != null) {
                      final String buildOrHash = implVersion.substring(implVersion.lastIndexOf('-') + 1);
 -                    leafVersion = "git-Leaf-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash); // Gale - branding changes - metrics // Leaf - Rebrand
-+                    zirkoniumVersion = "git-Zirkonium-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash); // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
++                    zirkoniumVersion = "git-Leaf-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash); // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
                  } else {
 -                    leafVersion = "unknown"; // Gale - branding changes - metrics // Leaf - Rebrand
 +                    zirkoniumVersion = "unknown"; // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
@@ -51,7 +51,7 @@ index f59879ae7d3c73cd4c4233d30667988bf22f12f1..fa367cb1c2b7000a50d0ad3c6ab456a0
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
-index f267abd6f905180cfa5cf4961cf79f57544a891c..06477b516f90eab7fb8993eb2c292bb05b19ddf3 100644
+index f267abd6f905180cfa5cf4961cf79f57544a891c..7508e28a79d8e667a5798d9f481518fc982b0483 100644
 --- a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
 +++ b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
 @@ -37,6 +37,7 @@ public record ServerBuildInfoImpl(
@@ -67,10 +67,10 @@ index f267abd6f905180cfa5cf4961cf79f57544a891c..06477b516f90eab7fb8993eb2c292bb0
              getManifestAttribute(manifest, ATTRIBUTE_BRAND_ID)
                  .map(Key::key)
 -                .orElse(BRAND_LEAF_ID), // Gale - branding changes // Leaf - Rebrand
-+                .orElse(BRAND_ZIRKONIUM_ID), // Gale - branding changes // Leaf - Rebrand
++                .orElse(BRAND_ZIRKONIUM_ID), // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
              getManifestAttribute(manifest, ATTRIBUTE_BRAND_NAME)
 -                .orElse(BRAND_LEAF_NAME), // Gale - branding changes // Leaf - Rebrand
-+                .orElse(BRAND_ZIRKONIUM_NAME), // Gale - branding changes // Leaf - Rebrand
++                .orElse(BRAND_ZIRKONIUM_NAME), // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
              SharedConstants.getCurrentVersion().getId(),
              SharedConstants.getCurrentVersion().getName(),
              getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)

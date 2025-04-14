@@ -1,15 +1,5 @@
 --- a/leaf-server/build.gradle.kts
 +++ b/leaf-server/build.gradle.kts
-@@ -9,7 +_,8 @@
- }
- 
- val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
--val leafMavenPublicUrl = "https://maven.nostal.ink/repository/maven-snapshots/" // Leaf - project setup - Add publish repo
-+val leafMavenPublicUrl =
-+    "https://maven.nostal.ink/repository/maven-snapshots/" // Leaf - project setup - Add publish repo
- 
- dependencies {
-     mache("io.papermc:mache:1.21.4+build.7")
 @@ -54,7 +_,36 @@
          }
      }
@@ -48,23 +38,6 @@
      // Leaf end - project setup
      // Gale end - project setup
  
-@@ -80,7 +_,7 @@
-     libraryRepositories.addAll(
-         "https://repo.maven.apache.org/maven2/",
-         paperMavenPublicUrl,
--        leafMavenPublicUrl // Leaf - project setup - Add publish repo
-+        leafMavenPublicUrl, // Leaf - project setup - Add publish repo
-     )
- }
- 
-@@ -91,6 +_,7 @@
-     @get:Inject
-     abstract val archiveOperations: ArchiveOperations
- }
-+
- val services = objects.newInstance<Services>()
- 
- if (project.providers.gradleProperty("publishDevBundle").isPresent) {
 @@ -146,12 +_,16 @@
          resources { srcDir("../paper-server/src/main/resources") }
          java { srcDir("../gale-server/src/main/java") } // Leaf - project setup
@@ -82,14 +55,6 @@
      }
  }
  
-@@ -166,6 +_,7 @@
- 
- // Configure mockito agent that is needed in newer java versions
- val mockitoAgent = configurations.register("mockitoAgent")
-+
- abstract class MockitoAgentProvider : CommandLineArgumentProvider {
-     @get:CompileClasspath
-     abstract val fileCollection: ConfigurableFileCollection
 @@ -176,7 +_,7 @@
  }
  
@@ -98,34 +63,23 @@
 +    implementation(project(":zirkonium-api")) // Gale - project setup - Depend on own API // Leaf - project setup // Zirkonium - project setup
  
      // Leaf start - Libraries
-     implementation("com.github.thatsmusic99:ConfigurationMaster-API:v2.0.0-rc.2") { // Leaf config
-@@ -239,7 +_,9 @@
-     testImplementation("org.junit.platform:junit-platform-suite-engine:1.11.4")
-     testImplementation("org.hamcrest:hamcrest:3.0")
-     testImplementation("org.mockito:mockito-core:5.15.2")
--    mockitoAgent("org.mockito:mockito-core:5.15.2") { isTransitive = false } // Configure mockito agent that is needed in newer java versions
-+    mockitoAgent("org.mockito:mockito-core:5.15.2") {
-+        isTransitive = false
-+    } // Configure mockito agent that is needed in newer java versions
-     testImplementation("org.ow2.asm:asm-tree:9.7.1")
-     testImplementation("org.junit-pioneer:junit-pioneer:2.3.0") // CartesianTest
-     // Leaf end - Bump Dependencies
-@@ -282,14 +_,14 @@
+     implementation("com.github.thatsmusic99:ConfigurationMaster-API:v2.0.0-rc.3") { // Leaf config
+@@ -285,14 +_,14 @@
          val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
 -            "Implementation-Title" to "Leaf", // Gale - branding changes // Leaf - Rebrand
-+            "Implementation-Title" to "Zirkonium", // Gale - branding changes // Leaf - Rebrand  // Zirkonium - Rebrand
++            "Implementation-Title" to "Zirkonium", // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
              "Implementation-Version" to implementationVersion,
              "Implementation-Vendor" to date,
 -            "Specification-Title" to "Leaf", // Gale - branding changes // Leaf - Rebrand
-+            "Specification-Title" to "Zirkonium", // Gale - branding changes // Leaf - Rebrand  // Zirkonium - Rebrand
++            "Specification-Title" to "Zirkonium", // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
              "Specification-Version" to project.version,
 -            "Specification-Vendor" to "Winds Studio", // Gale - branding changes // Leaf - Rebrand
 -            "Brand-Id" to "winds-studio:leaf", // Gale - branding changes // Leaf - Rebrand
 -            "Brand-Name" to "Leaf", // Gale - branding changes // Leaf - Rebrand
-+            "Specification-Vendor" to "Zirkon Network", // Gale - branding changes // Leaf - Rebrand
-+            "Brand-Id" to "zirkon-network:zirkonium", // Gale - branding changes // Leaf - Rebrand
++            "Specification-Vendor" to "Zirkon Network", // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
++            "Brand-Id" to "zirkon-network:zirkonium", // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
 +            "Brand-Name" to "Zirkonium", // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
              "Build-Number" to (build ?: ""),
              "Build-Time" to buildTime.toString(),

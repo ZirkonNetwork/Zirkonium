@@ -109,10 +109,10 @@ index c3d45e60e262b8e34d76f0425f6bef79f034e8ab..48b01996086a2e9141fbde1c750cd05b
  
          if (stream != null) {
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index 745a9afcdb8ea3047c1fcdc91971ba8f034cbd39..36d1b286319c93ad8616745c09693476142e5731 100644
+index 16e5ab49bc96f64143eb9e0dff19b33a7e3b5f3a..f463044495180ce20011a46e7f77a38847639588 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
-@@ -83,15 +83,15 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
+@@ -82,15 +82,15 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
                      We do not want people to report thread issues to Paper,
                      but we do want people to report thread issues to Gale.
                      */
@@ -131,7 +131,7 @@ index 745a9afcdb8ea3047c1fcdc91971ba8f034cbd39..36d1b286319c93ad8616745c09693476
  
                      if (net.minecraft.world.level.Level.lastPhysicsProblem != null) {
                          logger.log(Level.SEVERE, "------------------------------");
-@@ -116,13 +116,13 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
+@@ -115,13 +115,13 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
                      We do not want people to report thread issues to Paper,
                      but we do want people to report thread issues to Gale.
                      */
@@ -146,8 +146,8 @@ index 745a9afcdb8ea3047c1fcdc91971ba8f034cbd39..36d1b286319c93ad8616745c09693476
 +                logger.log(Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Zirkonium!):"); // Paper // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
                  FeatureHooks.dumpAllChunkLoadInfo(MinecraftServer.getServer(), isLongTimeout); // Paper - log detailed tick information
                  WatchdogThread.dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE), logger);
-                 // Leaf start
-@@ -153,7 +153,7 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
+                 logger.log(Level.SEVERE, "------------------------------");
+@@ -154,7 +154,7 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
                      We do not want people to report thread issues to Paper,
                      but we do want people to report thread issues to Gale.
                      */

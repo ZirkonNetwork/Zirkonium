@@ -3,7 +3,7 @@ name: Automatically update Leaf commit hash
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 19 * * *"
+    - cron: "0 1 * * *"
 
 jobs:
   build:
@@ -22,13 +22,13 @@ jobs:
           repository: "Winds-Studio/Leaf"
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get Leaf latest commit Hash
+      - name: Get Leaf latest commit hash
         id: leafCommit
         run: |
           cd Leaf
           echo "leafCommit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Get Zirkonium Current Leaf commit Hash
+      - name: Get current Zirkonium Leaf commit hash
         id: currLeafRef
         run: |
           cd Zirkonium
@@ -52,7 +52,7 @@ jobs:
       - uses: actions/setup-java@main
         with:
           distribution: 'zulu'
-          java-version:  '21'
+          java-version: '21'
 
       - name: Running tests before push
         run: |
@@ -61,6 +61,7 @@ jobs:
             echo "Running tests...."
             ./gradlew applyAllPatches
             ./gradlew build -x test
+            ./gradlew rebuildLeafPatches
             ./gradlew rebuildAllServerPatches
           fi
 
@@ -71,10 +72,10 @@ jobs:
             echo "Writing to repo....."
             git add .
             chmod +x ./scripts/upstreamCommit.sh
-            ./scripts/upstreamCommit.sh --leaf $CURR_LEAF_REF
+            ./scripts/upstreamCommit.sh --leaf $CURR_GALE_REF
             git push
           else
             echo "No changes to commit."
           fi
         env:
-          CURR_LEAF_REF: ${{ steps.currLeafRef.outputs.currLeafRef }}
+          CURR_GALE_REF: ${{ steps.currLeafRef.outputs.currLeafRef }}

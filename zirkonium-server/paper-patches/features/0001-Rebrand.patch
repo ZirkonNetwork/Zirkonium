@@ -5,35 +5,35 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 49ac2b52fc134bfa77a108bf58de3e81be38c683..60bd8feab0e8ee604fa74cb6c85fc540ef5e8ae4 100644
+index 8685b42dd00c964b0fbf42334cd6d23f187b2658..65f3dda391af2189cd63b321ce10b60387e70143 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
-@@ -592,7 +592,7 @@ public class Metrics {
+@@ -593,7 +593,7 @@ public class Metrics {
              boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
              // Only start Metrics, if it's enabled in the config
              if (config.getBoolean("enabled", true)) {
--                Metrics metrics = new Metrics("Leaf", serverUUID, logFailedRequests, Bukkit.getLogger()); // Gale - branding changes - metrics // Leaf - Rebrand
-+                Metrics metrics = new Metrics("Zirkonium", serverUUID, logFailedRequests, Bukkit.getLogger()); // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
+-                Metrics metrics = new Metrics("Leaf", serverUUID, logFailedRequests, Bukkit.getLogger()); // Gale - branding changes - metrics // Leaf - metrics
++                Metrics metrics = new Metrics("Zirkonium", serverUUID, logFailedRequests, Bukkit.getLogger()); // Gale - branding changes - metrics // Leaf - metrics // Zirkonium - Rebrand
  
                  metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
                      String minecraftVersion = Bukkit.getVersion();
-@@ -602,15 +602,15 @@ public class Metrics {
+@@ -603,15 +603,15 @@ public class Metrics {
  
                  metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
                  metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
--                final String leafVersion; // Gale - branding changes - metrics // Leaf - Rebrand
-+                final String zirkoniumVersion; // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
+-                final String leafVersion; // Gale - branding changes - metrics // Leaf - metrics
++                final String zirkoniumVersion; // Gale - branding changes - metrics // Leaf - metrics // Zirkonium - Rebrand
                  final String implVersion = org.bukkit.craftbukkit.Main.class.getPackage().getImplementationVersion();
                  if (implVersion != null) {
                      final String buildOrHash = implVersion.substring(implVersion.lastIndexOf('-') + 1);
--                    leafVersion = "git-Leaf-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash); // Gale - branding changes - metrics // Leaf - Rebrand
-+                    zirkoniumVersion = "git-Leaf-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash); // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
+-                    leafVersion = "git-Leaf-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash); // Gale - branding changes - metrics // Leaf - metrics
++                    zirkoniumVersion = "git-Zirkonium-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash); // Gale - branding changes - metrics // Leaf - metrics // Zirkonium - Rebrand
                  } else {
--                    leafVersion = "unknown"; // Gale - branding changes - metrics // Leaf - Rebrand
-+                    zirkoniumVersion = "unknown"; // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
+-                    leafVersion = "unknown"; // Gale - branding changes - metrics // Leaf - metrics
++                    zirkoniumVersion = "unknown"; // Gale - branding changes - metrics // Leaf - metrics // Zirkonium - Rebrand
                  }
--                metrics.addCustomChart(new Metrics.SimplePie("leaf_version", () -> leafVersion)); // Gale - branding changes - metrics // Leaf - Rebrand
-+                metrics.addCustomChart(new Metrics.SimplePie("zirkonium_version", () -> zirkoniumVersion)); // Gale - branding changes - metrics // Leaf - Rebrand // Zirkonium - Rebrand
+-                metrics.addCustomChart(new Metrics.SimplePie("leaf_version", () -> leafVersion)); // Gale - branding changes - metrics // Leaf - metrics
++                metrics.addCustomChart(new Metrics.SimplePie("zirkonium_version", () -> zirkoniumVersion)); // Gale - branding changes - metrics // Leaf - metrics // Zirkonium - Rebrand
  
                  metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                      Map<String, Map<String, Integer>> map = new HashMap<>(2); // Gale - metrics - reduce HashMap capacity
@@ -109,10 +109,10 @@ index c3d45e60e262b8e34d76f0425f6bef79f034e8ab..48b01996086a2e9141fbde1c750cd05b
  
          if (stream != null) {
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index 16e5ab49bc96f64143eb9e0dff19b33a7e3b5f3a..f463044495180ce20011a46e7f77a38847639588 100644
+index e98279e78c9f5ddbd6dd0cdf48973453304b8e1c..a3af275e1539ad3d14f01e65547b8655eaad26b3 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
-@@ -82,15 +82,15 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
+@@ -80,15 +80,15 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
                      We do not want people to report thread issues to Paper,
                      but we do want people to report thread issues to Gale.
                      */
@@ -131,7 +131,7 @@ index 16e5ab49bc96f64143eb9e0dff19b33a7e3b5f3a..f463044495180ce20011a46e7f77a388
  
                      if (net.minecraft.world.level.Level.lastPhysicsProblem != null) {
                          logger.log(Level.SEVERE, "------------------------------");
-@@ -115,13 +115,13 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
+@@ -113,13 +113,13 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
                      We do not want people to report thread issues to Paper,
                      but we do want people to report thread issues to Gale.
                      */
@@ -145,9 +145,9 @@ index 16e5ab49bc96f64143eb9e0dff19b33a7e3b5f3a..f463044495180ce20011a46e7f77a388
 -                logger.log(Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Leaf!):"); // Paper // Gale - branding changes // Leaf - Rebrand
 +                logger.log(Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Zirkonium!):"); // Paper // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
                  FeatureHooks.dumpAllChunkLoadInfo(MinecraftServer.getServer(), isLongTimeout); // Paper - log detailed tick information
-                 WatchdogThread.dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE), logger);
+                 WatchdogThread.dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(MinecraftServer.getServer().serverThread.threadId(), Integer.MAX_VALUE), logger);
                  logger.log(Level.SEVERE, "------------------------------");
-@@ -154,7 +154,7 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
+@@ -152,7 +152,7 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
                      We do not want people to report thread issues to Paper,
                      but we do want people to report thread issues to Gale.
                      */

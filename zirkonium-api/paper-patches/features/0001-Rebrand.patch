@@ -5,10 +5,10 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/src/main/java/io/papermc/paper/ServerBuildInfo.java b/src/main/java/io/papermc/paper/ServerBuildInfo.java
-index 5c10ab3deb359bd0045ba5999bcbce19a7949eaa..70b2d82d5799ed5fd12fae79e26b3ebbfb35ce02 100644
+index c198304386e83edc2ec582fdf66d97d624004771..5208b70b66cc6a75bac5b1eefa6888032d3e129d 100644
 --- a/src/main/java/io/papermc/paper/ServerBuildInfo.java
 +++ b/src/main/java/io/papermc/paper/ServerBuildInfo.java
-@@ -40,6 +40,13 @@ public interface ServerBuildInfo {
+@@ -41,6 +41,13 @@ public interface ServerBuildInfo {
      Key BRAND_LEAF_ID = Key.key("winds-studio", "leaf");
      // Leaf end - Rebrand
  

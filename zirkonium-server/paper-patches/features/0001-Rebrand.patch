@@ -51,7 +51,7 @@ index f59879ae7d3c73cd4c4233d30667988bf22f12f1..fa367cb1c2b7000a50d0ad3c6ab456a0
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
-index f267abd6f905180cfa5cf4961cf79f57544a891c..7508e28a79d8e667a5798d9f481518fc982b0483 100644
+index afaff6dcfe2044c465693dd0971d07644470ba8a..52d80dab3f69875f925b0b3a596a2c235ca7bf3c 100644
 --- a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
 +++ b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
 @@ -37,6 +37,7 @@ public record ServerBuildInfoImpl(
@@ -71,8 +71,8 @@ index f267abd6f905180cfa5cf4961cf79f57544a891c..7508e28a79d8e667a5798d9f481518fc
              getManifestAttribute(manifest, ATTRIBUTE_BRAND_NAME)
 -                .orElse(BRAND_LEAF_NAME), // Gale - branding changes // Leaf - Rebrand
 +                .orElse(BRAND_ZIRKONIUM_NAME), // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
-             SharedConstants.getCurrentVersion().getId(),
-             SharedConstants.getCurrentVersion().getName(),
+             SharedConstants.getCurrentVersion().id(),
+             SharedConstants.getCurrentVersion().name(),
              getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)
 @@ -71,6 +72,7 @@ public record ServerBuildInfoImpl(
          return brandId.equals(this.brandId)

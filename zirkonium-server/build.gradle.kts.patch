@@ -1,6 +1,16 @@
 --- a/leaf-server/build.gradle.kts
 +++ b/leaf-server/build.gradle.kts
-@@ -54,7 +_,36 @@
+@@ -1,9 +_,6 @@
+ import io.papermc.paperweight.attribute.DevBundleOutput
+ import io.papermc.paperweight.util.*
+-import io.papermc.paperweight.util.data.FileEntry
+-import paper.libs.com.google.gson.annotations.SerializedName
+ import java.time.Instant
+-import kotlin.io.path.readText
+ 
+ plugins {
+     `java-library`
+@@ -39,7 +_,31 @@
          }
      }
  
@@ -12,11 +22,6 @@
 +            upstreamRepo = leaf.patchedRepo("paperServer")
 +            patchesDir = rootDirectory.dir("zirkonium-server/paper-patches")
 +            outputDir = rootDirectory.dir("paper-server")
-+        }
-+        upstream.patchRepo("galeServer") {
-+            upstreamRepo = leaf.patchedRepo("galeServer")
-+            patchesDir = rootDirectory.dir("zirkonium-server/gale-patches")
-+            outputDir = rootDirectory.dir("gale-server")
 +        }
 +        upstream.patchDir("leafServer") {
 +            upstreamPath = "leaf-server"
@@ -36,51 +41,74 @@
 +    activeFork = zirkonium
 +    // Zirkonium end - project setup
      // Leaf end - project setup
-     // Gale end - project setup
  
-@@ -146,12 +_,16 @@
+     spigot {
+@@ -75,6 +_,7 @@
+     @get:Inject
+     abstract val archiveOperations: ArchiveOperations
+ }
++
+ val services = objects.newInstance<Services>()
+ 
+ if (project.providers.gradleProperty("publishDevBundle").isPresent) {
+@@ -128,10 +_,14 @@
+     main {
+         java { srcDir("../paper-server/src/main/java") }
          resources { srcDir("../paper-server/src/main/resources") }
-         java { srcDir("../gale-server/src/main/java") } // Leaf - project setup
-         resources { srcDir("../gale-server/src/main/resources") } // Leaf - project setup
 +        java { srcDir("../leaf-server/src/main/java") } // Zirkonium - project setup
 +        resources { srcDir("../leaf-server/src/main/resources") } // Zirkonium - project setup
      }
      test {
          java { srcDir("../paper-server/src/test/java") }
          resources { srcDir("../paper-server/src/test/resources") }
-         java { srcDir("../gale-server/src/test/java") } // Leaf - project setup
-         resources { srcDir("../gale-server/src/test/resources") } // Leaf - project setup
 +        java { srcDir("../leaf-server/src/test/java") } // Zirkonium - project setup
 +        resources { srcDir("../leaf-server/src/test/resources") } // Zirkonium - project setup
      }
  }
  
-@@ -176,7 +_,7 @@
+@@ -150,6 +_,7 @@
+ 
+ // Configure mockito agent that is needed in newer java versions
+ val mockitoAgent = configurations.register("mockitoAgent")
++
+ abstract class MockitoAgentProvider : CommandLineArgumentProvider {
+     @get:CompileClasspath
+     abstract val fileCollection: ConfigurableFileCollection
+@@ -160,7 +_,7 @@
  }
  
  dependencies {
--    implementation(project(":leaf-api")) // Gale - project setup - Depend on own API // Leaf - project setup
-+    implementation(project(":zirkonium-api")) // Gale - project setup - Depend on own API // Leaf - project setup // Zirkonium - project setup
+-    implementation(project(":leaf-api")) // Leaf - project setup
++    implementation(project(":zirkonium-api")) // Leaf - project setup // Zirkonium - project setup
  
      // Leaf start - Libraries
      implementation("com.github.thatsmusic99:ConfigurationMaster-API:v2.0.0-rc.3") { // Leaf config
-@@ -287,14 +_,14 @@
+@@ -277,14 +_,14 @@
          val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
--            "Implementation-Title" to "Leaf", // Gale - branding changes // Leaf - Rebrand
-+            "Implementation-Title" to "Zirkonium", // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
+-            "Implementation-Title" to "Leaf", // Leaf - Rebrand
++            "Implementation-Title" to "Zirkonium", // Leaf - Rebrand // Zirkonium - Rebrand
              "Implementation-Version" to implementationVersion,
              "Implementation-Vendor" to date,
--            "Specification-Title" to "Leaf", // Gale - branding changes // Leaf - Rebrand
-+            "Specification-Title" to "Zirkonium", // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
+-            "Specification-Title" to "Leaf", // Leaf - Rebrand
++            "Specification-Title" to "Zirkonium", // Leaf - Rebrand // Zirkonium - Rebrand
              "Specification-Version" to project.version,
--            "Specification-Vendor" to "Winds Studio", // Gale - branding changes // Leaf - Rebrand
--            "Brand-Id" to "winds-studio:leaf", // Gale - branding changes // Leaf - Rebrand
--            "Brand-Name" to "Leaf", // Gale - branding changes // Leaf - Rebrand
-+            "Specification-Vendor" to "Zirkon Network", // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
-+            "Brand-Id" to "zirkon-network:zirkonium", // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
-+            "Brand-Name" to "Zirkonium", // Gale - branding changes // Leaf - Rebrand // Zirkonium - Rebrand
+-            "Specification-Vendor" to "Winds Studio", // Leaf - Rebrand
+-            "Brand-Id" to "winds-studio:leaf", // Leaf - Rebrand
+-            "Brand-Name" to "Leaf", // Leaf - Rebrand
++            "Specification-Vendor" to "Zirkon Network", // Leaf - Rebrand // Zirkonium - Rebrand
++            "Brand-Id" to "zirkon-network:zirkonium", // Leaf - Rebrand // Zirkonium - Rebrand
++            "Brand-Name" to "Zirkonium", // Leaf - Rebrand // Zirkonium - Rebrand
              "Build-Number" to (build ?: ""),
              "Build-Time" to buildTime.toString(),
              "Git-Branch" to gitBranch,
+@@ -366,7 +_,7 @@
+ 
+ fun TaskContainer.registerRunTask(
+     name: String,
+-    block: JavaExec.() -> Unit
++    block: JavaExec.() -> Unit,
+ ): TaskProvider<JavaExec> = register<JavaExec>(name) {
+     group = "runs"
+     mainClass.set("org.bukkit.craftbukkit.Main")

@@ -1,4 +1,4 @@
-name: Build Zirkonium 1.21.4
+name: Build Zirkonium 1.21.5
 
 on:
   push:
@@ -90,15 +90,15 @@ jobs:
       - name: Upload Zirkonium
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: Zirkonium 1.21.4
-          path: ./zirkonium-1.21.4-${{ env.BUILD_NUMBER }}.jar
+          name: Zirkonium 1.21.5
+          path: ./zirkonium-1.21.5-${{ env.BUILD_NUMBER }}.jar
 
       - name: Release Zirkonium
         uses: softprops/action-gh-release@v2.3.2
         with:
-          name: "Zirkonium 1.21.4"
-          tag_name: "ver-1.21.4"
-          files: "./zirkonium-1.21.4-${{ env.BUILD_NUMBER }}.jar"
+          name: "Zirkonium 1.21.5"
+          tag_name: "ver-1.21.5"
+          files: "./zirkonium-1.21.5-${{ env.BUILD_NUMBER }}.jar"
           body_path: "./release_notes.md"
           token: "${{ secrets.GITHUB_TOKEN }}"
           target_commitish: "${{ github.sha }}"

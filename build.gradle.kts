@@ -25,12 +25,6 @@ paperweight {
             patchesDir = file("zirkonium-api/paper-patches")
             outputDir = file("paper-api")
         }
-        patchRepo("galeApi") {
-            upstreamPath = "gale-api"
-            excludes = listOf("build.gradle.kts", "build.gradle.kts.patch", "paper-patches")
-            patchesDir = file("zirkonium-api/gale-patches")
-            outputDir = file("gale-api")
-        }
         patchDir("leafApi") {
             upstreamPath = "leaf-api"
             excludes = listOf("build.gradle.kts", "build.gradle.kts.patch", "paper-patches")

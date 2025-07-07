@@ -5,12 +5,12 @@ IS_EOL=false
 IS_UNSUPPORTED=false
 IS_DEV=false
 
-JAR_NAME="zirkonium-1.21.6"
-CURRENT_TAG="ver-1.21.6"
+JAR_NAME="zirkonium-1.21.7"
+CURRENT_TAG="ver-1.21.7"
 RELEASE_NOTES="release_notes.md"
 
 # Rename Zirkonium jar
-mv ./zirkonium-server/build/libs/zirkonium-paperclip-1.21.6-R0.1-SNAPSHOT-mojmap.jar ./$JAR_NAME-${BUILD_NUMBER}.jar
+mv ./zirkonium-server/build/libs/zirkonium-paperclip-1.21.7-R0.1-SNAPSHOT-mojmap.jar ./$JAR_NAME-${BUILD_NUMBER}.jar
 
 # Branch name
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)

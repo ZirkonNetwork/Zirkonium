@@ -127,6 +127,22 @@ index 82efa8875605804bf03ae9079ffba9102dcad2cc..c96bea9567c10b8fccf60bfef8351877
          context.pipeline().firstContext().writeAndFlush(buffer).addListener(ChannelFutureListener.CLOSE);
      }
  
+diff --git a/net/minecraft/server/network/ServerConnectionListener.java b/net/minecraft/server/network/ServerConnectionListener.java
+index bd07e6a5aa1883786d789ea71711a0c0c0a95c26..8ebb3a02851f8ce5d186bda34e75641e2d214e1a 100644
+--- a/net/minecraft/server/network/ServerConnectionListener.java
++++ b/net/minecraft/server/network/ServerConnectionListener.java
+@@ -121,6 +121,11 @@ public class ServerConnectionListener {
+                             new ChannelInitializer<Channel>() {
+                                 @Override
+                                 protected void initChannel(Channel channel) {
++                                    // Zirkonium - Sneaky - Block banned IPs
++                                    if (!com.adryd.sneaky.Sneaky.shouldAllowConnection(channel.remoteAddress())) {
++                                        channel.close();
++                                        return;
++                                    } // Zirkonium - Sneaky - Block banned IPs
+                                     try {
+                                         channel.config().setOption(ChannelOption.TCP_NODELAY, true);
+                                     } catch (ChannelException var5) {
 diff --git a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 index 94967a2a735180f7a4860ef4de3a9ad9fcc680db..64e41fe31894f59b6e18f65719442b8a1f95122e 100644
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java

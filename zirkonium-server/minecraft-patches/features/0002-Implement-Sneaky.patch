@@ -160,7 +160,7 @@ index 94967a2a735180f7a4860ef4de3a9ad9fcc680db..64e41fe31894f59b6e18f65719442b8a
                  } else {
                      this.connection.disconnect(IGNORE_STATUS_REASON);
 diff --git a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index 72115a4d2c54834f9edef02c83ed79f0fe380e78..119a438b1e86e56d0fe207484c5c5194a7d0f722 100644
+index 72115a4d2c54834f9edef02c83ed79f0fe380e78..086de57c00d1751dd36f84dac0c9d5a1e25e3ceb 100644
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 @@ -159,6 +159,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
@@ -171,7 +171,15 @@ index 72115a4d2c54834f9edef02c83ed79f0fe380e78..119a438b1e86e56d0fe207484c5c5194
          LOGGER.info("{} lost connection: {}", this.getUserName(), details.reason().getString());
      }
  
-@@ -316,6 +317,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+@@ -242,6 +243,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+                 this.state = ServerLoginPacketListenerImpl.State.WAITING_FOR_DUPE_DISCONNECT;
+             } else {
+                 this.finishLoginAndWaitForClient(profile);
++                com.adryd.sneaky.IPList.INSTANCE.addToIPList(this.connection.getRemoteAddress()); // Zirkonium - Sneaky - Add addresses to IPList
+             }
+         }
+     }
+@@ -316,6 +318,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
                          ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(string1)); // Spigot
                      } else {
                          ServerLoginPacketListenerImpl.this.disconnect(org.purpurmc.purpur.PurpurConfig.unverifiedUsername.equals("default") ? Component.translatable("multiplayer.disconnect.unverified_username") : io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(org.purpurmc.purpur.PurpurConfig.unverifiedUsername))); // Purpur - Config for unverified username message

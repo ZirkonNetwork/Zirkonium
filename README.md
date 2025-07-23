@@ -1,8 +1,9 @@
 # Zirkonium
 A Leaf fork. Originally a Purpur fork for Zirkon Network.
-## Features (soon)
-- [Dynamic View](https://github.com/ldtteam/DynView)
+## Features
 - [Sneaky](https://github.com/adryd325/sneaky)
+## Coming Soon
+- [Dynamic View](https://github.com/ldtteam/DynView)
 ## Building
 Note:
 These instructions will not work without a Java 21 Development Kit (JDK) or another compatible JDK setup correctly.

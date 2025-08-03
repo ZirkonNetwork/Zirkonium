@@ -5,7 +5,7 @@ Subject: [PATCH] Implement Sneaky
 
 
 diff --git a/net/minecraft/server/MinecraftServer.java b/net/minecraft/server/MinecraftServer.java
-index 9eb35364757b5748f7228c1557e9350edc805440..54c2673ac20130302f3d8e5a82634a1ff254f540 100644
+index 7849a905db35377da0931aa1c9b8770f30a51044..c710fcdee62c89fc86e0b2a9aaa5f8ec8013afa3 100644
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
 @@ -922,6 +922,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -160,10 +160,10 @@ index 94967a2a735180f7a4860ef4de3a9ad9fcc680db..64e41fe31894f59b6e18f65719442b8a
                  } else {
                      this.connection.disconnect(IGNORE_STATUS_REASON);
 diff --git a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index 72115a4d2c54834f9edef02c83ed79f0fe380e78..086de57c00d1751dd36f84dac0c9d5a1e25e3ceb 100644
+index 4fe2fbe7b8329a0507ac94f42b0db78038c566d8..09eb0f8ed5bf89dba1bd11e71c206a8008e80aca 100644
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -159,6 +159,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+@@ -151,6 +151,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
  
      @Override
      public void onDisconnect(DisconnectionDetails details) {
@@ -171,7 +171,7 @@ index 72115a4d2c54834f9edef02c83ed79f0fe380e78..086de57c00d1751dd36f84dac0c9d5a1
          LOGGER.info("{} lost connection: {}", this.getUserName(), details.reason().getString());
      }
  
-@@ -242,6 +243,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+@@ -234,6 +235,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
                  this.state = ServerLoginPacketListenerImpl.State.WAITING_FOR_DUPE_DISCONNECT;
              } else {
                  this.finishLoginAndWaitForClient(profile);
@@ -179,7 +179,7 @@ index 72115a4d2c54834f9edef02c83ed79f0fe380e78..086de57c00d1751dd36f84dac0c9d5a1
              }
          }
      }
-@@ -316,6 +318,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+@@ -287,6 +289,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
                          ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(string1)); // Spigot
                      } else {
                          ServerLoginPacketListenerImpl.this.disconnect(org.purpurmc.purpur.PurpurConfig.unverifiedUsername.equals("default") ? Component.translatable("multiplayer.disconnect.unverified_username") : io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(org.purpurmc.purpur.PurpurConfig.unverifiedUsername))); // Purpur - Config for unverified username message

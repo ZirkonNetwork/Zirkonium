@@ -5,10 +5,10 @@ Subject: [PATCH] Implement Sneaky
 
 
 diff --git a/net/minecraft/server/MinecraftServer.java b/net/minecraft/server/MinecraftServer.java
-index 7849a905db35377da0931aa1c9b8770f30a51044..c710fcdee62c89fc86e0b2a9aaa5f8ec8013afa3 100644
+index f31a643b9fcfdafb2c1c6069b44b736527960787..6a5fba6bd589ab4e34efb7dc0a5bb7c3ff9f8dd5 100644
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -922,6 +922,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -921,6 +921,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          return this.saveAllChunks(suppressLog, flush, forced, false);
      }
      public boolean saveAllChunks(boolean suppressLog, boolean flush, boolean forced, boolean close) {
@@ -17,7 +17,7 @@ index 7849a905db35377da0931aa1c9b8770f30a51044..c710fcdee62c89fc86e0b2a9aaa5f8ec
          boolean flag = false;
  
 diff --git a/net/minecraft/server/dedicated/DedicatedServer.java b/net/minecraft/server/dedicated/DedicatedServer.java
-index 463a9d9b15301e7139bd36435214662aa3ccf63d..34d315b510c5e0d5b62092b7d9d4f1dcae10429c 100644
+index c13b8c2a4a1b6a6b744a0b1b330e63f3c77fa6e5..425409b3cd1badbf3286c6df5f414b3acdde055e 100644
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -192,6 +192,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -128,10 +128,10 @@ index 82efa8875605804bf03ae9079ffba9102dcad2cc..c96bea9567c10b8fccf60bfef8351877
      }
  
 diff --git a/net/minecraft/server/network/ServerConnectionListener.java b/net/minecraft/server/network/ServerConnectionListener.java
-index bd07e6a5aa1883786d789ea71711a0c0c0a95c26..8ebb3a02851f8ce5d186bda34e75641e2d214e1a 100644
+index ea5dfaa2efaccd643f9977cb60d982791439a597..6fca160bacd2ce5579c7925da8dda30cc520c81f 100644
 --- a/net/minecraft/server/network/ServerConnectionListener.java
 +++ b/net/minecraft/server/network/ServerConnectionListener.java
-@@ -121,6 +121,11 @@ public class ServerConnectionListener {
+@@ -151,6 +151,11 @@ public class ServerConnectionListener {
                              new ChannelInitializer<Channel>() {
                                  @Override
                                  protected void initChannel(Channel channel) {

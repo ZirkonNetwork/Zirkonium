@@ -55,10 +55,10 @@ index 42645ea0f97df8e733001e7c3f4c4096ed6a5049..bcc28ef678f8ce370a53280173efc151
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index c03726447fa79270d00f3c4384f0b43f9e421073..42ea74ef00c570156d099d9ecce9f4fdb72bd48f 100644
+index 3e972dc2160f953daaa727c2305ec71eed7981a5..b540a785fac7e084341e088fc8e1a8241e378d47 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
-@@ -172,6 +172,14 @@ public class Main {
+@@ -180,6 +180,14 @@ public class Main {
                      .describedAs("Yml file");
                  // Purpur end - Purpur config files
  

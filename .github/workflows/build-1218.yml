@@ -2,7 +2,7 @@ name: Build Zirkonium 1.21.8
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "ver/1.21.8" ]
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
       GRADLE_MEMORY: "-Xmx4g -XX:MaxMetaspaceSize=2g"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -38,8 +38,6 @@ jobs:
           mkdir -p ~/.gradle/caches/modules-2
           [ -f ~/.gradle/caches/modules-2/modules-2.lock ] && rm -f ~/.gradle/caches/modules-2/modules-2.lock
           find ~/.gradle/caches -name "*.lock" -type f -delete || echo "No lock files found"
-          rm -rf .gradle/caches/paperweight/upstreams
-          rm -rf ~/.gradle/caches/paperweight/upstreams
 
       - name: Setup java
         uses: actions/setup-java@v4
@@ -90,13 +88,13 @@ jobs:
           BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
 
       - name: Upload Zirkonium
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v4
         with:
           name: Zirkonium 1.21.8
           path: ./zirkonium-1.21.8-${{ env.BUILD_NUMBER }}.jar
 
       - name: Release Zirkonium
-        uses: softprops/action-gh-release@v2.3.2
+        uses: softprops/action-gh-release@v2
         with:
           name: "Zirkonium 1.21.8"
           tag_name: "ver-1.21.8"

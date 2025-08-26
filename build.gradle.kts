@@ -35,7 +35,7 @@ paperweight {
 }
 
 val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
-val leafMavenPublicUrl = "https://maven.nostal.ink/repository/maven-snapshots/"
+val leafMavenPublicUrl = "https://maven.leafmc.one/snapshots/"
 
 subprojects {
     apply(plugin = "java-library")
@@ -51,7 +51,6 @@ subprojects {
         mavenCentral()
         maven(paperMavenPublicUrl)
         maven(leafMavenPublicUrl)
-        maven("https://repo.bsdevelopment.org/releases/") // Leaf - Leaf config - ConfigurationMaster-API
     }
 
     tasks.withType<AbstractArchiveTask>().configureEach {
@@ -63,6 +62,7 @@ subprojects {
         options.release = 21
         options.isFork = true
         options.forkOptions.memoryMaximumSize = "1G"
+        options.compilerArgs.addAll(listOf("-Xlint:-deprecation", "-Xlint:-removal"))
     }
     tasks.withType<Javadoc> {
         options.encoding = Charsets.UTF_8.name()

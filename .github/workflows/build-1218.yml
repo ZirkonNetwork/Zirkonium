@@ -67,8 +67,8 @@ jobs:
         run: |
           PARALLELISM=$(($(nproc) * 2))
           ./gradlew -Dorg.gradle.jvmargs="${{ env.GRADLE_MEMORY }}" \
-                   -Dzirkonium.patcher.parallelism=$PARALLELISM \
-                   -Dzirkonium.patcher.incremental=true \
+                   -Dleaf.patcher.parallelism=$PARALLELISM \
+                   -Dleaf.patcher.incremental=true \
                    applyAllPatches \
                    --stacktrace --parallel \
                    --max-workers=$PARALLELISM \

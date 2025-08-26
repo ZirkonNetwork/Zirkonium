@@ -2,7 +2,7 @@ name: Build Zirkonium 1.21.8
 
 on:
   push:
-    branches: [ "ver/1.21.8" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:

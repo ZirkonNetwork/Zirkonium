@@ -43,10 +43,10 @@ index 30a19d10869f73d67b794e8e4c035bc5c10209e6..9a1c3f1f619190514c907a1b71df68d8
 +    ); // Zirkonium end - Sneaky - Hide data spoofing
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 42645ea0f97df8e733001e7c3f4c4096ed6a5049..bcc28ef678f8ce370a53280173efc1519ff0dc50 100644
+index 034d136bcaa894d8999fc51a53d66b40bb884ccd..b213c969131ed339cc2f9e13e8afc49c48cf51d5 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -1067,6 +1067,7 @@ public final class CraftServer implements Server {
+@@ -1069,6 +1069,7 @@ public final class CraftServer implements Server {
          this.console.paperConfigurations.reloadConfigs(this.console);
          this.console.galeConfigurations.reloadConfigs(this.console); // Gale - Gale configuration
          org.purpurmc.purpur.PurpurConfig.init((File) console.options.valueOf("purpur-settings")); // Purpur - Purpur config files

@@ -22,13 +22,13 @@ jobs:
       - name: Apply Patches
         run: ./gradlew applyAllPatches --stacktrace
       - name: Build
-        run: ./gradlew build --stacktrace
+        run: ./gradlew createMojmapPaperclipJar --stacktrace --parallel --no-daemon
       - name: Rebuild on Failure
         if: ${{ failure() }}
         run: |
           ./gradlew clean cleanCache --refresh-dependencies
           ./gradlew applyAllPatches --stacktrace 
-          ./gradlew build --stacktrace
+          ./gradlew createMojmapPaperclipJar --stacktrace --parallel --no-daemon
 
       - name: Upload Zirkonium
         uses: actions/upload-artifact@v4
